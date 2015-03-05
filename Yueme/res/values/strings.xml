@@ -1,8 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Yueme</string>
+    <string name="app_name">InviteYou</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    
+    <!-- activity_login.xml -->
+    <string name="login">登 录</string>
+    <string name="user_account">账号</string>
+    <string name="password">密码</string>
+    <string name="forget_password">忘记密码？</string>
+    <string name="quick_register">快速注册</string>
+    <string name="login_success"> 登录成功！</string>
+    
 
+    <!-- activity_register.xml -->
+    <string name="register">注册</string>
+    <string name="phoneNum">手机号</string>
+    <string name="verifi_code">验证码</string>
+    <string name="had_account">已有账号</string>
+    <string name="click_send">点击发送</string>
+    
+    <!-- activity_find_password.xml -->
+    <string name="find_password">找回密码</string>
+    <string name="new_password">新密码</string>
+    <string name="confirm">确认</string>
+    
+    <!-- fragement_home.xml -->
+    <string name="begin_invite">约起</string>
+    
+    <!-- fragment_user.xml -->
+    <string name="user_me">我</string>
+    
+    <!-- fragment_discovery.xml -->
+    <string name="discovery">发现</string>
 </resources>

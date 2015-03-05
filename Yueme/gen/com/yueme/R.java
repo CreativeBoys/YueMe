@@ -18,22 +18,123 @@ public final class R {
          would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
     
          */
-        public static final int activity_horizontal_margin=0x7f030000;
-        public static final int activity_vertical_margin=0x7f030001;
+        public static final int activity_horizontal_margin=0x7f050000;
+        public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
+        public static final int back_icon=0x7f020000;
+        public static final int discovery_select=0x7f020001;
+        public static final int discovery_unselect=0x7f020002;
+        public static final int home_select=0x7f020003;
+        public static final int home_unselect=0x7f020004;
+        public static final int ic_launcher=0x7f020005;
+        public static final int ic_pulltorefresh_arrow=0x7f020006;
+        public static final int icon=0x7f020007;
+        public static final int login_bg=0x7f020008;
+        public static final int login_success=0x7f020009;
+        public static final int me_select=0x7f02000a;
+        public static final int me_unselect=0x7f02000b;
+        public static final int pull_to_refresh_header_background=0x7f02000c;
+        public static final int selector_discovery_btn=0x7f02000d;
+        public static final int selector_home_btn=0x7f02000e;
+        public static final int selector_me_btn=0x7f02000f;
+        public static final int selector_tab_background=0x7f020010;
+        public static final int tab_bg=0x7f020011;
+        public static final int titlebar_bg=0x7f020012;
+        public static final int user_head=0x7f020013;
+        public static final int verifi_btn=0x7f020014;
     }
     public static final class id {
-        public static final int action_settings=0x7f070000;
+        public static final int action_settings=0x7f080024;
+        public static final int backBtn=0x7f080002;
+        public static final int btn_register=0x7f08001a;
+        public static final int confirmBtn=0x7f080007;
+        public static final int et_nickname=0x7f080019;
+        public static final int fl_bottom=0x7f080014;
+        public static final int fl_title=0x7f080012;
+        public static final int forgetPasswordTv=0x7f08000e;
+        public static final int hadAccountTv=0x7f08001b;
+        public static final int imageView1=0x7f080011;
+        public static final int imageview=0x7f080022;
+        public static final int loginBtn=0x7f08000d;
+        public static final int loginSuccessTips=0x7f080010;
+        public static final int newPasswordEt=0x7f08000a;
+        public static final int passwordEt=0x7f080017;
+        public static final int password_editText=0x7f08000c;
+        public static final int phoneNumEt=0x7f080004;
+        public static final int pull_to_refresh_header=0x7f08001d;
+        public static final int pull_to_refresh_image=0x7f08001f;
+        public static final int pull_to_refresh_progress=0x7f08001e;
+        public static final int pull_to_refresh_text=0x7f080020;
+        public static final int pull_to_refresh_updated_at=0x7f080021;
+        public static final int quickRegisterTv=0x7f08000f;
+        public static final int rg_bottom=0x7f08001c;
+        public static final int textView1=0x7f080001;
+        public static final int textView2=0x7f080003;
+        public static final int textView3=0x7f080008;
+        public static final int textView4=0x7f080005;
+        public static final int textView5=0x7f080018;
+        public static final int textview=0x7f080023;
+        public static final int topLayout=0x7f080000;
+        public static final int username_editText=0x7f08000b;
+        public static final int verifiBtn=0x7f080016;
+        public static final int verifiEt=0x7f080015;
+        public static final int verifyBtn=0x7f080009;
+        public static final int verifyEt=0x7f080006;
+        public static final int vp_middle=0x7f080013;
+    }
+    public static final class layout {
+        public static final int activity_find_password=0x7f030000;
+        public static final int activity_login=0x7f030001;
+        public static final int activity_main=0x7f030002;
+        public static final int activity_register=0x7f030003;
+        public static final int fragment_bottom=0x7f030004;
+        public static final int fragment_title=0x7f030005;
+        public static final int fragment_user=0x7f030006;
+        public static final int pull_to_refresh_header=0x7f030007;
+        public static final int tab_indicator_view=0x7f030008;
     }
     public static final class menu {
-        public static final int main=0x7f060000;
+        public static final int home=0x7f070000;
+        public static final int main=0x7f070001;
     }
     public static final class string {
-        public static final int action_settings=0x7f040002;
+        public static final int action_settings=0x7f040006;
         public static final int app_name=0x7f040000;
-        public static final int hello_world=0x7f040001;
+        /**  fragement_home.xml 
+         */
+        public static final int begin_invite=0x7f040015;
+        public static final int click_send=0x7f040011;
+        public static final int confirm=0x7f040014;
+        /**  fragment_discovery.xml 
+         */
+        public static final int discovery=0x7f040017;
+        /**  activity_find_password.xml 
+         */
+        public static final int find_password=0x7f040012;
+        public static final int forget_password=0x7f04000a;
+        public static final int had_account=0x7f040010;
+        public static final int hello_world=0x7f040005;
+        /**  activity_login.xml 
+         */
+        public static final int login=0x7f040007;
+        public static final int login_success=0x7f04000c;
+        public static final int new_password=0x7f040013;
+        public static final int password=0x7f040009;
+        public static final int phoneNum=0x7f04000e;
+        public static final int pull_to_refresh_pull_label=0x7f040001;
+        public static final int pull_to_refresh_refreshing_label=0x7f040003;
+        public static final int pull_to_refresh_release_label=0x7f040002;
+        public static final int pull_to_refresh_tap_label=0x7f040004;
+        public static final int quick_register=0x7f04000b;
+        /**  activity_register.xml 
+         */
+        public static final int register=0x7f04000d;
+        public static final int user_account=0x7f040008;
+        /**  fragment_user.xml 
+         */
+        public static final int user_me=0x7f040016;
+        public static final int verifi_code=0x7f04000f;
     }
     public static final class style {
         /** 
@@ -57,10 +158,10 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f050000;
+        public static final int AppBaseTheme=0x7f060000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f050001;
+        public static final int AppTheme=0x7f060001;
     }
 }
