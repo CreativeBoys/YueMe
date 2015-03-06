@@ -18,4 +18,10 @@ public class TitleFragment extends BaseFragment{
 		return inflater.inflate(R.layout.fragment_title, null);
 	}
 
+	@Override
+	protected void setListenerAndAdapter() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

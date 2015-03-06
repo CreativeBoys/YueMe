@@ -20,7 +20,9 @@ public abstract class BaseFragment extends Fragment{
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		init();
+		setListenerAndAdapter();
 	}
+	protected abstract void setListenerAndAdapter();
 	protected abstract void init();
 	protected abstract View initView(LayoutInflater inflater);
 	protected View findViewById(int id) {
