@@ -42,6 +42,14 @@
         
         <activity android:name=".PubRequireActivity" >
         </activity>
+          <activity 
+            android:name=".SystemSettings">
+            
+        </activity>
+        <activity 
+            android:name=".UserInformation">
+            
+        </activity>
     </application>
 
 </manifest>
