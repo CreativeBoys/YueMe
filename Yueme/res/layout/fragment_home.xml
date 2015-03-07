@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#F6F6F6" >
 
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipe_container"
+    <ListView
+        android:id="@+id/homeListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-         >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:divider="#F6F6F6"
+        android:dividerHeight="10dp" />
 
-        <ListView
-            android:id="@+id/homeListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/home_addBtn"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="18dp"
+            android:layout_marginRight="18dp"
+            android:background="@drawable/home_add" />
+
+    </RelativeLayout>
+
+</FrameLayout>

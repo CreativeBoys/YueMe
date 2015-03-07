@@ -44,14 +44,14 @@
 
     <ListView
         android:layout_marginTop="12dp"
-        android:background="#FFFFFF"
         android:id="@+id/userListview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/head_layout"
         android:divider="#F6F6F6"
-        android:dividerHeight="12dp" >
+        android:dividerHeight="12dp"
+        android:background="#FFFFFF" >
     </ListView>
 
 </RelativeLayout>
