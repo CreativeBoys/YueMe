@@ -11,11 +11,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.yueme.fragment.BottomFragment;
 import com.yueme.fragment.DiscoveryFragment;
@@ -41,6 +43,7 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle arg0) {
 		// TODO Auto-generated method stub
 		super.onCreate(arg0);
+		
 		setContentView(R.layout.activity_main);
 		fragments = new ArrayList<BaseFragment>();
 		fl_bottom = (FrameLayout) findViewById(R.id.fl_bottom);
@@ -80,8 +83,6 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onPageSelected(int pos) {
 				((RadioButton)bottomFragment.rg_bottom.getChildAt(pos)).setChecked(true);
-				// 改变TitleFragment 内容 modify by heshaokang 
-				titleFragment.changeTitle(pos);
 			}
 			
 			@Override
@@ -96,6 +97,10 @@ public class MainActivity extends FragmentActivity {
 				
 			}
 		});
+		
+		
+		
+		
 	}
 	
 	private class HomePagerAdapter extends FragmentPagerAdapter {
@@ -115,4 +120,16 @@ public class MainActivity extends FragmentActivity {
 		}
 		
 	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if(keyCode == KeyEvent.KEYCODE_BACK) {
+			homeFragment.closePopWindow();
+		}
+		return super.onKeyDown(keyCode, event);
+		
+	}
+	
+	
 }

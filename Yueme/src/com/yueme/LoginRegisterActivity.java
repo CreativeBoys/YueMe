@@ -27,7 +27,7 @@ public class LoginRegisterActivity extends Activity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(LoginRegisterActivity.this, LoginActivity.class);
+				Intent intent = new Intent(LoginRegisterActivity.this, MainActivity.class);
 				startActivity(intent);
 				finish();
 			}
