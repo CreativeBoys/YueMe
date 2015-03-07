@@ -1,22 +1,32 @@
 package com.yueme.fragment;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yueme.R;
+import com.yueme.SystemSettings;
+import com.yueme.UserInformation;
 import com.yueme.fragment.base.BaseFragment;
 
 public class UserFragment extends BaseFragment {
 	private ListView listView;
+	private RelativeLayout head_layout;
 	@Override
 	protected void init() {
 		listView = (ListView) findViewById(R.id.userListview);
-		listView.setAdapter(new MyAdapter());		
+		listView.setAdapter(new MyAdapter());	
+		head_layout = (RelativeLayout) findViewById(R.id.head_layout);
+		
 	}
 
 	@Override
@@ -65,6 +75,39 @@ public class UserFragment extends BaseFragment {
 	@Override
 	protected void setListenerAndAdapter() {
 		// TODO Auto-generated method stub
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = null;
+				switch (position) {
+				case 0:
+					
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:  			//系统设置		
+					intent = new Intent(getActivity(),SystemSettings.class);
+					startActivity(intent);
+					break;
+				default:
+					break;
+				}
+				
+			}
+			
+		});
 		
+		head_layout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(),UserInformation.class);
+				startActivity(intent);
+			}
+		});
 	}
 }

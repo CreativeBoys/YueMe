@@ -11,8 +11,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.yueme.fragment.BottomFragment;
 import com.yueme.fragment.DiscoveryFragment;
@@ -77,6 +80,8 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onPageSelected(int pos) {
 				((RadioButton)bottomFragment.rg_bottom.getChildAt(pos)).setChecked(true);
+				// 改变TitleFragment 内容 modify by heshaokang 
+				titleFragment.changeTitle(pos);
 			}
 			
 			@Override

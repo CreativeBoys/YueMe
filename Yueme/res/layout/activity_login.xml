@@ -6,10 +6,10 @@
     <RelativeLayout
         android:id="@+id/topLayout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/titlebar_bg" >
+        android:background="#00CCFF" >
 
         <TextView
             android:id="@+id/textView1"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="8dp"
             android:src="@drawable/back_icon" />
     </RelativeLayout>
 
