@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6F6F6"
@@ -17,25 +19,25 @@
             android:src="@drawable/back_icon"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="8dp"/>
-        <ImageView
+        <com.yueme.ui.CircleImageView
             android:id="@+id/user_head"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-         
-            android:layout_centerHorizontal="true"
-           	android:layout_marginTop="5dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+         	
+            android:layout_centerInParent="true"
+           
             android:src="@drawable/user_head"/>
+       
         <TextView 
-            android:id="@+id/user_nickname"
+            android:id="@+id/save_information"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_below="@id/user_head"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:textSize="15sp"
+            android:layout_height="wrap_content"
+            android:text="保存"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:text="Mr He"/>
+            android:textSize="20sp"
+            android:layout_alignBottom="@id/user_back"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"/>
     </RelativeLayout>
 	
     <!-- 性别 -->
@@ -54,7 +56,8 @@
             android:layout_marginLeft="8dp"
             android:src="@drawable/user_head" />
 		
-        <TextView 
+        <TextView
+            android:id="@+id/tv_gender" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="性别"
@@ -69,9 +72,56 @@
             android:layout_centerVertical="true"
             android:text="男" 
             android:textSize="16sp"
-           	android:layout_alignParentRight="true"
-           	android:layout_marginRight="10dp"/>
+          	android:layout_toRightOf="@id/tv_gender"
+           	android:layout_marginLeft="30dp"/>
     </RelativeLayout>
+    <!-- 昵称 -->
+    <RelativeLayout
+        android:id="@+id/ll_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        android:background="#FFFFFF"
+        android:focusable="true"
+		android:focusableInTouchMode="true" >
+
+        <ImageView
+            android:id="@+id/nickname_img"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/user_head" />
+        
+        
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="昵称"
+            android:layout_toRightOf="@id/nickname_img"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            android:layout_marginLeft="10dp"/>
+
+        <EditText
+            android:id="@+id/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_nickname"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="20dp"
+            android:layout_centerVertical="true"
+            android:text="" 
+            android:textSize="16sp"
+            android:maxLength="20"
+            android:singleLine="true"
+            android:hint="填写你喜欢的昵称"
+            android:background="@null"
+           />
+    </RelativeLayout>
+    
+    
     
     <!-- 真实姓名 -->
     <RelativeLayout
@@ -79,7 +129,9 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+        android:focusable="true"
+		android:focusableInTouchMode="true">
 
         <ImageView
             android:id="@+id/username_img"
@@ -90,24 +142,31 @@
             android:src="@drawable/user_head" />
         
         
-        <TextView 
+        <TextView
+            android:id="@+id/tv_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="真实姓名"
+            android:text="姓名"
             android:layout_toRightOf="@id/username_img"
             android:layout_centerVertical="true"
             android:textSize="18sp"
             android:layout_marginLeft="10dp"/>
 
-        <TextView
+        <EditText
             android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@id/tv_username"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="20dp"
             android:layout_centerVertical="true"
-            android:text="Mr Li" 
+            android:text="" 
             android:textSize="16sp"
-           android:layout_alignParentRight="true"/>
+            android:maxLength="20"
+            android:singleLine="true"
+            android:hint="填写真实姓名,发现好友"
+            android:background="@null"
+           />
     </RelativeLayout>
     
     <!-- 学校 -->
@@ -116,7 +175,9 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+         android:focusable="true"
+		android:focusableInTouchMode="true">
 
         <ImageView
             android:id="@+id/school_img"
@@ -127,7 +188,8 @@
             android:src="@drawable/user_head" />
         
         
-        <TextView 
+        <TextView
+            android:id="@+id/tv_school"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="学校"
@@ -136,15 +198,21 @@
             android:textSize="18sp"
             android:layout_marginLeft="10dp"/>
 
-        <TextView
-            android:id="@+id/school_name"
+         <EditText
+            android:id="@+id/school"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@id/tv_school"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="20dp"
             android:layout_centerVertical="true"
-            android:text="重庆邮电大学" 
+            android:text="" 
             android:textSize="16sp"
-           android:layout_alignParentRight="true"/>
+            android:maxLength="20"
+            android:singleLine="true"
+            android:hint="填写学校，发现校友"
+            android:background="@null"
+           />
     </RelativeLayout>
     
    
@@ -155,7 +223,9 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+         android:focusable="true"
+		android:focusableInTouchMode="true">
 
         <ImageView
             android:id="@+id/academy_img"
@@ -166,7 +236,8 @@
             android:src="@drawable/user_head" />
         
         
-        <TextView 
+        <TextView
+            android:id="@+id/tv_academy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="学院"
@@ -175,15 +246,21 @@
             android:textSize="18sp"
             android:layout_marginLeft="10dp"/>
 
-        <TextView
-            android:id="@+id/academy_name"
+        <EditText
+            android:id="@+id/academy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@id/tv_academy"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="20dp"
             android:layout_centerVertical="true"
-            android:text="计算机学院" 
+            android:text="" 
             android:textSize="16sp"
-           android:layout_alignParentRight="true"/>
+            android:maxLength="20"
+            android:singleLine="true"
+            android:hint="填写所在学院"
+            android:background="@null"
+           />
     </RelativeLayout>
     
      <!-- 年级 -->
@@ -192,7 +269,9 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+         android:focusable="true"
+		android:focusableInTouchMode="true">
 
         <ImageView
             android:id="@+id/grade_img"
@@ -203,7 +282,8 @@
             android:src="@drawable/user_head" />
         
         
-        <TextView 
+        <TextView
+            android:id="@+id/tv_grade"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="年级"
@@ -212,15 +292,21 @@
             android:textSize="18sp"
             android:layout_marginLeft="10dp"/>
 
-        <TextView
-            android:id="@+id/grade_name"
+         <EditText
+            android:id="@+id/grade"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@id/tv_grade"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="20dp"
             android:layout_centerVertical="true"
-            android:text="大二" 
+            android:text="" 
             android:textSize="16sp"
-           android:layout_alignParentRight="true"/>
+            android:maxLength="20"
+            android:singleLine="true"
+            android:hint="填写你的年级"
+            android:background="@null"
+           />
     </RelativeLayout>
     
       <!-- 个性签名 -->
@@ -229,7 +315,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+         android:focusable="true"
+		android:focusableInTouchMode="true">
 
         <ImageView
             android:id="@+id/signature_img"
@@ -241,7 +329,7 @@
         
         
         <TextView
-            android:id="@+id/signature" 
+            android:id="@+id/tv_signature" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="个性签名"
@@ -249,24 +337,25 @@
             android:layout_centerVertical="true"
             android:textSize="18sp"
             android:layout_marginLeft="10dp"/>
-		<RelativeLayout 
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:layout_toRightOf="@id/signature"
-		    android:layout_margin="10dp">
-		    <TextView
-            android:id="@+id/signature_name"
+		  
+         <EditText
+            android:id="@+id/signature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_signature"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="20dp"
             android:layout_centerVertical="true"
-            android:text="生活的理想，总是为了理想的生活" 
+            android:text="生活的理想，就是理想的生活" 
             android:textSize="16sp"
-           	/>
-		</RelativeLayout>
-        
+            android:maxLength="20"
+            android:hint="填写你的个性签名吧!"
+            android:background="@null"
+           />
     </RelativeLayout>
    
     <TextView 
+        android:id="@+id/backlogin"
         android:layout_width="240dp"
         android:layout_height="50dp"
         android:text="退出登录"
