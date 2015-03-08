@@ -7,19 +7,23 @@ public class DemandItem implements Parcelable {
 
 	public int icon_id;
 	public String userName;
+	public String classify;
 	public String time;
 	public String demandContent;
 	public String restTime;
 
-	public DemandItem(int icon_id, String userName, String time,
+	public DemandItem(int icon_id, String userName, String classify, String time,
 			String demandContent, String restTime) {
 		this.icon_id = icon_id;
 		this.userName = userName;
+		this.classify = classify;
 		this.time = time;
 		this.demandContent = demandContent;
 		this.restTime = restTime;
+		
 	}
 
+	public DemandItem(){}
 	//数据恢复
 	private DemandItem(Parcel in) {
 		icon_id = in.readInt();

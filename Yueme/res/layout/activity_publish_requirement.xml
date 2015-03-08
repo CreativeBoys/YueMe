@@ -32,7 +32,7 @@
             android:onClick="back" />
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/publish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -40,6 +40,7 @@
             android:layout_marginRight="16dp"
             android:textColor="#FFFFFF"
             android:textSize="25sp"
+            android:focusable="true"
             android:text="发表" />
 
     </RelativeLayout>
@@ -92,7 +93,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            android:textSize="27sp"
+            android:gravity="center_horizontal"
+            android:textSize="25sp"
             android:layout_toRightOf="@+id/textView4"
              />
 
@@ -127,13 +129,15 @@
             android:layout_marginLeft="5dp"
             android:background="#BDBDBD" />
 
-        <EditText
+        <TextView
             android:id="@+id/effictiveTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
-            android:textSize="27sp"
+            android:gravity="center_horizontal"
+            android:textSize="25sp"
+            android:text="(请点击设置)"
             android:layout_marginRight="12dp"
             android:layout_toRightOf="@+id/textView14"
              />
@@ -170,12 +174,15 @@
 
         <EditText
             android:id="@+id/numAccount"
+            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            android:textSize="27sp"
+            android:gravity="center_horizontal"
+            android:textSize="25sp"
+            
             android:layout_toRightOf="@+id/textView124"
              />
 

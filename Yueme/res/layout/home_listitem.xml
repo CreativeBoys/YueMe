@@ -16,22 +16,32 @@
             android:src="@drawable/user_head" />
 
         <TextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="昨天"
-            android:textSize="20sp" />
-
-        <TextView
             android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/userHeadIcon"
             android:text="TextView"
             android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/userName"
+            android:layout_alignBottom="@+id/userHeadIcon"
+            android:text="昨天"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/classify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:textSize="20sp"
+            android:text="TextView" />
+
     </RelativeLayout>
 
     <TextView

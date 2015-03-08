@@ -46,15 +46,6 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="145dp"
-        android:text="约么"
-        android:textColor="#FFD700"
-        android:textSize="55sp" />
+    
 
 </RelativeLayout>

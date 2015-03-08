@@ -67,9 +67,10 @@ public final class R {
         public static final int yue_learning=0x7f020027;
     }
     public static final class id {
-        public static final int action_settings=0x7f090040;
+        public static final int action_settings=0x7f090042;
         public static final int backBtn=0x7f090002;
         public static final int btn_register=0x7f090026;
+        public static final int classify=0x7f09003f;
         public static final int confirmBtn=0x7f090007;
         public static final int demandContent=0x7f09002d;
         public static final int details_layout=0x7f090028;
@@ -80,11 +81,12 @@ public final class R {
         public static final int fl_title=0x7f090013;
         public static final int forgetPasswordTv=0x7f09000e;
         public static final int hadAccountTv=0x7f090027;
-        public static final int head_layout=0x7f090039;
-        public static final int homeListView=0x7f090037;
-        public static final int home_addBtn=0x7f090038;
+        public static final int head_layout=0x7f09003a;
+        public static final int homeListView=0x7f090038;
+        public static final int home_addBtn=0x7f090039;
+        public static final int home_refresh=0x7f090037;
         public static final int imageView1=0x7f090011;
-        public static final int imageview=0x7f09003e;
+        public static final int imageview=0x7f090040;
         public static final int itemIcon=0x7f090032;
         public static final int itemInImg=0x7f090033;
         public static final int itemTv=0x7f090034;
@@ -97,6 +99,7 @@ public final class R {
         public static final int passwordEt=0x7f090023;
         public static final int password_editText=0x7f09000c;
         public static final int phoneNumEt=0x7f090004;
+        public static final int publish=0x7f090016;
         public static final int quickRegisterTv=0x7f09000f;
         public static final int registerBtn=0x7f090012;
         public static final int relativeLayout1=0x7f090029;
@@ -115,12 +118,11 @@ public final class R {
         public static final int textView3=0x7f090008;
         public static final int textView4=0x7f090005;
         public static final int textView5=0x7f090024;
-        public static final int textView6=0x7f090016;
-        public static final int textview=0x7f09003f;
+        public static final int textview=0x7f090041;
         public static final int time=0x7f09002b;
         public static final int topLayout=0x7f090000;
         public static final int userHeadIcon=0x7f09002a;
-        public static final int userListview=0x7f09003a;
+        public static final int userListview=0x7f09003b;
         public static final int userName=0x7f09002c;
         public static final int username_editText=0x7f09000b;
         public static final int verifiBtn=0x7f090022;
@@ -129,9 +131,9 @@ public final class R {
         public static final int verifyEt=0x7f090006;
         public static final int vp_middle=0x7f090014;
         public static final int yueBtn=0x7f090031;
-        public static final int yue_home=0x7f09003c;
-        public static final int yue_learning=0x7f09003b;
-        public static final int yue_more=0x7f09003d;
+        public static final int yue_home=0x7f09003d;
+        public static final int yue_learning=0x7f09003c;
+        public static final int yue_more=0x7f09003e;
     }
     public static final class layout {
         public static final int activity_find_password=0x7f030000;

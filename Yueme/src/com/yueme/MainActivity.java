@@ -76,6 +76,7 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onBottomClick(int pos) {
 				vp_middle.setCurrentItem(pos-1);
+				homeFragment.closePopWindow();
 			}
 		});
 		vp_middle.setOnPageChangeListener(new OnPageChangeListener() {
@@ -83,6 +84,7 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onPageSelected(int pos) {
 				((RadioButton)bottomFragment.rg_bottom.getChildAt(pos)).setChecked(true);
+				
 			}
 			
 			@Override
@@ -94,7 +96,7 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
 				// TODO Auto-generated method stub
-				
+				homeFragment.closePopWindow();
 			}
 		});
 		
@@ -120,13 +122,23 @@ public class MainActivity extends FragmentActivity {
 		}
 		
 	}
+	
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		/*onCreate(null);*/
+	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if(keyCode == KeyEvent.KEYCODE_BACK) {
-			homeFragment.closePopWindow();
-			return false;
+			if(homeFragment.closePopWindow()) {
+				return false;
+			};
+			
 		}
 		return super.onKeyDown(keyCode, event);
 		
