@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,6 +14,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,20 +25,31 @@ import android.widget.TextView;
 
 import com.yueme.PubRequireActivity;
 import com.yueme.R;
+import com.yueme.SingleRequireDetailsActivity;
 import com.yueme.fragment.base.BaseFragment;
+import com.yueme.public_class.DemandItem;
 
 public class HomeFragment extends BaseFragment {
 	View fragmentView;
 	List<DemandItem> demandListItems;
 	PopupWindow popupWindow;
 	Button homeAddBtn;
+	ListView listView;
 
 	@Override
 	protected void init() {
 		// TODO Auto-generated method stub
-		demandListItems = new ArrayList<HomeFragment.DemandItem>();
+		demandListItems = new ArrayList<DemandItem>();
 		demandListItems.add(new DemandItem(R.drawable.user_head, "Mr He", "今天",
-				"约自习", "1小时"));
+				"明天下午两点，在二教有木有一起要上自习的，可以联系我", "1小时"));
+		demandListItems.add(new DemandItem(R.drawable.user_head, "Mrs SHE",
+				"两小时前", "我是杭州的，有木有杭州的老乡啊，一块约会家吧", "2小时"));
+		demandListItems.add(new DemandItem(R.drawable.user_head, "Mike", "昨天",
+				"明天下午五点，有没有人一起去篮球场篮球的？", "1小时"));
+		demandListItems.add(new DemandItem(R.drawable.user_head, "John",
+				"1小时前", "今天上午12点有没有人一起约外卖，组队会省不少钱的..", "30分钟"));
+		
+		
 
 	}
 
@@ -43,15 +57,40 @@ public class HomeFragment extends BaseFragment {
 	protected View initView(LayoutInflater inflater) {
 		fragmentView = inflater.inflate(R.layout.fragment_home, null);
 		homeAddBtn = (Button) fragmentView.findViewById(R.id.home_addBtn);
+		listView = (ListView) fragmentView.findViewById(R.id.homeListView);
 		return fragmentView;
 	}
 
 	@Override
 	protected void setListenerAndAdapter() {
 		// TODO Auto-generated method stub
-		ListView listView = (ListView) fragmentView
-				.findViewById(R.id.homeListView);
+		
 		listView.setAdapter(new HomeListAdapter());
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+					long arg3) {
+				// TODO Auto-generated method stub
+				Log.d("hello", "onitemclicked");
+				
+				if(popupWindow!=null && popupWindow.isShowing()) {
+					closePopWindow();
+				} else{
+					Intent intent = new Intent(getActivity(), SingleRequireDetailsActivity.class);
+					Bundle bundle = new Bundle();
+					bundle.putParcelable("DEMAND_INFO", demandListItems.get(position));
+					intent.putExtras(bundle);
+					Log.d("hello", "position: "+position);
+					Log.d("hello", ""+demandListItems.get(position));
+					startActivity(intent);
+					Log.d("hello", "itemclick");
+				}
+				
+				
+			}
+		});
+
 		homeAddBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -60,91 +99,96 @@ public class HomeFragment extends BaseFragment {
 				showPopWindow();
 			}
 		});
+		
+		listView.setFocusable(false);
 
 		fragmentView.setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
+				
 				closePopWindow();
 				return false;
 			}
 		});
-		
-		listView.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				closePopWindow();
-				return false;
-			}
-		});
+
+
 	}
 
 	private void showPopWindow() {
-		if(popupWindow!=null && !popupWindow.isShowing() ){
+		if (popupWindow != null && !popupWindow.isShowing()) {
 			popupWindow.showAtLocation(fragmentView, Gravity.LEFT, 300, 0);
-			
-		} else if(popupWindow==null){
+
+		} else if (popupWindow == null) {
 			View popView = LayoutInflater.from(getActivity()).inflate(
 					R.layout.home_center_popwindow, null);
 			popupWindow = new PopupWindow(popView, LayoutParams.MATCH_PARENT,
 					LayoutParams.WRAP_CONTENT);
 			popupWindow.showAtLocation(fragmentView, Gravity.LEFT, 300, 0);
-			popupWindow.setFocusable(false);
-			popupWindow.setBackgroundDrawable(new BitmapDrawable());
-			popupWindow.setOutsideTouchable(true);
 			
-			Button yue_learningBtn = (Button)popView.findViewById(R.id.yue_learning);
-			Button yue_homeBtn = (Button)popView.findViewById(R.id.yue_home);
-			Button yue_moreBtn = (Button)popView.findViewById(R.id.yue_more);
 			
+			popupWindow.setOutsideTouchable(false);
+
+			Button yue_learningBtn = (Button) popView
+					.findViewById(R.id.yue_learning);
+			Button yue_homeBtn = (Button) popView.findViewById(R.id.yue_home);
+			Button yue_moreBtn = (Button) popView.findViewById(R.id.yue_more);
+
 			yue_learningBtn.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent = new Intent(getActivity(),PubRequireActivity.class);
-					intent.putExtra("CLASSIFY", "约自习");
+					Intent intent = new Intent(getActivity(),
+							PubRequireActivity.class);
+					Bundle bundle = new Bundle();
+					
+					bundle.putString("CLASSIFY", "约自习");
+					intent.putExtras(bundle);
 					startActivity(intent);
+					closePopWindow();
 				}
 			});
-			
+
 			yue_homeBtn.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent = new Intent(getActivity(),PubRequireActivity.class);
+					Intent intent = new Intent(getActivity(),
+							PubRequireActivity.class);
 					intent.putExtra("CLASSIFY", "约回家");
 					startActivity(intent);
-					
+					closePopWindow();
+
 				}
 			});
-			
+
 			yue_moreBtn.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent = new Intent(getActivity(),PubRequireActivity.class);
+					Intent intent = new Intent(getActivity(),
+							PubRequireActivity.class);
 					intent.putExtra("CLASSIFY", "约其他");
 					startActivity(intent);
+					closePopWindow();
 				}
 			});
 		}
-		
 
 	}
 
 	public void closePopWindow() {
 		if (popupWindow != null && popupWindow.isShowing()) {
 			popupWindow.dismiss();
+			listView.setFocusable(true);
 		}
 	}
 
-	class HomeListAdapter extends BaseAdapter {
+	private class HomeListAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
@@ -155,7 +199,7 @@ public class HomeFragment extends BaseFragment {
 		@Override
 		public Object getItem(int position) {
 			// TODO Auto-generated method stub
-			return null;
+			return position;
 		}
 
 		@Override
@@ -167,43 +211,49 @@ public class HomeFragment extends BaseFragment {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
-			View view = LayoutInflater.from(getActivity()).inflate(
-					R.layout.home_listitem, null);
-			ImageView img = (ImageView) view.findViewById(R.id.userHeadIcon);
-			TextView time = (TextView) view.findViewById(R.id.time);
-			TextView userName = (TextView) view.findViewById(R.id.userName);
-			TextView demandContent = (TextView) view
-					.findViewById(R.id.demandContent);
-			TextView restTime = (TextView) view.findViewById(R.id.restTime);
+
+			ViewHolder viewHolder = null;
+			if (convertView == null) {
+				convertView = LayoutInflater.from(getActivity()).inflate(
+						R.layout.home_listitem, parent, false);
+				viewHolder = new ViewHolder();
+
+				viewHolder.img = (ImageView) convertView
+						.findViewById(R.id.userHeadIcon);
+				viewHolder.time = (TextView) convertView
+						.findViewById(R.id.time);
+				viewHolder.userName = (TextView) convertView
+						.findViewById(R.id.userName);
+				viewHolder.demandContent = (TextView) convertView
+						.findViewById(R.id.demandContent);
+				viewHolder.restTime = (TextView) convertView
+						.findViewById(R.id.restTime);
+				convertView.setTag(viewHolder);
+
+			} else {
+
+				viewHolder = (ViewHolder) convertView.getTag();
+			}
 
 			DemandItem demandItem = demandListItems.get(position);
-			img.setImageResource(demandItem.icon_id);
-			time.setText(demandItem.time);
-			userName.setText(demandItem.userName);
-			demandContent.setText(demandItem.demandContent);
-			restTime.setText("还剩" + demandItem.restTime);
-
-			return view;
+			viewHolder.img.setImageResource(demandItem.icon_id);
+			viewHolder.time.setText(demandItem.time);
+			viewHolder.userName.setText(demandItem.userName);
+			viewHolder.demandContent.setText(demandItem.demandContent);
+			viewHolder.restTime.setText(demandItem.restTime);
+			return convertView;
 		}
 
-	}
+		private class ViewHolder {
+			ImageView img;
+			TextView time;
+			TextView userName;
+			TextView demandContent;
+			TextView restTime;
 
-	class DemandItem {
-		int icon_id;
-		String userName;
-		String time;
-		String demandContent;
-		String restTime;
-
-		public DemandItem(int icon_id, String userName, String time,
-				String demandContent, String restTime) {
-			this.icon_id = icon_id;
-			this.userName = userName;
-			this.time = time;
-			this.demandContent = demandContent;
-			this.restTime = restTime;
 		}
-
 	}
+
+	
 
 }

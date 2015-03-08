@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:padding="5dp">
+    android:layout_height="match_parent"
+    android:padding="5dp" >
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
@@ -22,7 +22,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:text="昨天"
-            android:textSize="25sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/userName"
@@ -41,10 +41,10 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/relativeLayout1"
         android:layout_marginLeft="50dp"
-        android:textSize="16sp"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textSize="16sp" />
 
-    <Button
+    <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -66,15 +66,24 @@
             android:src="@drawable/clock" />
 
         <TextView
-            android:id="@+id/restTime"
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/imageView1"
             android:layout_marginLeft="15dp"
-            android:textSize="20sp"
-            android:text="TextView" />
+            android:layout_toRightOf="@+id/imageView1"
+            android:text="还剩"
+            android:textSize="20sp" />
 
+        <TextView
+            android:id="@+id/restTime"
+            
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/textView1"
+            android:text="TextView"
+            android:textSize="20sp" />
     </RelativeLayout>
 
 </RelativeLayout>

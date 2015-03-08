@@ -2,6 +2,7 @@ package com.yueme;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -15,7 +16,8 @@ public class PubRequireActivity extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_publish_requirement);
-		/*bundleString = savedInstanceState.getString("CLASSIFY");*/
+		bundleString = getIntent().getExtras().getString("CLASSIFY");
+		Log.d("hello", "bundlestring"+bundleString);
 		initView();
 	}
 	
@@ -24,7 +26,7 @@ public class PubRequireActivity extends Activity{
 		effictiveTime = (EditText)findViewById(R.id.effictiveTime);
 		numAccount = (EditText)findViewById(R.id.numAccount);
 		
-		/*requirementClass.setText(bundleString);*/
+		requirementClass.setText(bundleString);
 	}
 	
 	public void back(View v) {

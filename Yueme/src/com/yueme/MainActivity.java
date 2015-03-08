@@ -126,6 +126,7 @@ public class MainActivity extends FragmentActivity {
 		// TODO Auto-generated method stub
 		if(keyCode == KeyEvent.KEYCODE_BACK) {
 			homeFragment.closePopWindow();
+			return false;
 		}
 		return super.onKeyDown(keyCode, event);
 		

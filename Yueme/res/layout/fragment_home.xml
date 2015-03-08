@@ -5,6 +5,7 @@
     android:background="#F6F6F6" >
 
     <ListView
+        android:descendantFocusability="blocksDescendants"
         android:id="@+id/homeListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

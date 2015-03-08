@@ -51,6 +51,7 @@
         android:layout_height="150dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/topLayout"
+        
         android:gravity="left"
        />
 
