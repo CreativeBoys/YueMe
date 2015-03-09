@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,10 +20,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
@@ -30,15 +38,10 @@ import android.widget.TextView;
  * 2015-3-7 下午3:51:48
  */
 public class UserInformation extends SwipeBackActivity implements OnClickListener{
-	private EditText nickname; 	 //昵称
-	private EditText username ;  //真实姓名
-	private EditText school;	 //学校
-	private EditText academy;    //学院
-	private EditText grade;      //年级
-	private EditText signature;  //个性签名
 	private TextView save_information;
 	private TextView backlogin;  //退出登录
 	private ImageView user_back;  //返回键
+	private TextView gender; //性别
 	//头像
 	private ImageView user_head;
 	private Bitmap head;
@@ -53,6 +56,9 @@ public class UserInformation extends SwipeBackActivity implements OnClickListene
 	private static final int CAMERA_REQUEST_CODE = 1;
 	private static final int  RESULT_REQUEST_CODE = 2;
 	
+	private ListView mListView;
+	private List<UserInfor> mList ;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -62,19 +68,17 @@ public class UserInformation extends SwipeBackActivity implements OnClickListene
 	
 		initView();
 		initEvent();
+		
 	}
+	
 	
 	private void initView() {
 		user_head = (ImageView) findViewById(R.id.user_head);
-		nickname = (EditText) findViewById(R.id.nickname);
-		username = (EditText) findViewById(R.id.username);
-		school = (EditText) findViewById(R.id.school);
-		academy = (EditText) findViewById(R.id.academy);
-		grade = (EditText) findViewById(R.id.grade);
-		signature = (EditText) findViewById(R.id.signature);
+		mListView = (ListView) findViewById(R.id.user_information_list);
 		save_information = (TextView) findViewById(R.id.save_information);
 		backlogin = (TextView) findViewById(R.id.backlogin);
 		user_back = (ImageView) findViewById(R.id.user_back);
+		gender = (TextView) findViewById(R.id.user_gender_value);
 		Bitmap bt = BitmapFactory.decodeFile(path+"head.jpg");
 		if(bt!=null) {
 			@SuppressWarnings("deprecation")
@@ -83,13 +87,62 @@ public class UserInformation extends SwipeBackActivity implements OnClickListene
 		}else {
 			//从服务器取图片，再保存到sd卡中
 		}
+		
+		mList = new ArrayList<UserInformation.UserInfor>();
+		mList.add(new UserInfor(R.drawable.user_head, "昵称", "请填写你的昵称"));
+		mList.add(new UserInfor(R.drawable.user_head, "姓名", "填写姓名，方便好友找到你"));
+		mList.add(new UserInfor(R.drawable.user_head, "学校", "填写学校，方便找到你的校友"));
+		mList.add(new UserInfor(R.drawable.user_head, "学院", "填写学院"));
+		mList.add(new UserInfor(R.drawable.user_head, "年级", "填写年级"));
+		
+		mListView.setAdapter(new MyAdapter());
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				
+			
+			}
+		});
+		
 	}
+	private AlertDialog changGender;
 	
+	private void showChangeGender() {
+		 
+		AlertDialog.Builder builder = new Builder(UserInformation.this);
+		View view = LayoutInflater.from(UserInformation.this).inflate(R.layout.change_gender, null);
+		TextView man = (TextView) view.findViewById(R.id.man);
+		TextView woman = (TextView) view.findViewById(R.id.woman);
+		man.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				changGender.dismiss();
+				gender.setText("男");
+			}
+		});
+		woman.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				changGender.dismiss();
+				gender.setText("女");
+			
+			}
+		});
+		changGender = builder.create();
+		changGender.setView(view,0,0,0,0);
+		changGender.show();
+		
+	}
 	private void initEvent() {
 		user_head.setOnClickListener(this);
 		save_information.setOnClickListener(this);
 		backlogin.setOnClickListener(this);
 		user_back.setOnClickListener(this);
+		gender.setOnClickListener(this);
 	}
 	
 	
@@ -107,22 +160,22 @@ public class UserInformation extends SwipeBackActivity implements OnClickListene
 			break;
 		case R.id.user_back:
 			finish();
+			break; 
+		case R.id.user_gender_value:
+			showChangeGender();   //更改性别
 			break;
 		default:
 			break;
 		}
 	}
 	
+	
+	
 	/**
 	 * 得到用户输入的信息
 	 */
 	public void getEditText() {
-		final String nicknameEdit = nickname.getText().toString().trim();
-		final String usernameEdit = username.getText().toString().trim();
-		final String schoolEdit = school.getText().toString().trim();
-		final String academyEdit = academy.getText().toString().trim();
-		final String gradEdit = grade.getText().toString().trim();
-		final String signatureEdit = signature.getText().toString().trim();
+		
 	}
 	
 	/**
@@ -131,40 +184,48 @@ public class UserInformation extends SwipeBackActivity implements OnClickListene
 	public void saveInformation() {
 		
 	}
+	
+	private TextView from_picture;
+	private TextView from_camera;
+	private TextView cancel;
+	private AlertDialog dialog;
 	//显示对话框
 	private void showDialog() {
-		new AlertDialog.Builder(this)
-		.setTitle("设置头像")
-		.setItems(items, new DialogInterface.OnClickListener() {
+		
+		AlertDialog.Builder builder = new Builder(UserInformation.this);
+		View view = View.inflate(UserInformation.this, R.layout.change_head_alertdialog, null);
+		from_picture = (TextView) view.findViewById(R.id.from_picture);
+		from_camera = (TextView) view.findViewById(R.id.from_camera);
+		cancel = (TextView) view.findViewById(R.id.cancel);
+		
+		from_picture.setOnClickListener(new OnClickListener() {
 			
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				
-				switch (which) {
-				case 0:
-					Intent intentFromGallery = new Intent(Intent.ACTION_PICK,null);
-					intentFromGallery.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-					startActivityForResult(intentFromGallery, IMAGE_REQUEST_CODE);
-					break;
-				case 1:
-					Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-					cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Environment.getExternalStorageDirectory(),"head.jpg")));
-					startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
-					break;
-				default:
-					break;
-				}
+			public void onClick(View v) {
+				Intent intentFromGallery = new Intent(Intent.ACTION_PICK,null);
+				intentFromGallery.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+				startActivityForResult(intentFromGallery, IMAGE_REQUEST_CODE);
 			}
-
+		});
+		from_camera.setOnClickListener(new OnClickListener() {
 			
-		}).setNegativeButton("取消", new DialogInterface.OnClickListener(){
-
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			public void onClick(View v) {
+				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Environment.getExternalStorageDirectory(),"head.jpg")));
+				startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+			}
+		});
+		cancel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
 				dialog.dismiss();
 			}
-			
-		}).show();
+		});
+		dialog = builder.create();
+		dialog.setView(view, 0, 0, 0, 0);
+		dialog.show();
 	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -249,6 +310,53 @@ public class UserInformation extends SwipeBackActivity implements OnClickListene
 		}
 		
 	
+	}
+	
+	private class MyAdapter extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			
+			return mList.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View view = LayoutInflater.from(UserInformation.this).inflate(R.layout.user_information_listitem , parent,false);
+			ImageView user_head = (ImageView) view.findViewById(R.id.user_head);
+			TextView name = (TextView)  view.findViewById(R.id.user_name);
+			EditText value = (EditText)  view.findViewById(R.id.user_value);
+			UserInfor userinfor; 
+				userinfor = mList.get(position);
+				user_head.setImageResource(userinfor.icon);
+				name.setText(userinfor.name);
+				value.setHint(userinfor.value);	
+			return view;
+		}
+		
+	}
+	
+	 class UserInfor {
+		private int icon;
+		private String name;
+		private String value;
+		public UserInfor(int icon,String name,String value) {
+			this.icon = icon;
+			this.name = name;
+			this.value = value;
+		}
 	}
 	@Override
 	public void onBackPressed() {

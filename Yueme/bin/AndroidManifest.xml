@@ -49,10 +49,11 @@
              android:theme="@android:style/Theme.Translucent">
             
         </activity>
+          <!-- 解决ListView 中嵌套EditText 焦点冲突问题 -->
         <activity 
             android:name=".UserInformation"
-             android:theme="@android:style/Theme.Translucent">
-            
+             android:theme="@android:style/Theme.Translucent"
+             android:windowSoftInputMode="adjustPan">
         </activity>
     </application>
 

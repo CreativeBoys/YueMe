@@ -24,12 +24,11 @@ public class SwipeBackActivity extends Activity {
 	
 	
 	@Override
-	public void startActivity(Intent intent) {
-		super.startActivity(intent);
+	protected void onStart() {
+		
+		super.onStart();
 		overridePendingTransition(R.anim.base_slide_right_in, R.anim.base_slide_remain);
 	}
-
-
 
 
 	// Press the back button in mobile phone

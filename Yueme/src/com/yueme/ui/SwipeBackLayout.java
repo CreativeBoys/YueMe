@@ -175,36 +175,31 @@ public class SwipeBackLayout extends FrameLayout{
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			downX = tempX = (int) event.getRawX();
-			downY = (int) event.getRawY();
-			break;
 		case MotionEvent.ACTION_MOVE:
 			int moveX = (int) event.getRawX();
-			int deltaX = tempX-moveX;
+			int deltaX = tempX - moveX;
 			tempX = moveX;
-			if(moveX-downX>mTouchSlop && Math.abs(event.getRawY()-downY)<mTouchSlop) {
+			if (moveX - downX > mTouchSlop
+					&& Math.abs((int) event.getRawY() - downY) < mTouchSlop) {
 				isSliding = true;
 			}
-			if(moveX-downX>=0 && isSliding) {
-				mParentView.scrollBy(deltaX,0);
-				
+
+			if (moveX - downX >= 0 && isSliding) {
+				mParentView.scrollBy(deltaX, 0);
 			}
 			break;
 		case MotionEvent.ACTION_UP:
 			isSliding = false;
-			if(mParentView.getScrollX()<= -viewWidth/2) {
+			if (mParentView.getScrollX() <= -viewWidth / 2) {
 				isFinish = true;
-				//滑出屏幕
 				scrollRight();
-			}else {
-				isFinish = false;
-				//回复原状
+			} else {
 				scrollOrigin();
+				isFinish = false;
 			}
-			
 			break;
 		}
+
 		return true;
 	}
 	
