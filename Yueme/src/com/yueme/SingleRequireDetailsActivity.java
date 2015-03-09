@@ -1,13 +1,16 @@
 package com.yueme;
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.yueme.public_class.DemandItem;
+import com.yueme.domain.Info;
 
 public class SingleRequireDetailsActivity extends Activity{
 	
@@ -23,14 +26,21 @@ public class SingleRequireDetailsActivity extends Activity{
 		TextView userName = (TextView) findViewById(R.id.userName);
 		TextView demandContent = (TextView)findViewById(R.id.demandContent);
 		TextView restTime = (TextView) findViewById(R.id.restTime);
-		
-		DemandItem demandItem = (DemandItem) getIntent().getParcelableExtra("DEMAND_INFO");
-		Log.d("hello", "demandItem: "+demandItem.toString());
-		img.setImageResource(demandItem.icon_id);
-		time.setText(demandItem.time);
-		userName.setText(demandItem.userName);
-		demandContent.setText(demandItem.demandContent);
-		restTime.setText(demandItem.restTime);
+		Info info = (Info) getIntent().getSerializableExtra("info");
+		String createTime="";
+		long create_day = info.getCreate_day();
+		if (DateUtils.isToday(create_day)) {
+			createTime = "今天";
+		} else {
+			createTime = (String) DateFormat.format("yyyy-MM-dd",
+					create_day);
+		}
+		time.setText(createTime);
+		long deadline = info.getDeadline();
+		restTime.setText("还有" + (deadline - new Date().getTime()) / (3600*1000)
+				+ "小时");
+		userName.setText(info.getNickname());
+		demandContent.setText(info.getContent());
 		
 		
 	}

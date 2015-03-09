@@ -1,26 +1,30 @@
 package com.yueme.fragment;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.content.Intent;
-import android.graphics.PorterDuff.Mode;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.util.Log;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -30,63 +34,54 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yueme.PubRequireActivity;
 import com.yueme.R;
 import com.yueme.SingleRequireDetailsActivity;
+import com.yueme.domain.Info;
+import com.yueme.domain.ProtocalResponse;
 import com.yueme.fragment.base.BaseFragment;
-import com.yueme.public_class.DemandItem;
+import com.yueme.util.NetUtil;
+import com.yueme.util.StreamUtil;
+import com.yueme.values.ConstantValues;
 
 public class HomeFragment extends BaseFragment {
+	public static List<Info> infos;
+	private HomeListAdapter adapter;
 	View fragmentView;
-	public static List<DemandItem> demandListItems;
 	PopupWindow popupWindow;
 	Button homeAddBtn;
 	ListView listView;
 	SwipeRefreshLayout swipeRefresh;
-	Handler refreshHandler;
+	Handler refreshHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case REFRESH_COMPLETED:
+				swipeRefresh.setRefreshing(false);
+				break;
+			}
+		}
+
+	};
 	private static final int REFRESH_COMPLETED = 1;
 	public static final int PUBLISH_COMPLETED = 10;
-	HomeListAdapter homeListAdapter;
 
 	@Override
 	protected void init() {
-		// TODO Auto-generated method stub
-		demandListItems = new ArrayList<DemandItem>();
-		demandListItems
-				.add(new DemandItem(
-						R.drawable.user_head,
-						"Mr He",
-						"约自习",
-						"今天",
-						"明天下午两点，在二教有木有一起要上自己的，可以联系我哦，我们一起奋战期末！（明天下午两点，在二教有木有一起要上自己的，可以联系我哦，我们一起奋战期末",
-						"1小时"));
-
-		demandListItems.add(new DemandItem(R.drawable.user_head, "Mrs SHE",
-				"约回家", "两小时前", "我是杭州的，有木有杭州的老乡啊，一块约会家吧，我可是一枚妹纸哦", "2小时"));
-		demandListItems.add(new DemandItem(R.drawable.user_head, "Mike", "约运动",
-				"昨天", "明天下午五点，有没有人一起去篮球场篮球的？", "1小时"));
-		demandListItems.add(new DemandItem(R.drawable.user_head, "John", "约外卖",
-				"1小时前", "今天上午12点有没有人一起约外卖，组队会省不少钱的..", "30分钟"));
+		listView = (ListView) findViewById(R.id.homeListView);
+		infos = new ArrayList<Info>();
+		getInfo();
 
 		swipeRefresh
 				.setColorScheme(android.R.color.holo_blue_bright,
 						android.R.color.holo_green_light,
 						android.R.color.holo_blue_light,
 						android.R.color.holo_red_light);
-		refreshHandler = new Handler() {
-
-			@Override
-			public void handleMessage(Message msg) {
-				// TODO Auto-generated method stub
-				super.handleMessage(msg);
-				switch (msg.what) {
-				case REFRESH_COMPLETED:
-					swipeRefresh.setRefreshing(false);
-					break;
-				}
-			}
-
-		};
 
 	}
 
@@ -103,43 +98,28 @@ public class HomeFragment extends BaseFragment {
 
 	@Override
 	protected void setListenerAndAdapter() {
-		// TODO Auto-generated method stub
-		homeListAdapter = new HomeListAdapter();
-
-		listView.setAdapter(homeListAdapter);
+		adapter = new HomeListAdapter();
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
-				// TODO Auto-generated method stub
-				Log.d("hello", "onitemclicked");
-
 				if (popupWindow != null && popupWindow.isShowing()) {
 					closePopWindow();
 				} else {
 					Intent intent = new Intent(getActivity(),
 							SingleRequireDetailsActivity.class);
-					Bundle bundle = new Bundle();
-					bundle.putParcelable("DEMAND_INFO",
-							demandListItems.get(position));
-					intent.putExtras(bundle);
-					Log.d("hello", "position: " + position);
-					Log.d("hello", "" + demandListItems.get(position));
+					intent.putExtra("info", infos.get(position));
 					startActivity(intent);
-					Log.d("hello", "itemclick");
 				}
-
 			}
 		});
-
+		
 		swipeRefresh.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
 			public void onRefresh() {
-				// TODO Auto-generated method stub
-				homeListAdapter.notifyDataSetChanged();
-				refreshHandler.sendEmptyMessageDelayed(REFRESH_COMPLETED, 3200);
+				getInfo();
 			}
 		});
 		
@@ -148,26 +128,120 @@ public class HomeFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				showPopWindow();
 			}
 		});
-
-		listView.setFocusable(false);
-
-		fragmentView.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-
-				closePopWindow();
-				return false;
-			}
-		});
-
 	}
 
+	class HomeListAdapter extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			return infos.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View view;
+			ViewHolder holder;
+			if (convertView != null) {
+				view = convertView;
+				holder = (ViewHolder) view.getTag();
+			} else {
+				view = LayoutInflater.from(getActivity()).inflate(
+						R.layout.home_listitem, null);
+				holder = new ViewHolder();
+				holder.iv_head = (ImageView) view
+						.findViewById(R.id.userHeadIcon);
+				holder.tv_create_time = (TextView) view.findViewById(R.id.time);
+				holder.tv_nickname = (TextView) view
+						.findViewById(R.id.userName);
+				holder.tv_rest_time = (TextView) view
+						.findViewById(R.id.restTime);
+				holder.tv_content = (TextView) view
+						.findViewById(R.id.tv_content);
+				view.setTag(holder);
+			}
+			holder.tv_content.setText(infos.get(position).getContent());
+			String createTime;
+			long create_day = infos.get(position).getCreate_day();
+			if (DateUtils.isToday(create_day)) {
+				createTime = "今天";
+			} else {
+				createTime = (String) DateFormat.format("yyyy-MM-dd",
+						create_day);
+			}
+			holder.tv_create_time.setText(createTime);
+			long deadline = infos.get(position).getDeadline();
+			holder.tv_rest_time.setText("还有" + (deadline - new Date().getTime()) / (3600*1000)
+					+ "小时");
+			holder.tv_nickname.setText(infos.get(position).getNickname());
+			return view;
+		}
+
+		private class ViewHolder {
+			private ImageView iv_head;
+			private TextView tv_nickname;
+			private TextView tv_create_time;
+			private TextView tv_content;
+			private TextView tv_rest_time;
+		}
+	}
+
+	private void getInfo() {
+		new HomeAsyncTask().execute();
+	}
+	
+	private class HomeAsyncTask extends AsyncTask<Void, Void, List<Info>> {
+		@Override
+		protected void onPreExecute() {
+			swipeRefresh.setRefreshing(true);
+		}
+		@Override
+		protected List<Info> doInBackground(Void... params) {
+			try {
+				HttpClient client = new DefaultHttpClient();
+				LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+				map.put(ConstantValues.REQUESTPARAM,
+						ConstantValues.GET_HOME_PAGE_INFO + "");
+				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
+				HttpResponse response = client.execute(get);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					String json = StreamUtil.getString(response.getEntity()
+							.getContent());
+					Gson gson = new Gson();
+					return gson.fromJson(json, new TypeToken<List<Info>>() {
+					}.getType());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(List<Info> result) {
+			for (Info info : result) {
+				System.out.println(info.toString());
+			}
+			infos = result;
+			listView.setAdapter(adapter);
+			swipeRefresh.setRefreshing(false);
+		}
+		
+	}
+	
+	
 	private void showPopWindow() {
 		if (popupWindow != null && !popupWindow.isShowing()) {
 			popupWindow.showAtLocation(fragmentView, Gravity.LEFT, 300, 0);
@@ -178,9 +252,7 @@ public class HomeFragment extends BaseFragment {
 			popupWindow = new PopupWindow(popView, LayoutParams.MATCH_PARENT,
 					LayoutParams.WRAP_CONTENT);
 			popupWindow.showAtLocation(fragmentView, Gravity.LEFT, 300, 0);
-
-			popupWindow.setOutsideTouchable(false);
-
+			popupWindow.setOutsideTouchable(true);
 			Button yue_learningBtn = (Button) popView
 					.findViewById(R.id.yue_learning);
 			Button yue_homeBtn = (Button) popView.findViewById(R.id.yue_home);
@@ -231,7 +303,6 @@ public class HomeFragment extends BaseFragment {
 		}
 
 	}
-
 	public boolean closePopWindow() {
 
 		if (popupWindow != null && popupWindow.isShowing()) {
@@ -241,93 +312,10 @@ public class HomeFragment extends BaseFragment {
 		}
 		return false;
 	}
-
-	private class HomeListAdapter extends BaseAdapter {
-
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return demandListItems.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-
-			ViewHolder viewHolder = null;
-			if (convertView == null) {
-				convertView = LayoutInflater.from(getActivity()).inflate(
-						R.layout.home_listitem, parent, false);
-				viewHolder = new ViewHolder();
-
-				viewHolder.img = (ImageView) convertView
-						.findViewById(R.id.userHeadIcon);
-				viewHolder.time = (TextView) convertView
-						.findViewById(R.id.time);
-				viewHolder.classify = (TextView) convertView
-						.findViewById(R.id.classify);
-				viewHolder.userName = (TextView) convertView
-						.findViewById(R.id.userName);
-				viewHolder.demandContent = (TextView) convertView
-						.findViewById(R.id.demandContent);
-				viewHolder.restTime = (TextView) convertView
-						.findViewById(R.id.restTime);
-				convertView.setTag(viewHolder);
-
-			} else {
-
-				viewHolder = (ViewHolder) convertView.getTag();
-			}
-
-			DemandItem demandItem = demandListItems.get(position);
-			viewHolder.img.setImageResource(demandItem.icon_id);
-			viewHolder.time.setText(demandItem.time);
-			viewHolder.classify.setText(demandItem.classify);
-			viewHolder.userName.setText(demandItem.userName);
-
-			if (demandItem.demandContent.length() > 32) {
-				String str = demandItem.demandContent.substring(0, 30) + "...";
-				viewHolder.demandContent.setText(str);
-			} else {
-				viewHolder.demandContent.setText(demandItem.demandContent);
-			}
-
-			viewHolder.restTime.setText(demandItem.restTime);
-			return convertView;
-		}
-
-		private class ViewHolder {
-			ImageView img;
-			TextView time;
-			TextView classify;
-			TextView userName;
-			TextView demandContent;
-			TextView restTime;
-
-		}
-	}
-
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (resultCode) {
-		case PUBLISH_COMPLETED:
-			homeListAdapter.notifyDataSetChanged();
-			break;
-		}
+		new HomeAsyncTask().execute();
 	}
-
+	
 }

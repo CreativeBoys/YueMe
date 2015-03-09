@@ -101,6 +101,7 @@ public class LoginActivity extends Activity {
 							ToastUtil.showToast("登陆成功", LoginActivity.this);
 							Intent intent = new Intent(LoginActivity.this,MainActivity.class);
 							startActivity(intent);
+							finish();
 						} else {
 							ToastUtil.showToast(result.getResponse(), LoginActivity.this);
 						}

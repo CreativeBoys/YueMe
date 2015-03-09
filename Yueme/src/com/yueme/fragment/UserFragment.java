@@ -16,8 +16,7 @@ public class UserFragment extends BaseFragment {
 	@Override
 	protected void init() {
 		listView = (ListView) findViewById(R.id.userListview);
-		listView.setAdapter(new MyAdapter());	
-		
+		listView.setAdapter(new MyAdapter());		
 	}
 
 	@Override

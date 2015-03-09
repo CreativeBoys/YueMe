@@ -11,11 +11,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 
@@ -43,7 +38,6 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle arg0) {
 		// TODO Auto-generated method stub
 		super.onCreate(arg0);
-		
 		setContentView(R.layout.activity_main);
 		fragments = new ArrayList<BaseFragment>();
 		fl_bottom = (FrameLayout) findViewById(R.id.fl_bottom);
@@ -76,7 +70,6 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onBottomClick(int pos) {
 				vp_middle.setCurrentItem(pos-1);
-				homeFragment.closePopWindow();
 			}
 		});
 		vp_middle.setOnPageChangeListener(new OnPageChangeListener() {
@@ -84,7 +77,6 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onPageSelected(int pos) {
 				((RadioButton)bottomFragment.rg_bottom.getChildAt(pos)).setChecked(true);
-				
 			}
 			
 			@Override
@@ -96,13 +88,9 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
 				// TODO Auto-generated method stub
-				homeFragment.closePopWindow();
+				
 			}
 		});
-		
-		
-		
-		
 	}
 	
 	private class HomePagerAdapter extends FragmentPagerAdapter {
@@ -122,27 +110,4 @@ public class MainActivity extends FragmentActivity {
 		}
 		
 	}
-	
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-		/*onCreate(null);*/
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
-		if(keyCode == KeyEvent.KEYCODE_BACK) {
-			if(homeFragment.closePopWindow()) {
-				return false;
-			};
-			
-		}
-		return super.onKeyDown(keyCode, event);
-		
-	}
-	
-	
 }

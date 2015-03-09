@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="5dp" >
+    android:layout_height="match_parent" 
+    android:padding="5dp">
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
@@ -16,50 +16,59 @@
             android:src="@drawable/user_head" />
 
         <TextView
-            android:id="@+id/userName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/userHeadIcon"
-            android:text="TextView"
-            android:textSize="25sp" />
-
-        <TextView
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/userName"
-            android:layout_alignBottom="@+id/userHeadIcon"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+             android:focusable="false"
+            android:clickable="false"
             android:text="昨天"
-            android:textSize="12sp" />
+            android:textSize="25sp" />
 
         <TextView
-            android:id="@+id/classify"
+            android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:textSize="20sp"
-            android:text="TextView" />
-
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/userHeadIcon"
+            android:focusable="false"
+            android:clickable="false"
+            android:text="TextView"
+            android:textSize="25sp" />
     </RelativeLayout>
 
+  <!--   <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/relativeLayout1"
+         android:focusable="false"
+            android:clickable="false"
+        android:layout_marginLeft="50dp"
+        android:textSize="16sp"
+        android:text="TextView" /> -->
     <TextView
-        android:id="@+id/demandContent"
+        android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/relativeLayout1"
+         android:focusable="false"
+            android:clickable="false"
         android:layout_marginLeft="50dp"
-        android:text="TextView"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:text="TextView" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_alignLeft="@+id/demandContent"
-        android:layout_below="@+id/demandContent"
+        android:layout_alignLeft="@+id/tv_content"
+        android:layout_below="@+id/tv_content"
+         android:focusable="false"
+            android:clickable="false"
         android:background="#C9C9C9" />
 
     <RelativeLayout
@@ -73,27 +82,22 @@
             android:id="@+id/imageView1"
             android:layout_width="35dp"
             android:layout_height="35dp"
+             android:focusable="false"
+            android:clickable="false"
             android:src="@drawable/clock" />
 
         <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_toRightOf="@+id/imageView1"
-            android:text="还剩"
-            android:textSize="20sp" />
-
-        <TextView
             android:id="@+id/restTime"
-            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/textView1"
-            android:text="TextView"
-            android:textSize="20sp" />
+            android:layout_toRightOf="@+id/imageView1"
+            android:layout_marginLeft="15dp"
+            android:textSize="20sp"
+             android:focusable="false"
+            android:clickable="false"
+            android:text="TextView" />
+
     </RelativeLayout>
 
 </RelativeLayout>
