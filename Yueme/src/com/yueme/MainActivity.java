@@ -77,6 +77,8 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onPageSelected(int pos) {
 				((RadioButton)bottomFragment.rg_bottom.getChildAt(pos)).setChecked(true);
+				// 改变TitleFragment 内容 modify by heshaokang 
+				titleFragment.changeTitle(pos);
 			}
 			
 			@Override
