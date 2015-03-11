@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/first_bg" >
-
+<!-- 登录注册选择页面 -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="120dp"

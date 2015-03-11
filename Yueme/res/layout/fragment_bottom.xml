@@ -6,6 +6,7 @@
     android:background="@drawable/selector_tab_background"
     android:layout_marginBottom="4dip"
     android:layout_height="match_parent" >
+<!-- 底部fragment布局 -->
     <RadioButton 
         android:textSize="10sp"
         android:layout_gravity="center_vertical"

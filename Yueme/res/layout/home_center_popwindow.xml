@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:padding="15dp"
     android:background="#FF7F00" >
-
+<!-- 主页popwindow布局 -->
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >

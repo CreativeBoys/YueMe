@@ -159,7 +159,7 @@ public class HomeFragment extends BaseFragment {
 				holder = (ViewHolder) view.getTag();
 			} else {
 				view = LayoutInflater.from(getActivity()).inflate(
-						R.layout.home_listitem, null);
+						R.layout.home_fragment_listitem, null);
 				holder = new ViewHolder();
 				holder.iv_head = (ImageView) view
 						.findViewById(R.id.userHeadIcon);

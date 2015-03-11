@@ -194,19 +194,19 @@ public final class R {
         public static final int change_gender=0x7f03000b;
         public static final int change_head_alertdialog=0x7f03000c;
         public static final int choose_time_popwindow=0x7f03000d;
-        public static final int discovery_listitem=0x7f03000e;
+        public static final int discovery_fragment_listitem=0x7f03000e;
         public static final int fragment_bottom=0x7f03000f;
         public static final int fragment_discovery=0x7f030010;
         public static final int fragment_home=0x7f030011;
         public static final int fragment_title=0x7f030012;
         public static final int fragment_user=0x7f030013;
         public static final int home_center_popwindow=0x7f030014;
-        public static final int home_listitem=0x7f030015;
+        public static final int home_fragment_listitem=0x7f030015;
         public static final int popup_menu_item=0x7f030016;
         public static final int popup_menu_list=0x7f030017;
         public static final int tab_indicator_view=0x7f030018;
-        public static final int user_information_listitem=0x7f030019;
-        public static final int user_item=0x7f03001a;
+        public static final int user_fragment_listitem=0x7f030019;
+        public static final int user_information_listitem=0x7f03001a;
     }
     public static final class menu {
         public static final int home=0x7f090000;

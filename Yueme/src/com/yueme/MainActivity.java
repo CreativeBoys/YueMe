@@ -43,6 +43,7 @@ public class MainActivity extends FragmentActivity {
 		fl_bottom = (FrameLayout) findViewById(R.id.fl_bottom);
 		fl_title = (FrameLayout) findViewById(R.id.fl_title);
 		vp_middle = (ViewPager) findViewById(R.id.vp_middle);
+		vp_middle.setOffscreenPageLimit(2);
 		adapter = new HomePagerAdapter(getSupportFragmentManager());
 		initFragments();
 		setListenerAndAdapter();
@@ -69,7 +70,7 @@ public class MainActivity extends FragmentActivity {
 			
 			@Override
 			public void onBottomClick(int pos) {
-				vp_middle.setCurrentItem(pos-1);
+				vp_middle.setCurrentItem((pos-1)%3);
 			}
 		});
 		vp_middle.setOnPageChangeListener(new OnPageChangeListener() {

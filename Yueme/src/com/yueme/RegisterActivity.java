@@ -30,7 +30,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class RegisterActivity extends Activity {
+public class RegisterActivity extends SwipeBackActivity {
 	private ImageView backBtn;
 	private EditText phoneNumEt, verifiEt, passwordEText, et_nickname;
 	private Button verifyBtn,btn_register;
@@ -64,6 +64,7 @@ public class RegisterActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				finish();
+				overridePendingTransition(0, R.anim.base_slide_right_out);
 			}
 		});
 

@@ -34,7 +34,7 @@ import com.yueme.util.StreamUtil;
 import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
 import com.yueme.values.GlobalValues;
-
+/*发布需求的activity*/
 public class PubRequireActivity extends Activity {
 	EditText requirementClassEt;
 	

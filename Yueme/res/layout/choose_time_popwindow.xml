@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#FFFFFF" >
-
+<!-- 发布需求时的时间选择布局 -->
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"

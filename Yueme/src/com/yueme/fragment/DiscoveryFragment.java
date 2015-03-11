@@ -48,7 +48,7 @@ public class DiscoveryFragment extends BaseFragment{
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
-			View view = LayoutInflater.from(getActivity()).inflate(R.layout.discovery_listitem, null);
+			View view = LayoutInflater.from(getActivity()).inflate(R.layout.discovery_fragment_listitem, null);
 			ImageView icon = (ImageView)view.findViewById(R.id.itemIcon);
 			TextView textView = (TextView)view.findViewById(R.id.itemTv);
 			ImageView inImageView = (ImageView)view.findViewById(R.id.itemInImg);

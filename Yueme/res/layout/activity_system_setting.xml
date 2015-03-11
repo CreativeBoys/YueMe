@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F6F6F6" >
+<!-- 系统设置页面 -->
     <RelativeLayout 
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -64,8 +65,8 @@
 		
 	    <ImageView
 	        android:id="@+id/message_push"
-	        android:layout_width="40dp"
-	        android:layout_height="40dp"
+	        android:layout_width="32dp"
+	        android:layout_height="32dp"
 	        android:layout_alignParentRight="true"
 	        android:layout_centerVertical="true"
 	        android:layout_marginRight="10dp"

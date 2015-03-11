@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.yueme.domain.Info;
 
+/*点击主页当需求后显示详情的acivity*/
 public class SingleRequireDetailsActivity extends Activity{
 	
 	protected void onCreate(Bundle savedInstanceState) {

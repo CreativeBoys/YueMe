@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#F6F6F6"
     android:orientation="vertical" >
-
+<!-- 用户信息页面 -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
