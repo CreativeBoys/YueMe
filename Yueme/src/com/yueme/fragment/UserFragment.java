@@ -24,12 +24,9 @@ public class UserFragment extends BaseFragment {
 	@Override
 	protected void init() {
 		listView = (ListView) findViewById(R.id.userListview);
-<<<<<<< HEAD
 		listView.setAdapter(new MyAdapter());		
-=======
 		listView.setAdapter(new MyAdapter());	
 		head_layout = (RelativeLayout) findViewById(R.id.head_layout);
->>>>>>> 14ac26406c8c9ca09178df64db2a0d6f1066e4dc
 	}
 
 	@Override

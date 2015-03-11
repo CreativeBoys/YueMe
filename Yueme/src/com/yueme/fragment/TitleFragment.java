@@ -3,28 +3,22 @@ package com.yueme.fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-<<<<<<< HEAD
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-=======
->>>>>>> 14ac26406c8c9ca09178df64db2a0d6f1066e4dc
 import android.widget.TextView;
 
 import com.yueme.R;
 import com.yueme.fragment.base.BaseFragment;
 
 public class TitleFragment extends BaseFragment{
-<<<<<<< HEAD
 	private String[] menus = new String[] {"约自习","约运动","约回家","其他"};
 	private ImageView iv_menu;
 	private ListView lv_popup;
 	PopupWindow popupWindow;
-=======
 	private TextView text;
->>>>>>> 14ac26406c8c9ca09178df64db2a0d6f1066e4dc
 	@Override
 	protected void init() {
 		lv_popup = (ListView) View.inflate(getActivity(), R.layout.popup_menu_list, null);
@@ -60,10 +54,6 @@ public class TitleFragment extends BaseFragment{
 			}
 		});
 	}
-<<<<<<< HEAD
-	
-
-=======
 	public void changeTitle(int pos) {
 		switch (pos) {
 		case 0:
@@ -79,5 +69,4 @@ public class TitleFragment extends BaseFragment{
 			break;
 		}
 	}
->>>>>>> 14ac26406c8c9ca09178df64db2a0d6f1066e4dc
 }
