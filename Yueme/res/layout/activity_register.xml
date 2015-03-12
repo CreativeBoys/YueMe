@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#ffffff">
 <!-- 注册页面 -->
     <RelativeLayout
         android:id="@+id/topLayout"
@@ -39,22 +40,39 @@
         android:ems="10"
         android:textSize="18sp"
         android:layout_marginRight="22dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="@null"
         android:hint="填写昵称"
         android:layout_below="@id/topLayout"
         android:layout_centerHorizontal="true" />
+     <TextView 
+         android:layout_width="match_parent"
+         android:layout_height="1dp"
+        android:background="#CBC4C4"
+         android:layout_marginLeft="20dp"
+         android:layout_marginRight="20dp"
+         android:layout_below="@id/et_nickname"/>
     <EditText
         android:id="@+id/phoneNumEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="22dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
         android:layout_below="@id/et_nickname"
         android:layout_centerHorizontal="true"
         android:textSize="18sp"
+        android:background="@null"
         android:ems="10"
         android:hint="输入手机号" />
-
+	<TextView 
+         android:layout_width="match_parent"
+         android:layout_height="1dp"
+         android:background="#CBC4C4"
+         android:layout_marginLeft="20dp"
+         android:layout_marginRight="20dp"
+         android:layout_below="@id/phoneNumEt"/>
    
 
     <EditText
@@ -65,8 +83,17 @@
         android:textSize="18sp"
         android:layout_centerHorizontal="true"
         android:hint="填写短信验证码"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
+         android:layout_marginLeft="20dp"
+        android:background="@null"
         android:layout_below="@id/phoneNumEt"/>
+    <TextView 
+         android:layout_width="match_parent"
+         android:layout_height="1dp"
+        android:background="#CBC4C4"
+         android:layout_marginLeft="20dp"
+         android:layout_marginRight="100dp"
+         android:layout_below="@id/verifiEt"/>
 
     <Button
         android:id="@+id/verifiBtn"
@@ -85,12 +112,20 @@
         android:layout_marginRight="22dp"
         android:ems="10"
         android:textSize="18sp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
         android:layout_centerHorizontal="true"
         android:hint="填写密码"
         android:inputType="textPassword"
+        android:background="@null"
         android:layout_below="@id/verifiEt"/>
-
+	 <TextView 
+         android:layout_width="match_parent"
+         android:layout_height="1dp"
+        android:background="#CBC4C4"
+         android:layout_marginLeft="20dp"
+         android:layout_marginRight="20dp"
+         android:layout_below="@id/passwordEt"/>
 	  <Button
         android:id="@+id/btn_register"
         android:layout_width="match_parent"

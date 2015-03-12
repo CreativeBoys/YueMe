@@ -7,15 +7,17 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yueme.domain.Info;
 
 /*点击主页当需求后显示详情的acivity*/
-public class SingleRequireDetailsActivity extends Activity{
+public class SingleRequireDetailsActivity extends SwipeBackActivity{
 	
 	protected void onCreate(Bundle savedInstanceState) {
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_single_require_activity);
 		initView();
@@ -47,5 +49,6 @@ public class SingleRequireDetailsActivity extends Activity{
 	}
 	public void back(View v) {
 		finish();
+		overridePendingTransition(0, R.anim.base_slide_right_out);
 	}
 }

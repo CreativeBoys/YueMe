@@ -46,7 +46,7 @@
              >
         </activity>
         <activity
-            android:name=".FindPasswordActivity"
+            android:name=".FindPasswordActiviity"
             android:theme="@android:style/Theme.Translucent">
         </activity>
         <activity
@@ -59,7 +59,7 @@
         </activity>
         <activity
             android:name=".SingleRequireDetailsActivity"
-             >
+             android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
           <activity 
             android:name=".SystemSettings"

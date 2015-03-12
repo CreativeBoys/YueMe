@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#ffffff" >
 <!-- 登录页面 -->
     <RelativeLayout
         android:id="@+id/topLayout"
@@ -41,7 +42,7 @@
         android:layout_marginTop="25dp"
         android:text="@string/user_account"
         android:textColor="#00B2EE"
-        android:textSize="25sp" />
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/username_editText"
@@ -50,8 +51,17 @@
         android:layout_alignBaseline="@+id/textView2"
         android:layout_alignBottom="@+id/textView2"
         android:layout_marginRight="22dp"
+        android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/textView2"
-        android:textSize="25sp" />
+        android:textSize="20sp"
+        android:background="@null" />
+    <TextView 
+        android:layout_below="@id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginLeft="60dp"
+        android:background="#CBC4C4"/>
 
     <TextView
         android:id="@+id/textView4"
@@ -62,7 +72,14 @@
         android:layout_marginTop="30dp"
         android:text="@string/password"
         android:textColor="#00B2EE"
-        android:textSize="25sp" />
+        android:textSize="20sp" />
+    <TextView 
+        android:layout_below="@id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginLeft="60dp"
+        android:background="#CBC4C4"/>
 
     <EditText
         android:id="@+id/password_editText"
@@ -73,7 +90,9 @@
         android:layout_alignBottom="@+id/textView4"
         android:layout_alignLeft="@+id/username_editText"
         android:layout_marginRight="22dp"
-        android:textSize="25sp" />
+        android:layout_marginLeft="5dp"
+        android:textSize="20sp"
+        android:background="@null" />
 
     <Button
         android:id="@+id/loginBtn"

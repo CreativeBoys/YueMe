@@ -17,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,7 +31,7 @@ import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
 import com.yueme.values.GlobalValues;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends SwipeBackActivity {
 	ImageView backBtn;
 	EditText userNameEt, passwordEt;
 	Button loginBtn;
@@ -38,6 +39,7 @@ public class LoginActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
@@ -130,6 +132,14 @@ public class LoginActivity extends Activity {
 				Intent intent = new Intent(LoginActivity.this,
 						FindPasswordActiviity.class);
 				startActivity(intent);
+			}
+		});
+		backBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				finish();
+				overridePendingTransition(0, R.anim.base_slide_right_out);
 			}
 		});
 	}

@@ -1,16 +1,26 @@
 package com.yueme.fragment;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,6 +53,7 @@ import com.yueme.domain.Info;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.fragment.base.BaseFragment;
 import com.yueme.util.NetUtil;
+import com.yueme.util.RestTimeUtil;
 import com.yueme.util.StreamUtil;
 import com.yueme.values.ConstantValues;
 
@@ -52,6 +63,7 @@ public class HomeFragment extends BaseFragment {
 	View fragmentView;
 	PopupWindow popupWindow;
 	Button homeAddBtn;
+	private static List<Bitmap> bitmaps = new ArrayList<Bitmap>();
 	ListView listView;
 	SwipeRefreshLayout swipeRefresh;
 	Handler refreshHandler = new Handler() {
@@ -114,7 +126,7 @@ public class HomeFragment extends BaseFragment {
 				}
 			}
 		});
-		
+
 		swipeRefresh.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
@@ -122,8 +134,7 @@ public class HomeFragment extends BaseFragment {
 				getInfo();
 			}
 		});
-		
-		
+
 		homeAddBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -183,9 +194,13 @@ public class HomeFragment extends BaseFragment {
 			}
 			holder.tv_create_time.setText(createTime);
 			long deadline = infos.get(position).getDeadline();
-			holder.tv_rest_time.setText("还有" + (deadline - new Date().getTime()) / (3600*1000)
-					+ "小时");
+			holder.tv_rest_time.setText("还有"
+					+ RestTimeUtil.getRestTime((deadline - new Date().getTime())));
 			holder.tv_nickname.setText(infos.get(position).getNickname());
+			if (bitmaps.size() > position)
+				// holder.iv_head.setBackgroundDrawable(new
+				// BitmapDrawable(bitmaps.get(position)));
+				holder.iv_head.setImageBitmap(bitmaps.get(position));
 			return view;
 		}
 
@@ -201,12 +216,13 @@ public class HomeFragment extends BaseFragment {
 	private void getInfo() {
 		new HomeAsyncTask().execute();
 	}
-	
+
 	private class HomeAsyncTask extends AsyncTask<Void, Void, List<Info>> {
 		@Override
 		protected void onPreExecute() {
 			swipeRefresh.setRefreshing(true);
 		}
+
 		@Override
 		protected List<Info> doInBackground(Void... params) {
 			try {
@@ -231,17 +247,44 @@ public class HomeFragment extends BaseFragment {
 
 		@Override
 		protected void onPostExecute(List<Info> result) {
-			for (Info info : result) {
-				System.out.println(info.toString());
-			}
 			infos = result;
+			for (final Info info : result) {
+				new AsyncTask<Void, Void, Bitmap>() {
+
+					@Override
+					protected Bitmap doInBackground(Void... params) {
+						try {
+							String id = info.getId();
+							LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+							map.put(ConstantValues.REQUESTPARAM,
+									ConstantValues.GET_INFO_HEAD_IMG + "");
+							map.put("infoID", id);
+							HttpGet get = new HttpGet(NetUtil.getUrlString(map));
+							HttpClient client = new DefaultHttpClient();
+							HttpResponse response = client.execute(get);
+							if (response.getStatusLine().getStatusCode() == 200) {
+								InputStream inputStream = response.getEntity()
+										.getContent();
+								return BitmapFactory.decodeStream(inputStream);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						return null;
+					}
+
+					protected void onPostExecute(Bitmap result) {
+						bitmaps.add(result);
+						adapter.notifyDataSetChanged();
+					};
+				}.execute();
+			}
 			listView.setAdapter(adapter);
 			swipeRefresh.setRefreshing(false);
 		}
-		
+
 	}
-	
-	
+
 	private void showPopWindow() {
 		if (popupWindow != null && !popupWindow.isShowing()) {
 			popupWindow.showAtLocation(fragmentView, Gravity.LEFT, 300, 0);
@@ -303,6 +346,7 @@ public class HomeFragment extends BaseFragment {
 		}
 
 	}
+
 	public boolean closePopWindow() {
 
 		if (popupWindow != null && popupWindow.isShowing()) {
@@ -312,10 +356,10 @@ public class HomeFragment extends BaseFragment {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		new HomeAsyncTask().execute();
 	}
-	
+
 }
