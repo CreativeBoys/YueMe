@@ -39,6 +39,7 @@
         android:ems="10"
         android:textSize="18sp"
         android:layout_marginRight="22dp"
+        android:layout_marginTop="5dp"
         android:hint="填写昵称"
         android:layout_below="@id/topLayout"
         android:layout_centerHorizontal="true" />
@@ -47,9 +48,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="22dp"
+        android:layout_marginTop="5dp"
         android:layout_below="@id/et_nickname"
         android:layout_centerHorizontal="true"
         android:textSize="18sp"
+        android:ems="10"
         android:hint="输入手机号" />
 
    
@@ -62,6 +65,7 @@
         android:textSize="18sp"
         android:layout_centerHorizontal="true"
         android:hint="填写短信验证码"
+        android:layout_marginTop="5dp"
         android:layout_below="@id/phoneNumEt"/>
 
     <Button
@@ -69,9 +73,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/verifiEt"
-        android:background="@drawable/verifi_btn"
         android:text="@string/click_send"
-        android:textColor="#EEEE00" />
+        android:textSize="16sp"
+        android:layout_alignBaseline="@id/verifiEt"
+        android:textColor="#00CCFF" />
 
     <EditText
         android:id="@+id/passwordEt"
@@ -80,6 +85,7 @@
         android:layout_marginRight="22dp"
         android:ems="10"
         android:textSize="18sp"
+        android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
         android:hint="填写密码"
         android:inputType="textPassword"
