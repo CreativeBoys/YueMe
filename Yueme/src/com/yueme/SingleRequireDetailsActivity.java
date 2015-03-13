@@ -11,9 +11,13 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMMessage;
+import com.easemob.chat.TextMessageBody;
 import com.yueme.domain.Info;
 
 /*点击主页当需求后显示详情的acivity*/
+
 public class SingleRequireDetailsActivity extends SwipeBackActivity{
 	
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,29 @@ public class SingleRequireDetailsActivity extends SwipeBackActivity{
 		
 		
 	}
+	
+	/**
+	 * 点击相约后推送消息
+	 * @param view
+	 */
+	
+	public void onSendTxtMsg(View view) {
+		EMMessage msg = EMMessage.createSendMessage(EMMessage.Type.TXT);
+		
+		msg.setReceipt("123456789");
+		TextMessageBody body = new TextMessageBody("ddfadf");
+		msg.addBody(body);
+		msg.setAttribute("extStringAttr", "String Test Value");
+		
+		try {
+			EMChatManager.getInstance().sendMessage(msg);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
 	public void back(View v) {
 		finish();
 		overridePendingTransition(0, R.anim.base_slide_right_out);
