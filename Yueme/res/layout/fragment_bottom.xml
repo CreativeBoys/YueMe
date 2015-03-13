@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:id="@+id/rg_bottom"
+    android:orientation="horizontal"
+    android:background="@drawable/selector_tab_background"
+    android:layout_marginBottom="4dip"
+    android:layout_height="match_parent" >
+<!-- 底部fragment布局 -->
+    <RadioButton 
+        android:textSize="10sp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="约起"
+        android:textColor="@color/indicator_color"
+        android:drawableTop="@drawable/selector_home_btn"
+        android:button="@null"
+        />
+    <RadioButton 
+        android:textSize="10sp"
+        android:textColor="@color/indicator_color"
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
+        android:button="@null"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="我"
+        android:drawableTop="@drawable/selector_me_btn"
+        />
+    <RadioButton 
+        android:textSize="10sp"
+        android:textColor="@color/indicator_color"
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
+        android:button="@null"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="发现"
+        
+        android:drawableTop="@drawable/selector_discovery_btn"
+        />
+
+</RadioGroup>

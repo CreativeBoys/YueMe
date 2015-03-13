@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F6F6F6" >
+
+
+    <RelativeLayout
+        android:id="@+id/head_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:background="#FFFFFF" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:padding="8dp"
+            android:src="@drawable/user_head" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@+id/imageView1"
+            android:text="Mr He"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageView1"
+            android:layout_alignLeft="@+id/textView2"
+            android:layout_below="@+id/textView2"
+            android:text="信誉等级：一颗星" />
+    </RelativeLayout>
+
+    <ListView
+        android:layout_marginTop="12dp"
+        android:id="@+id/userListview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/head_layout"
+        android:divider="#F6F6F6"
+        android:dividerHeight="12dp"
+        android:background="#FFFFFF" >
+    </ListView>
+
+</RelativeLayout>
