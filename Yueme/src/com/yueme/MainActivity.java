@@ -24,7 +24,10 @@ import android.widget.RadioButton;
 
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMChatOptions;
 import com.easemob.chat.EMMessage;
+import com.easemob.chat.EMMessage.ChatType;
+import com.easemob.chat.OnNotificationClickListener;
 import com.easemob.chat.TextMessageBody;
 import com.yueme.fragment.BottomFragment;
 import com.yueme.fragment.DiscoveryFragment;
@@ -156,6 +159,8 @@ public class MainActivity extends FragmentActivity {
 			case TXT:
 				
 				TextMessageBody txtBody = (TextMessageBody) message.getBody();
+				
+				
 				String ns = Context.NOTIFICATION_SERVICE;
 				NotificationManager mNotificationManager = (NotificationManager)getSystemService(ns);
 				int icon = R.drawable.ic_launcher;
@@ -164,9 +169,9 @@ public class MainActivity extends FragmentActivity {
 				Notification notification = new Notification(icon,tickerText,when);
 				notification.flags |= Notification.FLAG_AUTO_CANCEL; 
 				CharSequence contentTitle = "约么提醒"; //通知栏标题
-				CharSequence contentText = message.getFrom()
-						+ " 加入了您的相约"; //通知栏内容
-				Intent notificationIntent = new Intent(getApplicationContext(),MainActivity.class); //点击该通知后要跳转的Activity
+				CharSequence contentText = txtBody.getMessage()
+						+ " 也加入了您参与的相约"; //通知栏内容
+				Intent notificationIntent = new Intent(getApplicationContext(),ParticipatedInfosActivity.class); //点击该通知后要跳转的Activity
 				PendingIntent contentIntent = PendingIntent.getActivity(MainActivity.this,0,notificationIntent,0);
 				notification.setLatestEventInfo(getApplicationContext(), contentTitle, contentText, contentIntent);
 				mNotificationManager.notify(0,notification);

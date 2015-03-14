@@ -35,8 +35,10 @@ import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.yueme.domain.Info;
 import com.yueme.domain.ProtocalResponse;
+import com.yueme.domain.User;
 import com.yueme.util.NetUtil;
 import com.yueme.util.RestTimeUtil;
 import com.yueme.util.StreamUtil;
@@ -64,7 +66,8 @@ public class SingleRequireDetailsActivity extends Activity implements OnClickLis
 	private Button btn_participate;
 	private long deadline;
 	private Info info;
-	private List<Bitmap> bitmaps = new ArrayList<Bitmap>(); 
+	private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
+	public List<User> users; 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_single_require_activity);
@@ -134,6 +137,7 @@ public class SingleRequireDetailsActivity extends Activity implements OnClickLis
 					} else {
 						ToastUtil.showToast("网络错误", SingleRequireDetailsActivity.this);
 					}
+					new ParticipantsAsyncTast().execute();
 					Intent intent = new Intent(SingleRequireDetailsActivity.this,ParticipantsActivity.class);
 					intent.putExtra("info", info);
 					startActivity(intent);
@@ -228,11 +232,11 @@ public class SingleRequireDetailsActivity extends Activity implements OnClickLis
 	 * @param view
 	 */
 	
-	public void onSendTxtMsg(View view) {
+	public void onSendTxtMsg(String user_id,String userName) {
 		EMMessage msg = EMMessage.createSendMessage(EMMessage.Type.TXT);
 		
-		msg.setReceipt("123456789");
-		TextMessageBody body = new TextMessageBody("ddfadf");
+		msg.setReceipt(user_id);
+		TextMessageBody body = new TextMessageBody(userName);
 		msg.addBody(body);
 		msg.setAttribute("extStringAttr", "String Test Value");
 		
@@ -249,4 +253,43 @@ public class SingleRequireDetailsActivity extends Activity implements OnClickLis
 		finish();
 		overridePendingTransition(0, R.anim.base_slide_right_out);
 	}
+	
+	private class ParticipantsAsyncTast extends
+	AsyncTask<Void, Void, ProtocalResponse> {
+
+@Override
+protected ProtocalResponse doInBackground(Void... params) {
+	try {
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+		map.put(ConstantValues.REQUESTPARAM,
+				ConstantValues.GET_PARTICIPANTS + "");
+		map.put("infoID", info.getId());
+		HttpGet get = new HttpGet(NetUtil.getUrlString(map));
+		HttpClient client = new DefaultHttpClient();
+		HttpResponse response = client.execute(get);
+		if (response.getStatusLine().getStatusCode() == 200) {
+			String json = StreamUtil.getString(response.getEntity()
+					.getContent());
+			return new Gson().fromJson(json, ProtocalResponse.class);
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	return null;
+}
+
+@Override
+protected void onPostExecute(ProtocalResponse result) {
+	if (result == null) {
+		ToastUtil.showToast("网络错误", SingleRequireDetailsActivity.this);
+	} else {
+		String json = result.getResponse();
+		users = new Gson().fromJson(json, new TypeToken<List<User>>() {
+		}.getType());
+		for (final User user : users) {
+			onSendTxtMsg(user.getId(),user.getNickname());
+		}
+	}
+}
+}
 }
