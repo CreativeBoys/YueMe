@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -36,6 +37,7 @@ import com.yueme.fragment.TitleFragment;
 import com.yueme.fragment.UserFragment;
 import com.yueme.fragment.base.BaseFragment;
 import com.yueme.interfaces.OnBottomClickListener;
+import com.yueme.values.ConstantValues;
 
 public class MainActivity extends FragmentActivity {
 	private FrameLayout fl_title;
@@ -49,6 +51,7 @@ public class MainActivity extends FragmentActivity {
 	private DiscoveryFragment discoveryFragment;
 	private UserFragment userFragment;
 	private NewMessageBroadcastReceiver msgReceiver;
+	private SharedPreferences.Editor sharedEditor;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -61,6 +64,8 @@ public class MainActivity extends FragmentActivity {
 		vp_middle = (ViewPager) findViewById(R.id.vp_middle);
 		vp_middle.setOffscreenPageLimit(2);
 		adapter = new HomePagerAdapter(getSupportFragmentManager());
+		sharedEditor = getSharedPreferences("data", 0).edit();
+		sharedEditor.putBoolean(ConstantValues.IS_LOGINED, true).commit();
 		initFragments();
 		setListenerAndAdapter();
 	}
@@ -192,6 +197,8 @@ public class MainActivity extends FragmentActivity {
 				e.printStackTrace();
 			}
 		}
+//暂时这样调试
+		sharedEditor.putBoolean(ConstantValues.IS_LOGINED, false).commit();
 		super.onDestroy();
 	}
 }
