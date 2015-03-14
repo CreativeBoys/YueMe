@@ -133,13 +133,13 @@ public class RegisterActivity extends SwipeBackActivity {
 	}
 	
 	private class CreateYueMeAccountTask extends AsyncTask<Void,Void, ProtocalResponse>{
-		String phone_number;
+		;
 		String password;
 		@Override
 		protected ProtocalResponse doInBackground(Void... params) {
 			try {
 				
-				phone_number = phoneNumEt.getText().toString();
+				String phone_number = phoneNumEt.getText().toString();
 				password = passwordEText.getText().toString();
 				String nickname = et_nickname.getText().toString();
 				HashMap<String, String> map = new HashMap<String, String>();
@@ -179,7 +179,8 @@ public class RegisterActivity extends SwipeBackActivity {
 				GlobalValues.USER_ID = result.getResponse();
 				Log.d("hello", "注册成功");
 				CreateChatAccountTask task = new CreateChatAccountTask();
-				task.execute(phone_number, password);
+				
+				task.execute(GlobalValues.USER_ID, password);
 				
 			} else {
 				ToastUtil.showToast(result.getResponse(), RegisterActivity.this);

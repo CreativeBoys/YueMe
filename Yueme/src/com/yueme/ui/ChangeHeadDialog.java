@@ -4,18 +4,13 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.view.ViewHelper;
 import com.yueme.R;
 
 /**

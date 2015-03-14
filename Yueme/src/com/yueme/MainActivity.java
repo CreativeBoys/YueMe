@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -24,7 +25,10 @@ import android.widget.RadioButton;
 
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMChatOptions;
 import com.easemob.chat.EMMessage;
+import com.easemob.chat.EMMessage.ChatType;
+import com.easemob.chat.OnNotificationClickListener;
 import com.easemob.chat.TextMessageBody;
 import com.yueme.fragment.BottomFragment;
 import com.yueme.fragment.DiscoveryFragment;
@@ -33,6 +37,7 @@ import com.yueme.fragment.TitleFragment;
 import com.yueme.fragment.UserFragment;
 import com.yueme.fragment.base.BaseFragment;
 import com.yueme.interfaces.OnBottomClickListener;
+import com.yueme.values.ConstantValues;
 
 public class MainActivity extends FragmentActivity {
 	private FrameLayout fl_title;
@@ -46,6 +51,7 @@ public class MainActivity extends FragmentActivity {
 	private DiscoveryFragment discoveryFragment;
 	private UserFragment userFragment;
 	private NewMessageBroadcastReceiver msgReceiver;
+	private SharedPreferences.Editor sharedEditor;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -58,6 +64,8 @@ public class MainActivity extends FragmentActivity {
 		vp_middle = (ViewPager) findViewById(R.id.vp_middle);
 		vp_middle.setOffscreenPageLimit(2);
 		adapter = new HomePagerAdapter(getSupportFragmentManager());
+		sharedEditor = getSharedPreferences("data", 0).edit();
+		sharedEditor.putBoolean(ConstantValues.IS_LOGINED, true).commit();
 		initFragments();
 		setListenerAndAdapter();
 	}
@@ -156,6 +164,8 @@ public class MainActivity extends FragmentActivity {
 			case TXT:
 				
 				TextMessageBody txtBody = (TextMessageBody) message.getBody();
+				
+				
 				String ns = Context.NOTIFICATION_SERVICE;
 				NotificationManager mNotificationManager = (NotificationManager)getSystemService(ns);
 				int icon = R.drawable.ic_launcher;
@@ -164,9 +174,9 @@ public class MainActivity extends FragmentActivity {
 				Notification notification = new Notification(icon,tickerText,when);
 				notification.flags |= Notification.FLAG_AUTO_CANCEL; 
 				CharSequence contentTitle = "约么提醒"; //通知栏标题
-				CharSequence contentText = message.getFrom()
-						+ " 加入了您的相约"; //通知栏内容
-				Intent notificationIntent = new Intent(getApplicationContext(),MainActivity.class); //点击该通知后要跳转的Activity
+				CharSequence contentText = txtBody.getMessage()
+						+ " 也加入了您参与的相约"; //通知栏内容
+				Intent notificationIntent = new Intent(getApplicationContext(),ParticipatedInfosActivity.class); //点击该通知后要跳转的Activity
 				PendingIntent contentIntent = PendingIntent.getActivity(MainActivity.this,0,notificationIntent,0);
 				notification.setLatestEventInfo(getApplicationContext(), contentTitle, contentText, contentIntent);
 				mNotificationManager.notify(0,notification);
@@ -187,6 +197,8 @@ public class MainActivity extends FragmentActivity {
 				e.printStackTrace();
 			}
 		}
+//暂时这样调试
+		sharedEditor.putBoolean(ConstantValues.IS_LOGINED, false).commit();
 		super.onDestroy();
 	}
 }

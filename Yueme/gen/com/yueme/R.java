@@ -125,8 +125,8 @@ public final class R {
         public static final int lv_participants=0x7f0a0019;
         public static final int lv_participated_infos=0x7f0a001c;
         public static final int lv_popup=0x7f0a006c;
-        public static final int main=0x7f0a0047;
-        public static final int man=0x7f0a0048;
+        public static final int main=0x7f0a0049;
+        public static final int man=0x7f0a0047;
         public static final int message_push=0x7f0a0039;
         public static final int myDateNumberPicker1=0x7f0a004f;
         public static final int newPasswordEt=0x7f0a0006;
@@ -189,7 +189,7 @@ public final class R {
         public static final int verifiEt=0x7f0a0004;
         public static final int version_update=0x7f0a003b;
         public static final int vp_middle=0x7f0a0014;
-        public static final int woman=0x7f0a0049;
+        public static final int woman=0x7f0a0048;
         public static final int yueBtn=0x7f0a0036;
         public static final int yue_home=0x7f0a0063;
         public static final int yue_learning=0x7f0a0062;
@@ -297,8 +297,5 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f070001;
-        public static final int alertDialog=0x7f070003;
-        public static final int dialog_tran=0x7f070002;
-        public static final int dialog_untran=0x7f070004;
     }
 }

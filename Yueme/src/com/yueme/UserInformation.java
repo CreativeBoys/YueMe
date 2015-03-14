@@ -20,7 +20,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,18 +43,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.ValueAnimator;
-import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.domain.User;
-import com.yueme.ui.ChangeHeadDialog;
 import com.yueme.util.EncodeUtil;
 import com.yueme.util.NetUtil;
 import com.yueme.util.StreamUtil;
@@ -73,6 +69,7 @@ public class UserInformation extends SwipeBackActivity implements
 	private ImageView user_head;
 	private Bitmap head;
 	private String[] items = new String[] { "从相册中选取", "拍照" };
+	@SuppressLint("SdCardPath")
 	private File path; // sd卡路径
 
 	// 请求码
@@ -136,7 +133,7 @@ public class UserInformation extends SwipeBackActivity implements
 
 	private void showChangeGender() {
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(UserInformation.this,R.style.alertDialog);
+		AlertDialog.Builder builder = new Builder(UserInformation.this);
 		View view = LayoutInflater.from(UserInformation.this).inflate(
 				R.layout.change_gender, null);
 		TextView man = (TextView) view.findViewById(R.id.man);
@@ -210,12 +207,24 @@ public class UserInformation extends SwipeBackActivity implements
 		new SaveInformationAsyncTask().execute();
 	}
 
+	private TextView from_picture;
+	private TextView from_camera;
+	private TextView cancel;
+	private AlertDialog dialog;
 	private Bitmap bt;
+
 	// 显示对话框
 	private void showDialog() {
-		ChangeHeadDialog dialog = ChangeHeadDialog.getInstance(this);
-		dialog.setFromPicture(new OnClickListener() {
-			
+
+		AlertDialog.Builder builder = new Builder(UserInformation.this);
+		View view = View.inflate(UserInformation.this,
+				R.layout.change_head_alertdialog, null);
+		from_picture = (TextView) view.findViewById(R.id.from_picture);
+		from_camera = (TextView) view.findViewById(R.id.from_camera);
+		cancel = (TextView) view.findViewById(R.id.cancel);
+
+		from_picture.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				Intent intentFromGallery = new Intent(Intent.ACTION_PICK, null);
@@ -225,8 +234,9 @@ public class UserInformation extends SwipeBackActivity implements
 								"image/*");
 				startActivityForResult(intentFromGallery, IMAGE_REQUEST_CODE);
 			}
-		}).setFromCamera(new OnClickListener() {
-			
+		});
+		from_camera.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				Intent cameraIntent = new Intent(
@@ -236,8 +246,17 @@ public class UserInformation extends SwipeBackActivity implements
 								.getExternalStorageDirectory(), "head.jpg")));
 				startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
 			}
-		}).setCancel().show();
-		
+		});
+		cancel.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog = builder.create();
+		dialog.setView(view, 0, 0, 0, 0);
+		dialog.show();
 	}
 
 	@Override
