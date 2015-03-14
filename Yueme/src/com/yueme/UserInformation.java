@@ -182,6 +182,7 @@ public class UserInformation extends SwipeBackActivity implements
 			
 			break;
 		case R.id.user_back:
+			overridePendingTransition(0, R.anim.base_slide_right_out);
 			finish();
 			break;
 		case R.id.user_gender_value:
