@@ -20,7 +20,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Intent;
@@ -47,6 +46,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
+import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.domain.User;
 import com.yueme.util.EncodeUtil;
@@ -69,7 +72,6 @@ public class UserInformation extends SwipeBackActivity implements
 	private ImageView user_head;
 	private Bitmap head;
 	private String[] items = new String[] { "从相册中选取", "拍照" };
-	@SuppressLint("SdCardPath")
 	private File path; // sd卡路径
 
 	// 请求码
@@ -253,9 +255,17 @@ public class UserInformation extends SwipeBackActivity implements
 				dialog.dismiss();
 			}
 		});
+		AnimatorSet animatorSet = new AnimatorSet();
+		int mDuration = 700;
 		dialog = builder.create();
 		dialog.setView(view, 0, 0, 0, 0);
 		dialog.show();
+		animatorSet.playTogether(
+				ObjectAnimator .ofFloat(view, "scaleX", 2, 1.5f, 1).setDuration(mDuration),
+				ObjectAnimator .ofFloat(view,"scaleY",2,1.5f,1).setDuration(mDuration),
+				ObjectAnimator .ofFloat(view, "alpha", 0, 1).setDuration(mDuration*3/2)
+				);
+		animatorSet.start();
 	}
 
 	@Override
