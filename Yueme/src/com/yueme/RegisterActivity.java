@@ -177,7 +177,7 @@ public class RegisterActivity extends SwipeBackActivity {
 	 * 请求验证码
 	 */
 	private void RequestVerificationCode() {
-		String phoneNumber = phoneNumEt.getText().toString().trim();
+		final String phoneNumber = phoneNumEt.getText().toString().trim();
 		if(vfc) {
 			vfc = false; //防止对此点击发送按钮
 			verifyBtn.setText("60秒后重发");
@@ -186,10 +186,25 @@ public class RegisterActivity extends SwipeBackActivity {
 					
 					@Override
 					public void run() {
-						StringBuffer sbf = new StringBuffer();
-						sbf.append("http://");   //验证手机号是否注册接口
-						//若为注册 返回签名,作为请求验证码的参数
-						
+						try {
+							StringBuffer sbf = new StringBuffer();
+							sbf.append(ConstantValues.HOST+"/servlet/VerifyPhoneNumberServlet?phoneNumber="+phoneNumber);   //验证手机号是否注册接口
+							//若未注册 返回签名,作为请求验证码的参数
+							HttpGet get = new HttpGet(sbf.toString());
+							HttpClient client = new DefaultHttpClient();
+							HttpResponse response = client.execute(get);
+							if(response.getStatusLine().getStatusCode()==200) {
+								ProtocalResponse resp = new Gson().fromJson(StreamUtil.getString(response.getEntity().getContent()), ProtocalResponse.class);
+								if(resp.getResponseCode()==0) {
+									//未注册
+									String key = resp.getResponse();
+								} else {
+									//已注册
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}).start();
 			}
