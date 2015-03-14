@@ -64,7 +64,7 @@ public class ChangeHeadDialog extends Dialog implements DialogInterface{
 	        if (instance == null||((Activity) context).isFinishing()) {
 	            synchronized (ChangeHeadDialog.class) {
 	                if (instance == null) {
-	                    instance = new ChangeHeadDialog(context,R.style.dialog_untran);
+	                    instance = new ChangeHeadDialog(context,R.style.AppTheme);
 	                }
 	            }
 	        }
