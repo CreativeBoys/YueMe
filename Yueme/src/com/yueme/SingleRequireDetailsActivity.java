@@ -30,6 +30,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMMessage;
+import com.easemob.chat.TextMessageBody;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.yueme.domain.Info;
@@ -94,10 +97,6 @@ public class SingleRequireDetailsActivity extends Activity implements OnClickLis
 		handler.sendEmptyMessageDelayed(COUNT_DOWN, 1000);
 		new CheckIsParticipatedAsyncTask().execute();
 	}
-	public void back(View v) {
-		finish();
-	}
-
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -223,5 +222,31 @@ public class SingleRequireDetailsActivity extends Activity implements OnClickLis
 				}
 			}
 		}
+	}
+	/**
+	 * 点击相约后推送消息
+	 * @param view
+	 */
+	
+	public void onSendTxtMsg(View view) {
+		EMMessage msg = EMMessage.createSendMessage(EMMessage.Type.TXT);
+		
+		msg.setReceipt("123456789");
+		TextMessageBody body = new TextMessageBody("ddfadf");
+		msg.addBody(body);
+		msg.setAttribute("extStringAttr", "String Test Value");
+		
+		try {
+			EMChatManager.getInstance().sendMessage(msg);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	public void back(View v) {
+		finish();
+		overridePendingTransition(0, R.anim.base_slide_right_out);
 	}
 }
