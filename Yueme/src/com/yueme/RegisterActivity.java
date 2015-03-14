@@ -102,7 +102,8 @@ public class RegisterActivity extends SwipeBackActivity {
 			@Override
 			public void onClick(View v) {
 				
-				
+				RequestVerificationCode();
+				System.out.println("发送验证码");
 			}
 		});
 		forgetPasswordTv.setOnClickListener(new OnClickListener() {
@@ -277,6 +278,7 @@ public class RegisterActivity extends SwipeBackActivity {
 								if(resp.getResponseCode()==0) {
 									//未注册
 									String key = resp.getResponse();
+									getVerificationCode(phoneNumber,key);
 								} else {
 									//已注册
 								}
