@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#f6f6f6" >
-<!-- 主页需求item点击进去的详情页面 -->
+      android:background="#FFFFFF"
+    android:layout_height="match_parent" >
+
     <RelativeLayout
         android:id="@+id/topLayout"
         android:layout_width="fill_parent"
@@ -34,11 +35,11 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_below="@+id/topLayout"
         android:id="@+id/details_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:layout_height="0dip"
+        android:layout_weight="3"
+      
         android:descendantFocusability="blocksDescendants"
         android:padding="5dp" >
 
@@ -92,14 +93,6 @@
             android:text="TextView"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignLeft="@+id/demandContent"
-            android:layout_below="@+id/demandContent"
-            android:background="#C9C9C9" />
-
         <RelativeLayout
             android:id="@+id/relativeLayout2"
             android:layout_width="match_parent"
@@ -107,31 +100,31 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textView2" >
 
-            <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/clock" />
-
-            <TextView
-                android:id="@+id/restTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:layout_toRightOf="@+id/imageView1"
-                android:text="TextView"
-                android:textSize="20sp" />
         </RelativeLayout>
     </RelativeLayout>
-
+	<TextView 
+		    android:layout_width="match_parent"
+		    android:layout_marginLeft="20dip"
+		    android:layout_marginRight="20dip"
+		    android:textSize="30sp"
+		    android:gravity="center"
+		    android:textColor="#ff0000"
+		    android:background="@drawable/counter_bg"
+		    android:layout_height="80dip"
+		    android:id="@+id/tv_counter"
+		    android:text="0天1小时15分30秒"
+		    android:layout_marginBottom="10dip"
+		    />
     <LinearLayout
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_alignParentLeft="true"
-   		android:layout_alignParentBottom="true"
-        android:padding="20dp" >
-
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dip"
+        >
         <Button
             android:id="@+id/replyBtn"
             android:layout_width="wrap_content"
@@ -155,4 +148,4 @@
             android:textSize="25sp" />
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

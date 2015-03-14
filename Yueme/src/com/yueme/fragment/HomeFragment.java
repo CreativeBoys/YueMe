@@ -122,6 +122,7 @@ public class HomeFragment extends BaseFragment {
 					Intent intent = new Intent(getActivity(),
 							SingleRequireDetailsActivity.class);
 					intent.putExtra("info", infos.get(position));
+					intent.putExtra("bitmap", bitmaps.get(position));
 					startActivity(intent);
 				}
 			}
@@ -247,6 +248,7 @@ public class HomeFragment extends BaseFragment {
 
 		@Override
 		protected void onPostExecute(List<Info> result) {
+			bitmaps.clear();
 			infos = result;
 			for (final Info info : result) {
 				new AsyncTask<Void, Void, Bitmap>() {

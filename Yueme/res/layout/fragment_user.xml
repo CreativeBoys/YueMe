@@ -13,7 +13,7 @@
         android:background="#FFFFFF" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/iv_head"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_alignParentLeft="true"
@@ -22,23 +22,23 @@
             android:src="@drawable/user_head" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tv_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
-            android:layout_toRightOf="@+id/imageView1"
+            android:layout_toRightOf="@+id/iv_head"
             android:text="Mr He"
             android:textSize="25sp" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tv_reputation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/imageView1"
-            android:layout_alignLeft="@+id/textView2"
-            android:layout_below="@+id/textView2"
+            android:layout_alignBottom="@+id/iv_head"
+            android:layout_alignLeft="@+id/tv_nickname"
+            android:layout_below="@+id/tv_nickname"
             android:text="信誉等级：一颗星" />
     </RelativeLayout>
 

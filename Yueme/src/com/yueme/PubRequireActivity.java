@@ -95,7 +95,7 @@ public class PubRequireActivity extends Activity {
 								map.put("content", EncodeUtil.chinese2URLEncode(demandContent));
 								map.put("category", EncodeUtil.chinese2URLEncode(demandClassify));
 								map.put("userID", GlobalValues.USER_ID);
-								map.put("deadline", System.currentTimeMillis()+86400000+"");
+								map.put("deadline", effictiveDate.getTime()+"");
 								HttpGet get = new HttpGet(NetUtil.getUrlString(map));
 								HttpClient clinet = new DefaultHttpClient();
 								HttpResponse response = clinet.execute(get);
@@ -178,7 +178,7 @@ public class PubRequireActivity extends Activity {
 					int hour = timePicker.getCurrentHour();
 					int minute = timePicker.getCurrentMinute();
 					
-					effictiveDate.setMonth(month);
+					effictiveDate.setMonth(month-1);
 					effictiveDate.setDate(day);
 					effictiveDate.setHours(hour);
 					effictiveDate.setMinutes(minute);

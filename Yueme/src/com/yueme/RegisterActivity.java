@@ -12,11 +12,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -26,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.easemob.EMCallBack;
+import com.easemob.chat.EMChatManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.verificationcodelib.api.VerificationCode;
@@ -46,7 +50,7 @@ public class RegisterActivity extends SwipeBackActivity {
 	private boolean vfc = true;
 	private boolean vfc_result = false;
 	private Timer mTimer = null;
-	
+	private ProgressDialog progressDialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -119,65 +123,140 @@ public class RegisterActivity extends SwipeBackActivity {
 			
 			@Override
 			public void onClick(View v) {
-				new AsyncTask<Void,Void, ProtocalResponse>() {
-					@Override
-					protected ProtocalResponse doInBackground(Void... params) {
-						try {
-							String phone_number = phoneNumEt.getText().toString();
-							String passsword = passwordEText.getText().toString();
-							String nickname = et_nickname.getText().toString();
-							HashMap<String, String> map = new HashMap<String, String>();
-							map.put(ConstantValues.REQUESTPARAM, ConstantValues.REGISTER+"");
-							map.put("phone_number", phone_number);
-							map.put("password", passsword);
-							map.put("nickname", nickname);
-							System.out.println(NetUtil.getUrlString(map));
-							HttpGet get = new HttpGet(NetUtil.getUrlString(map));
-							HttpClient client = new DefaultHttpClient();
-							HttpResponse response = client.execute(get);
-							if(response.getStatusLine().getStatusCode()==200) {
-								InputStream inputStream = response.getEntity().getContent();
-								String json = StreamUtil.getString(inputStream);
-								Gson gson = new Gson();
-								return gson.fromJson(json, ProtocalResponse.class);
-							}
-						} catch (JsonSyntaxException e) {
-							e.printStackTrace();
-						} catch (ClientProtocolException e) {
-							e.printStackTrace();
-						} catch (IllegalStateException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						return null;
-					}
+				showRegisterProgressDialog();
+				new CreateYueMeAccountTask().execute();
 				
-					@Override
-					protected void onPostExecute(ProtocalResponse result) {
-						if(result==null) {
-							ToastUtil.showToast("网络异常", RegisterActivity.this);
-							return;
-						}
-						if(result.getResponseCode()==0) {
-							GlobalValues.USER_ID = result.getResponse();
-							Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
-							startActivity(intent);
-						} else {
-							ToastUtil.showToast(result.getResponse(), RegisterActivity.this);
-						}
-					}
-				}.execute();
 			}
 		});
 		
 	}
 	
+	private class CreateYueMeAccountTask extends AsyncTask<Void,Void, ProtocalResponse>{
+		String phone_number;
+		String password;
+		@Override
+		protected ProtocalResponse doInBackground(Void... params) {
+			try {
+				
+				phone_number = phoneNumEt.getText().toString();
+				password = passwordEText.getText().toString();
+				String nickname = et_nickname.getText().toString();
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put(ConstantValues.REQUESTPARAM, ConstantValues.REGISTER+"");
+				map.put("phone_number", phone_number);
+				map.put("password", password);
+				map.put("nickname", nickname);
+				System.out.println(NetUtil.getUrlString(map));
+				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
+				HttpClient client = new DefaultHttpClient();
+				HttpResponse response = client.execute(get);
+				if(response.getStatusLine().getStatusCode()==200) {
+					InputStream inputStream = response.getEntity().getContent();
+					String json = StreamUtil.getString(inputStream);
+					Gson gson = new Gson();
+					return gson.fromJson(json, ProtocalResponse.class);
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	
+		@Override
+		protected void onPostExecute(ProtocalResponse result) {
+			if(result==null) {
+				ToastUtil.showToast("网络异常", RegisterActivity.this);
+				return;
+			}
+			if(result.getResponseCode()==0) {
+				GlobalValues.USER_ID = result.getResponse();
+				Log.d("hello", "注册成功");
+				CreateChatAccountTask task = new CreateChatAccountTask();
+				task.execute(phone_number, password);
+				
+			} else {
+				ToastUtil.showToast(result.getResponse(), RegisterActivity.this);
+			}
+		}
+	}
+	
+	private class CreateChatAccountTask extends AsyncTask<String, Void, String> {
+		protected String doInBackground(String... args) {
+			String userid = args[0];
+			String pwd = args[1];
+			try {
+				EMChatManager.getInstance().createAccountOnServer(userid, pwd);
+				Log.d("hello", "创建chat账号成功！");
+				//progressDialog.setMessage("正在登录...");
+				Log.d("hello", "uid: "+userid+";pwd: "+pwd);
+				// 登录到聊天服务器
+				EMChatManager.getInstance().login(userid, pwd, new EMCallBack() {
+
+					@Override
+					public void onError(int arg0, final String errorMsg) {
+						runOnUiThread(new Runnable() {
+							public void run() {
+								Log.d("hello","登录聊天服务器失败");
+								closeRegisterProgressDialog();
+								Toast.makeText(RegisterActivity.this, "登录聊天服务器失败：" + errorMsg, Toast.LENGTH_SHORT).show();
+							}
+						});
+					}
+
+					@Override
+					public void onProgress(int arg0, String arg1) {
+						Log.d("hello","onProgress");
+					}
+
+					@Override
+					public void onSuccess() {
+						runOnUiThread(new Runnable() {
+							public void run() {
+								
+								closeRegisterProgressDialog();
+								startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+								Log.d("hello", "登录成功！");
+								//Toast.makeText(RegisterActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+								finish();
+							}
+						});
+
+					}
+				});
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return userid;
+		}
+	}
+	
+	private void showRegisterProgressDialog() {
+		if (progressDialog == null) {
+			progressDialog = new ProgressDialog(this);
+			progressDialog.setMessage("正在注册...");
+			progressDialog.setCanceledOnTouchOutside(false);
+		}
+		progressDialog.show();
+	}
+
+	
+	private void closeRegisterProgressDialog() {
+		if (progressDialog != null && progressDialog.isShowing()) {
+			progressDialog.dismiss();
+		}
+	}
 	/**
 	 * 请求验证码
 	 */
 	private void RequestVerificationCode() {
-		String phoneNumber = phoneNumEt.getText().toString().trim();
+		final String phoneNumber = phoneNumEt.getText().toString().trim();
 		if(vfc) {
 			vfc = false; //防止对此点击发送按钮
 			verifyBtn.setText("60秒后重发");
@@ -186,10 +265,25 @@ public class RegisterActivity extends SwipeBackActivity {
 					
 					@Override
 					public void run() {
-						StringBuffer sbf = new StringBuffer();
-						sbf.append("http://");   //验证手机号是否注册接口
-						//若为注册 返回签名,作为请求验证码的参数
-						
+						try {
+							StringBuffer sbf = new StringBuffer();
+							sbf.append(ConstantValues.HOST+"/servlet/VerifyPhoneNumberServlet?phoneNumber="+phoneNumber);   //验证手机号是否注册接口
+							//若未注册 返回签名,作为请求验证码的参数
+							HttpGet get = new HttpGet(sbf.toString());
+							HttpClient client = new DefaultHttpClient();
+							HttpResponse response = client.execute(get);
+							if(response.getStatusLine().getStatusCode()==200) {
+								ProtocalResponse resp = new Gson().fromJson(StreamUtil.getString(response.getEntity().getContent()), ProtocalResponse.class);
+								if(resp.getResponseCode()==0) {
+									//未注册
+									String key = resp.getResponse();
+								} else {
+									//已注册
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}).start();
 			}
