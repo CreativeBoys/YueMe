@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -18,6 +19,8 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -52,6 +55,17 @@ public class ParticipatedInfosActivity extends Activity {
 	private void setListenerAndAdapter() {
 		adapter = new ParticipatedInfoAdapter();
 		lv_participated_infos.setAdapter(adapter);
+		lv_participated_infos.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(ParticipatedInfosActivity.this,ParticipantsActivity.class);
+				intent.putExtra("info", infos.get(position));
+				startActivity(intent);
+			}
+		});
 	}
 
 	private class ParticipatedInfoAdapter extends BaseAdapter {
