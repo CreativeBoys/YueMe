@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:background="#ffffff">
+    <TextView 
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="成功赴约"
+        android:textSize="16sp"
+        android:layout_marginLeft="10dp"
+        android:textColor="#666666"/>
+    <TextView 
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2015年2月14号"
+        android:textSize="12sp"
+        android:textColor="#555555"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/tv_content"/>
+    <TextView 
+        android:id="@+id/tv_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+5"
+        android:textSize="20sp"
+        android:textColor="#FF0000"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"/>
+
+</RelativeLayout>

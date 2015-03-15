@@ -39,15 +39,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="3"
-      
         android:descendantFocusability="blocksDescendants"
         android:padding="5dp" >
-
         <RelativeLayout
             android:id="@+id/relativeLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-
             <ImageView
                 android:id="@+id/userHeadIcon"
                 android:layout_width="50dp"
@@ -61,7 +58,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:text="昨天"
-                android:textSize="25sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/userName"
@@ -70,7 +67,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/userHeadIcon"
                 android:text="TextView"
-                android:textSize="25sp" />
+                android:textSize="16sp" />
         </RelativeLayout>
 
 <!--         <TextView
