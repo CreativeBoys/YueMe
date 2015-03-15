@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.yueme.MyIntegrate;
 import com.yueme.ParticipatedInfosActivity;
 import com.yueme.R;
 import com.yueme.SystemSettings;
@@ -117,7 +118,9 @@ public class UserFragment extends BaseFragment {
 					intent = new Intent(getActivity(),ParticipatedInfosActivity.class);
 					startActivity(intent);
 					break;
-				case 2:
+				case 2: //我的积分
+					intent = new Intent(getActivity(),MyIntegrate.class);
+					startActivity(intent);
 					break;
 				case 3:  			//系统设置		
 					intent = new Intent(getActivity(),SystemSettings.class);

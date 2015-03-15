@@ -83,6 +83,9 @@
         </activity>
         <activity android:name=".ChatGroupActivity" >
         </activity>
+        <activity 
+            android:name=".MyIntegrate"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
         <!-- Required. AppKey copied from Portal -->
         <meta-data
             android:name="EASEMOB_APPKEY"
