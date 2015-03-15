@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 public class WelcomeSplashActivity extends Activity{
 	
@@ -21,12 +22,13 @@ public class WelcomeSplashActivity extends Activity{
 			public void run() {
 				// TODO Auto-generated method stub
 				SharedPreferences ini = getSharedPreferences("data", 0);
+				
 				if(ini.getBoolean(ConstantValues.IS_LOGINED, false)==false) {
 					startActivity(new Intent(WelcomeSplashActivity.this, LoginRegisterActivity.class));
 				} else{
 					startActivity(new Intent(WelcomeSplashActivity.this	, MainActivity.class));
 				}
-				
+				Log.d("hello", ini.getBoolean(ConstantValues.IS_LOGINED, false)+"");
 				finish();
 			}
 			

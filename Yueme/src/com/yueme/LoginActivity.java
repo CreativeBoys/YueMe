@@ -106,7 +106,7 @@ public class LoginActivity extends SwipeBackActivity {
 							GlobalValues.USER_ID = result.getResponse();
 
 							// 登录到聊天服务器
-							EMChatManager.getInstance().login(userNameEt.getText().toString(), passwordEt.getText().toString(), new EMCallBack() {
+							EMChatManager.getInstance().login(GlobalValues.USER_ID, passwordEt.getText().toString(), new EMCallBack() {
 
 								@Override
 								public void onError(int arg0, final String errorMsg) {
@@ -130,7 +130,7 @@ public class LoginActivity extends SwipeBackActivity {
 											ToastUtil.showToast("登陆成功", LoginActivity.this);
 											Intent intent = new Intent(LoginActivity.this,MainActivity.class);
 											startActivity(intent);
-											finish();
+											LoginActivity.this.finish();
 										}
 									});
 

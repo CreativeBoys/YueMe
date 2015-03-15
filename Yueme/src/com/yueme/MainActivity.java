@@ -68,6 +68,7 @@ public class MainActivity extends FragmentActivity {
 		sharedEditor.putBoolean(ConstantValues.IS_LOGINED, true).commit();
 		initFragments();
 		setListenerAndAdapter();
+		Log.d("hello", getSharedPreferences("data", 0).getBoolean(ConstantValues.IS_LOGINED, false)+"");
 	}
 
 	private void initFragments() {
@@ -197,6 +198,7 @@ public class MainActivity extends FragmentActivity {
 				e.printStackTrace();
 			}
 		}
+		Log.d("main", "ondestroyed");
 //暂时这样调试
 		sharedEditor.putBoolean(ConstantValues.IS_LOGINED, false).commit();
 		super.onDestroy();
