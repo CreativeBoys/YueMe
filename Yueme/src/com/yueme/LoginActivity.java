@@ -12,16 +12,21 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.easemob.EMCallBack;
+import com.easemob.chat.EMChatManager;
 import com.google.gson.Gson;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.util.NetUtil;
@@ -30,14 +35,15 @@ import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
 import com.yueme.values.GlobalValues;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends SwipeBackActivity {
 	ImageView backBtn;
 	EditText userNameEt, passwordEt;
 	Button loginBtn;
 	TextView quickRegTv, forgetPasswordTv;
-
+	private ProgressDialog progressDialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
@@ -98,14 +104,47 @@ public class LoginActivity extends Activity {
 						}
 						if(result.getResponseCode()==0) {
 							GlobalValues.USER_ID = result.getResponse();
-							ToastUtil.showToast("登陆成功", LoginActivity.this);
-							Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-							startActivity(intent);
+
+							// 登录到聊天服务器
+							EMChatManager.getInstance().login(userNameEt.getText().toString(), passwordEt.getText().toString(), new EMCallBack() {
+
+								@Override
+								public void onError(int arg0, final String errorMsg) {
+									runOnUiThread(new Runnable() {
+										public void run() {
+											closeLoginProgressDialog();
+											Toast.makeText(LoginActivity.this, "登录聊天服务器失败：" + errorMsg, Toast.LENGTH_SHORT).show();
+										}
+									});
+								}
+
+								@Override
+								public void onProgress(int arg0, String arg1) {
+								}
+
+								@Override
+								public void onSuccess() {
+									runOnUiThread(new Runnable() {
+										public void run() {
+											closeLoginProgressDialog();
+											ToastUtil.showToast("登陆成功", LoginActivity.this);
+											Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+											startActivity(intent);
+											finish();
+										}
+									});
+
+								}
+							});
+							
+							
 						} else {
 							ToastUtil.showToast(result.getResponse(), LoginActivity.this);
 						}
 					}
 				}.execute();
+				
+				
 			}
 		});
 
@@ -131,6 +170,30 @@ public class LoginActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		backBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				finish();
+				overridePendingTransition(0, R.anim.base_slide_right_out);
+			}
+		});
+	}
+	
+	private void showLoginProgressDialog() {
+		if (progressDialog == null) {
+			progressDialog = new ProgressDialog(this);
+			progressDialog.setMessage("正在登陆...");
+			progressDialog.setCanceledOnTouchOutside(false);
+		}
+		progressDialog.show();
+	}
+
+	
+	private void closeLoginProgressDialog() {
+		if (progressDialog != null && progressDialog.isShowing()) {
+			progressDialog.dismiss();
+		}
 	}
 
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+/*注册登录选择的activity*/
 public class LoginRegisterActivity extends Activity{
 	Button loginButton, registerButton;
 	@Override
@@ -29,7 +30,7 @@ public class LoginRegisterActivity extends Activity{
 				// TODO Auto-generated method stub
 				Intent intent = new Intent(LoginRegisterActivity.this, LoginActivity.class);
 				startActivity(intent);
-				finish();
+				//finish();
 			}
 		});
 		
@@ -40,7 +41,7 @@ public class LoginRegisterActivity extends Activity{
 				// TODO Auto-generated method stub
 				Intent intent = new Intent(LoginRegisterActivity.this, RegisterActivity.class);
 				startActivity(intent);
-				finish();
+				//finish();
 			}
 		});
 	}

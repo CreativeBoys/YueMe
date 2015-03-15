@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6F6F6"
     android:orientation="vertical" >
-
+<!-- 用户信息页面 -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,34 +19,34 @@
             android:src="@drawable/back_icon"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="8dp"/>
-        <ImageView
+        <com.yueme.ui.CircleImageView
             android:id="@+id/user_head"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-         
-            android:layout_centerHorizontal="true"
-           	android:layout_marginTop="5dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+         	
+            android:layout_centerInParent="true"
+           
             android:src="@drawable/user_head"/>
+       
         <TextView 
-            android:id="@+id/user_nickname"
+            android:id="@+id/save_information"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_below="@id/user_head"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:textSize="15sp"
+            android:layout_height="wrap_content"
+            android:text="保存"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:text="Mr He"/>
+            android:textSize="20sp"
+            android:layout_alignBottom="@id/user_back"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"/>
     </RelativeLayout>
 	
-    <!-- 性别 -->
     <RelativeLayout
-        android:id="@+id/ll_user_gender"
+     	android:id="@+id/ll_user_gender"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+        android:layout_marginBottom="5dp">
 
         <ImageView
             android:id="@+id/user_gender_img"
@@ -54,219 +56,39 @@
             android:layout_marginLeft="8dp"
             android:src="@drawable/user_head" />
 		
-        <TextView 
+        <TextView
+            android:id="@+id/user_gender" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="性别"
             android:layout_toRightOf="@id/user_gender_img"
             android:layout_centerVertical="true"
             android:textSize="18sp"
+            android:text="性别"
             android:layout_marginLeft="10dp"/>
         <TextView
-            android:id="@+id/user_gender"
-            android:layout_width="wrap_content"
+            android:id="@+id/user_gender_value"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="男" 
             android:textSize="16sp"
-           	android:layout_alignParentRight="true"
-           	android:layout_marginRight="10dp"/>
-    </RelativeLayout>
+            android:text="男"
+            android:textColor="#000000"
+          	android:layout_toRightOf="@id/user_gender"
+           	android:layout_marginLeft="30dp"/>
+ </RelativeLayout>
     
-    <!-- 真实姓名 -->
-    <RelativeLayout
-        android:id="@+id/ll_username"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
-
-        <ImageView
-            android:id="@+id/username_img"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/user_head" />
-        
-        
-        <TextView 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="真实姓名"
-            android:layout_toRightOf="@id/username_img"
-            android:layout_centerVertical="true"
-            android:textSize="18sp"
-            android:layout_marginLeft="10dp"/>
-
-        <TextView
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:text="Mr Li" 
-            android:textSize="16sp"
-           android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-    
-    <!-- 学校 -->
-    <RelativeLayout
-        android:id="@+id/ll_school"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
-
-        <ImageView
-            android:id="@+id/school_img"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/user_head" />
-        
-        
-        <TextView 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="学校"
-            android:layout_toRightOf="@id/school_img"
-            android:layout_centerVertical="true"
-            android:textSize="18sp"
-            android:layout_marginLeft="10dp"/>
-
-        <TextView
-            android:id="@+id/school_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:text="重庆邮电大学" 
-            android:textSize="16sp"
-           android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-    
-   
-    
-     <!-- 学院 -->
-    <RelativeLayout
-        android:id="@+id/ll_academy"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
-
-        <ImageView
-            android:id="@+id/academy_img"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/user_head" />
-        
-        
-        <TextView 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="学院"
-            android:layout_toRightOf="@id/academy_img"
-            android:layout_centerVertical="true"
-            android:textSize="18sp"
-            android:layout_marginLeft="10dp"/>
-
-        <TextView
-            android:id="@+id/academy_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:text="计算机学院" 
-            android:textSize="16sp"
-           android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-    
-     <!-- 年级 -->
-    <RelativeLayout
-        android:id="@+id/ll_grade"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
-
-        <ImageView
-            android:id="@+id/grade_img"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/user_head" />
-        
-        
-        <TextView 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="年级"
-            android:layout_toRightOf="@id/grade_img"
-            android:layout_centerVertical="true"
-            android:textSize="18sp"
-            android:layout_marginLeft="10dp"/>
-
-        <TextView
-            android:id="@+id/grade_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:text="大二" 
-            android:textSize="16sp"
-           android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-    
-      <!-- 个性签名 -->
-    <RelativeLayout
-        android:id="@+id/ll_signature"
+    <ListView 
+        android:id="@+id/user_information_list"
+        android:divider="#f6f6f6"
+        android:dividerHeight="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:background="#FFFFFF">
-
-        <ImageView
-            android:id="@+id/signature_img"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/user_head" />
+        android:descendantFocusability="beforeDescendants">
         
-        
-        <TextView
-            android:id="@+id/signature" 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="个性签名"
-            android:layout_toRightOf="@id/signature_img"
-            android:layout_centerVertical="true"
-            android:textSize="18sp"
-            android:layout_marginLeft="10dp"/>
-		<RelativeLayout 
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:layout_toRightOf="@id/signature"
-		    android:layout_margin="10dp">
-		    <TextView
-            android:id="@+id/signature_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="生活的理想，总是为了理想的生活" 
-            android:textSize="16sp"
-           	/>
-		</RelativeLayout>
-        
-    </RelativeLayout>
-   
+    </ListView>
+  
     <TextView 
+        android:id="@+id/backlogin"
         android:layout_width="240dp"
         android:layout_height="50dp"
         android:text="退出登录"
