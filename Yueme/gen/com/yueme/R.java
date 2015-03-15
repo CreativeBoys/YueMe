@@ -214,20 +214,22 @@ public final class R {
         public static final int change_head_alertdialog=0x7f03000f;
         public static final int choose_time_popwindow=0x7f030010;
         public static final int discovery_fragment_listitem=0x7f030011;
-        public static final int fragment_bottom=0x7f030012;
-        public static final int fragment_discovery=0x7f030013;
-        public static final int fragment_home=0x7f030014;
-        public static final int fragment_title=0x7f030015;
-        public static final int fragment_user=0x7f030016;
-        public static final int home_center_popwindow=0x7f030017;
-        public static final int home_fragment_listitem=0x7f030018;
-        public static final int participant_liset_item=0x7f030019;
-        public static final int participated_items=0x7f03001a;
-        public static final int popup_menu_item=0x7f03001b;
-        public static final int popup_menu_list=0x7f03001c;
-        public static final int tab_indicator_view=0x7f03001d;
-        public static final int user_fragment_listitem=0x7f03001e;
-        public static final int user_information_listitem=0x7f03001f;
+        public static final int discovery_listitem=0x7f030012;
+        public static final int fragment_bottom=0x7f030013;
+        public static final int fragment_discovery=0x7f030014;
+        public static final int fragment_home=0x7f030015;
+        public static final int fragment_title=0x7f030016;
+        public static final int fragment_user=0x7f030017;
+        public static final int home_center_popwindow=0x7f030018;
+        public static final int home_fragment_listitem=0x7f030019;
+        public static final int participant_liset_item=0x7f03001a;
+        public static final int participated_items=0x7f03001b;
+        public static final int popup_menu_item=0x7f03001c;
+        public static final int popup_menu_list=0x7f03001d;
+        public static final int tab_indicator_view=0x7f03001e;
+        public static final int user_fragment_listitem=0x7f03001f;
+        public static final int user_information_listitem=0x7f030020;
+        public static final int user_item=0x7f030021;
     }
     public static final class menu {
         public static final int home=0x7f090000;
@@ -298,5 +300,7 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f070001;
+        public static final int dialog_tran=0x7f070002;
+        public static final int dialog_untran=0x7f070003;
     }
 }

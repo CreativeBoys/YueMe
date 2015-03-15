@@ -1,3 +1,4 @@
+
 package com.yueme;
 
 import java.io.IOException;
@@ -130,7 +131,7 @@ public class LoginActivity extends SwipeBackActivity {
 											ToastUtil.showToast("登陆成功", LoginActivity.this);
 											Intent intent = new Intent(LoginActivity.this,MainActivity.class);
 											startActivity(intent);
-											LoginActivity.this.finish();
+											finish();
 										}
 									});
 
