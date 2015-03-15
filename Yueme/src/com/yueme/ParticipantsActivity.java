@@ -10,13 +10,16 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,7 +30,6 @@ import com.yueme.domain.Info;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.domain.User;
 import com.yueme.util.NetUtil;
-import com.yueme.util.RestTimeUtil;
 import com.yueme.util.StreamUtil;
 import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
@@ -53,6 +55,17 @@ public class ParticipantsActivity extends Activity {
 	private void setListenerAndAdapter() {
 		adapter = new ParticipantsAdapter();
 		lv_participants.setAdapter(adapter);
+		Button btn_group_talk = (Button)findViewById(R.id.btn_group_talk);
+		btn_group_talk.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(ParticipantsActivity.this,ChatGroupActivity.class);
+				intent.putExtra("info", info);
+				startActivity(intent);
+			}
+		});
 	}
 
 	public void back(View v) {
