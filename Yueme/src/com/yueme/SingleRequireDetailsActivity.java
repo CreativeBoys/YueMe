@@ -236,9 +236,9 @@ public class SingleRequireDetailsActivity extends Activity implements OnClickLis
 		EMMessage msg = EMMessage.createSendMessage(EMMessage.Type.TXT);
 		
 		msg.setReceipt(user_id);
+		msg.setAttribute(ConstantValues.MSG_CATEGAORY, ConstantValues.NOTIFICATION);
 		TextMessageBody body = new TextMessageBody(userName);
 		msg.addBody(body);
-		msg.setAttribute("extStringAttr", "String Test Value");
 		
 		try {
 			EMChatManager.getInstance().sendMessage(msg);
