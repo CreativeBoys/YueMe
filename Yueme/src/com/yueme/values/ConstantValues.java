@@ -74,4 +74,16 @@ public class ConstantValues {
 	 * 得到某个用户参加的所有活动
 	 */
 	public static final int GET_USER_ALL_PARTICIPATED_INFO = 14;
+	/**
+	 * 添加主评论
+	 */
+	public static final int ADD_COMMENT = 15;
+	/**
+	 * 得到评论
+	 */
+	public static final int GET_COMMENT = 16;
+	/**
+	 * 添加子评论
+	 */
+	public static final int ADD_SUB_COMMENT = 17;
 }
