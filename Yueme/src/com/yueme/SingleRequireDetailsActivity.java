@@ -77,7 +77,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 			}
 		};
 	};
-	private List<Comment> comments;
+	private static List<Comment> comments;
 	private TextView tv_counter;
 	private LinearLayout ll_reply;
 	private Button btn_reply;
@@ -268,10 +268,14 @@ public class SingleRequireDetailsActivity extends Activity implements
 		et_reply.requestFocus();
 		if (isMainComment)
 			et_reply.setHint("我也说一句...");
-		else
+		else if (subCommentPos < 0) {
+			et_reply.setHint("回复@" + comments.get(commentPos).getNickname()
+					+ ":");
+		} else {
 			et_reply.setHint("回复@"
 					+ comments.get(commentPos).getSubcomments()
 							.get(subCommentPos).getNickname() + ":");
+		}
 		final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 		btn_publish.setOnClickListener(new OnClickListener() {
@@ -448,7 +452,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 					ToastUtil.showToast(result.getResponse(),
 							SingleRequireDetailsActivity.this);
 				}
-				lv_comments.setSelection(lv_comments.getCount() - 1);
+				// lv_comments.setSelection(lv_comments.getCount() - 1);
 			}
 		}
 	}
@@ -488,7 +492,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 			LayoutParams params = lv_sub_comment.getLayoutParams();
 			params.height = DensityUtil.dip2px(
 					SingleRequireDetailsActivity.this, 19)
-					* comments.get(position).getSubcomments().size();
+					* (comments.get(position).getSubcomments().size() + 1);
 			lv_sub_comment.setLayoutParams(params);
 			// tv_reply.setText(Html.fromHtml("<font color=blue>"+comments.get(position).getNickname()+"</font>回复:"+comments.get(position).getContent()));
 			lv_sub_comment.setAdapter(new BaseAdapter() {
@@ -510,7 +514,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 								+ comments.get(position).getContent()));
 					} else {
 						Subcomment subcomment = comments.get(position)
-								.getSubcomments().get(pos);
+								.getSubcomments().get(pos - 1);
 						tv_reply.setText(Html
 								.fromHtml("&nbsp;&nbsp;&nbsp<font color=blue>"
 										+ subcomment.getNickname()
@@ -546,7 +550,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 						int pos, long id) {
 					isMainComment = false;
 					commentPos = position;
-					subCommentPos = pos;
+					subCommentPos = pos - 1;
 					showReplyBox();
 				}
 			});
@@ -567,8 +571,13 @@ public class SingleRequireDetailsActivity extends Activity implements
 				map.put("content", EncodeUtil.chinese2URLEncode(et_reply
 						.getText().toString()));
 				map.put("userID", GlobalValues.USER_ID);
-				map.put("t_userID", comments.get(commentPos).getSubcomments()
-						.get(subCommentPos).getU_id());
+				if(subCommentPos<0) {
+					map.put("t_userID", comments.get(commentPos).getU_id());
+				} else {
+					map.put("t_userID", comments.get(commentPos).getSubcomments()
+							.get(subCommentPos).getU_id());
+					
+				}
 				map.put("commentID", comments.get(commentPos).getId() + "");
 				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
 				HttpClient client = new DefaultHttpClient();
