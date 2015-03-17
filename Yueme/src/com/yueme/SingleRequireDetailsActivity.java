@@ -48,6 +48,7 @@ import com.yueme.domain.Comment;
 import com.yueme.domain.Info;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.domain.Subcomment;
+import com.yueme.domain.User;
 import com.yueme.util.DensityUtil;
 import com.yueme.util.EncodeUtil;
 import com.yueme.util.NetUtil;
@@ -88,8 +89,10 @@ public class SingleRequireDetailsActivity extends Activity implements
 	private ListView lv_comments;
 	private static boolean isMainComment = true;
 	private CommentAdapter commentAdapter;
+	private List<User> users;
 	private static int commentPos = 0;
 	private static int subCommentPos = 0;
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_single_require_activity);
@@ -201,6 +204,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 						finish();
 					}
 				}.execute();
+				new ParticipantsAsyncTast().execute();
 			} else {
 
 				new AsyncTask<Void, Void, ProtocalResponse>() {
@@ -258,14 +262,16 @@ public class SingleRequireDetailsActivity extends Activity implements
 	private void showReplyBox() {
 		ll_reply.setVisibility(View.VISIBLE);
 		et_reply = (EditText) ll_reply.findViewById(R.id.et_reply);
-		Button btn_publish = (Button) ll_reply
-				.findViewById(R.id.btn_publish);
+		Button btn_publish = (Button) ll_reply.findViewById(R.id.btn_publish);
 		et_reply.setFocusable(true);
 		et_reply.setFocusableInTouchMode(true);
 		et_reply.requestFocus();
-		if(isMainComment)et_reply.setHint("我也说一句...");
-		else 
-			et_reply.setHint("回复@"+comments.get(commentPos).getSubcomments().get(subCommentPos).getNickname()+":");
+		if (isMainComment)
+			et_reply.setHint("我也说一句...");
+		else
+			et_reply.setHint("回复@"
+					+ comments.get(commentPos).getSubcomments()
+							.get(subCommentPos).getNickname() + ":");
 		final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 		btn_publish.setOnClickListener(new OnClickListener() {
@@ -276,11 +282,11 @@ public class SingleRequireDetailsActivity extends Activity implements
 						SingleRequireDetailsActivity.this.getCurrentFocus()
 								.getWindowToken(),
 						InputMethodManager.HIDE_NOT_ALWAYS);
-				if(isMainComment) 
-				new AddMainCommentAsyncTask().execute();
-				else 
+				if (isMainComment)
+					new AddMainCommentAsyncTask().execute();
+				else
 					new AddSubCommentAyncTask().execute();
-					
+
 			}
 		});
 	}
@@ -334,13 +340,14 @@ public class SingleRequireDetailsActivity extends Activity implements
 	 * @param view
 	 */
 
-	public void onSendTxtMsg(View view) {
+	public void onSendTxtMsg(String user_id, String userName) {
 		EMMessage msg = EMMessage.createSendMessage(EMMessage.Type.TXT);
 
-		msg.setReceipt("123456789");
-		TextMessageBody body = new TextMessageBody("ddfadf");
+		msg.setReceipt(user_id);
+		msg.setAttribute(ConstantValues.MSG_CATEGAORY,
+				ConstantValues.NOTIFICATION);
+		TextMessageBody body = new TextMessageBody(userName);
 		msg.addBody(body);
-		msg.setAttribute("extStringAttr", "String Test Value");
 
 		try {
 			EMChatManager.getInstance().sendMessage(msg);
@@ -396,16 +403,15 @@ public class SingleRequireDetailsActivity extends Activity implements
 			clearReplyBox();
 		}
 
-		
 	}
+
 	private void clearReplyBox() {
 		et_reply.setText("");
 		ll_reply.setVisibility(View.GONE);
 	}
+
 	private class GetCommentsAsyncTask extends
 			AsyncTask<Void, Void, ProtocalResponse> {
-
-		
 
 		@Override
 		protected ProtocalResponse doInBackground(Void... params) {
@@ -434,8 +440,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 				ToastUtil.showToast("网络错误", SingleRequireDetailsActivity.this);
 			} else {
 				if (result.getResponseCode() == 0) {
-					comments = new Gson().fromJson(
-							result.getResponse(),
+					comments = new Gson().fromJson(result.getResponse(),
 							new TypeToken<List<Comment>>() {
 							}.getType());
 					commentAdapter.notifyDataSetChanged();
@@ -443,18 +448,18 @@ public class SingleRequireDetailsActivity extends Activity implements
 					ToastUtil.showToast(result.getResponse(),
 							SingleRequireDetailsActivity.this);
 				}
-				lv_comments.setSelection(lv_comments.getCount()-1);
+				lv_comments.setSelection(lv_comments.getCount() - 1);
 			}
 		}
 	}
-	
+
 	private class CommentAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
-			if(comments!=null) 
-			return comments.size();
-			else 
+			if (comments != null)
+				return comments.size();
+			else
 				return 0;
 		}
 
@@ -469,52 +474,69 @@ public class SingleRequireDetailsActivity extends Activity implements
 		}
 
 		@Override
-		public View getView(final int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
 			View view;
-			if(convertView!=null) {
+			if (convertView != null) {
 				view = convertView;
 			} else {
-				view =  View.inflate(SingleRequireDetailsActivity.this, R.layout.lv_comment_item,null);
+				view = View.inflate(SingleRequireDetailsActivity.this,
+						R.layout.lv_comment_item, null);
 			}
-			ListView lv_sub_comment = (ListView) view.findViewById(R.id.lv_sub_comment);
+			ListView lv_sub_comment = (ListView) view
+					.findViewById(R.id.lv_sub_comment);
 			LayoutParams params = lv_sub_comment.getLayoutParams();
-			params.height = DensityUtil.dip2px(SingleRequireDetailsActivity.this, 19)*comments.get(position).getSubcomments().size();
+			params.height = DensityUtil.dip2px(
+					SingleRequireDetailsActivity.this, 19)
+					* comments.get(position).getSubcomments().size();
 			lv_sub_comment.setLayoutParams(params);
-//			tv_reply.setText(Html.fromHtml("<font color=blue>"+comments.get(position).getNickname()+"</font>回复:"+comments.get(position).getContent()));
+			// tv_reply.setText(Html.fromHtml("<font color=blue>"+comments.get(position).getNickname()+"</font>回复:"+comments.get(position).getContent()));
 			lv_sub_comment.setAdapter(new BaseAdapter() {
-				
+
 				@Override
 				public View getView(int pos, View convertView, ViewGroup parent) {
 					TextView tv_reply;
-					if(convertView!=null) {
+					if (convertView != null) {
 						tv_reply = (TextView) convertView;
 					} else {
-						tv_reply = (TextView) View.inflate(SingleRequireDetailsActivity.this, R.layout.subcomment_list_item, null);
+						tv_reply = (TextView) View.inflate(
+								SingleRequireDetailsActivity.this,
+								R.layout.subcomment_list_item, null);
 					}
-					if(pos==0) {
-						tv_reply.setText(Html.fromHtml("<font color=blue>"+comments.get(position).getNickname()+"</font>回复:"+comments.get(position).getContent()));
+					if (pos == 0) {
+						tv_reply.setText(Html.fromHtml("<font color=blue>"
+								+ comments.get(position).getNickname()
+								+ "</font>回复:"
+								+ comments.get(position).getContent()));
 					} else {
-						Subcomment subcomment = comments.get(position).getSubcomments().get(pos);
-						tv_reply.setText(Html.fromHtml("&nbsp;&nbsp;&nbsp<font color=blue>"+subcomment.getNickname()+"</font>回复<font color=blue>"+subcomment.getT_nickname()+"</font>:"+subcomment.getContent()));
+						Subcomment subcomment = comments.get(position)
+								.getSubcomments().get(pos);
+						tv_reply.setText(Html
+								.fromHtml("&nbsp;&nbsp;&nbsp<font color=blue>"
+										+ subcomment.getNickname()
+										+ "</font>回复<font color=blue>"
+										+ subcomment.getT_nickname()
+										+ "</font>:" + subcomment.getContent()));
 					}
 					return tv_reply;
 				}
-				
+
 				@Override
 				public long getItemId(int position) {
 					return position;
 				}
-				
+
 				@Override
 				public Object getItem(int position) {
 					return position;
 				}
-				
+
 				@Override
 				public int getCount() {
-					if(comments.get(position).getSubcomments()!=null)
-					return comments.get(position).getSubcomments().size()+1;
-					else return 1;
+					if (comments.get(position).getSubcomments() != null)
+						return comments.get(position).getSubcomments().size() + 1;
+					else
+						return 1;
 				}
 			});
 			lv_sub_comment.setOnItemClickListener(new OnItemClickListener() {
@@ -530,24 +552,30 @@ public class SingleRequireDetailsActivity extends Activity implements
 			});
 			return view;
 		}
-		
+
 	}
-	private class AddSubCommentAyncTask extends AsyncTask<Void, Void, ProtocalResponse> {
+
+	private class AddSubCommentAyncTask extends
+			AsyncTask<Void, Void, ProtocalResponse> {
 
 		@Override
 		protected ProtocalResponse doInBackground(Void... params) {
 			try {
 				Map<String, String> map = new LinkedHashMap<String, String>();
-				map.put(ConstantValues.REQUESTPARAM, ConstantValues.ADD_SUB_COMMENT+"");
-				map.put("content", EncodeUtil.chinese2URLEncode(et_reply.getText().toString()));
+				map.put(ConstantValues.REQUESTPARAM,
+						ConstantValues.ADD_SUB_COMMENT + "");
+				map.put("content", EncodeUtil.chinese2URLEncode(et_reply
+						.getText().toString()));
 				map.put("userID", GlobalValues.USER_ID);
-				map.put("t_userID", comments.get(commentPos).getSubcomments().get(subCommentPos).getU_id());
-				map.put("commentID", comments.get(commentPos).getId()+"");
+				map.put("t_userID", comments.get(commentPos).getSubcomments()
+						.get(subCommentPos).getU_id());
+				map.put("commentID", comments.get(commentPos).getId() + "");
 				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
-				HttpClient client =  new DefaultHttpClient();
+				HttpClient client = new DefaultHttpClient();
 				HttpResponse response = client.execute(get);
-				if(response.getStatusLine().getStatusCode()==200) {
-					String json = StreamUtil.getString(response.getEntity().getContent());
+				if (response.getStatusLine().getStatusCode() == 200) {
+					String json = StreamUtil.getString(response.getEntity()
+							.getContent());
 					return new Gson().fromJson(json, ProtocalResponse.class);
 				}
 			} catch (Exception e) {
@@ -555,15 +583,56 @@ public class SingleRequireDetailsActivity extends Activity implements
 			}
 			return null;
 		}
+
 		@Override
 		protected void onPostExecute(ProtocalResponse result) {
-			if(result!=null) {
-				ToastUtil.showToast(result.getResponse(), SingleRequireDetailsActivity.this);
-			}else {
+			if (result != null) {
+				ToastUtil.showToast(result.getResponse(),
+						SingleRequireDetailsActivity.this);
+			} else {
 				ToastUtil.showToast("网络错误", SingleRequireDetailsActivity.this);
 			}
 			clearReplyBox();
 			getComments();
+		}
+	}
+
+	private class ParticipantsAsyncTast extends
+			AsyncTask<Void, Void, ProtocalResponse> {
+
+		@Override
+		protected ProtocalResponse doInBackground(Void... params) {
+			try {
+				LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+				map.put(ConstantValues.REQUESTPARAM,
+						ConstantValues.GET_PARTICIPANTS + "");
+				map.put("infoID", info.getId());
+				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
+				HttpClient client = new DefaultHttpClient();
+				HttpResponse response = client.execute(get);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					String json = StreamUtil.getString(response.getEntity()
+							.getContent());
+					return new Gson().fromJson(json, ProtocalResponse.class);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(ProtocalResponse result) {
+			if (result == null) {
+				ToastUtil.showToast("网络错误", SingleRequireDetailsActivity.this);
+			} else {
+				String json = result.getResponse();
+				users = new Gson().fromJson(json, new TypeToken<List<User>>() {
+				}.getType());
+				for (final User user : users) {
+					onSendTxtMsg(user.getId(), user.getNickname());
+				}
+			}
 		}
 	}
 }

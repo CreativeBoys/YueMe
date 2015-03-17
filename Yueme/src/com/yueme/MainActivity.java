@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -24,8 +25,12 @@ import android.widget.RadioButton;
 
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMChatOptions;
 import com.easemob.chat.EMMessage;
+import com.easemob.chat.EMMessage.ChatType;
+import com.easemob.chat.OnNotificationClickListener;
 import com.easemob.chat.TextMessageBody;
+import com.easemob.exceptions.EaseMobException;
 import com.yueme.fragment.BottomFragment;
 import com.yueme.fragment.DiscoveryFragment;
 import com.yueme.fragment.HomeFragment;
@@ -33,6 +38,7 @@ import com.yueme.fragment.TitleFragment;
 import com.yueme.fragment.UserFragment;
 import com.yueme.fragment.base.BaseFragment;
 import com.yueme.interfaces.OnBottomClickListener;
+import com.yueme.values.ConstantValues;
 
 public class MainActivity extends FragmentActivity {
 	private FrameLayout fl_title;
@@ -58,6 +64,7 @@ public class MainActivity extends FragmentActivity {
 		vp_middle = (ViewPager) findViewById(R.id.vp_middle);
 		vp_middle.setOffscreenPageLimit(2);
 		adapter = new HomePagerAdapter(getSupportFragmentManager());
+
 		initFragments();
 		setListenerAndAdapter();
 	}
@@ -109,15 +116,15 @@ public class MainActivity extends FragmentActivity {
 
 			}
 		});
-		
-		// 注册message receiver 接收消息
-				msgReceiver = new NewMessageBroadcastReceiver();
-				IntentFilter intentFilter = new IntentFilter(EMChatManager
-						.getInstance().getNewMessageBroadcastAction());
-				registerReceiver(msgReceiver, intentFilter);
 
-				// app初始化完毕
-				EMChat.getInstance().setAppInited();
+		// 注册message receiver 接收消息
+		msgReceiver = new NewMessageBroadcastReceiver();
+		IntentFilter intentFilter = new IntentFilter(EMChatManager
+				.getInstance().getNewMessageBroadcastAction());
+		registerReceiver(msgReceiver, intentFilter);
+
+		// app初始化完毕
+		EMChat.getInstance().setAppInited();
 	}
 
 	private class HomePagerAdapter extends FragmentPagerAdapter {
@@ -152,27 +159,41 @@ public class MainActivity extends FragmentActivity {
 					"new message id:" + msgId + " from:" + message.getFrom()
 							+ " type:" + message.getType() + " body:"
 							+ message.getBody());
-			switch (message.getType()) {
-			case TXT:
-				
-				TextMessageBody txtBody = (TextMessageBody) message.getBody();
-				String ns = Context.NOTIFICATION_SERVICE;
-				NotificationManager mNotificationManager = (NotificationManager)getSystemService(ns);
-				int icon = R.drawable.ic_launcher;
-				CharSequence tickerText = "Hello"; 
-				long when = System.currentTimeMillis();
-				Notification notification = new Notification(icon,tickerText,when);
-				notification.flags |= Notification.FLAG_AUTO_CANCEL; 
-				CharSequence contentTitle = "约么提醒"; //通知栏标题
-				CharSequence contentText = message.getFrom()
-						+ " 加入了您的相约"; //通知栏内容
-				Intent notificationIntent = new Intent(getApplicationContext(),MainActivity.class); //点击该通知后要跳转的Activity
-				PendingIntent contentIntent = PendingIntent.getActivity(MainActivity.this,0,notificationIntent,0);
-				notification.setLatestEventInfo(getApplicationContext(), contentTitle, contentText, contentIntent);
-				mNotificationManager.notify(0,notification);
-				break;
+			try {
 
+				int msg_catergory = message
+						.getIntAttribute(ConstantValues.MSG_CATEGAORY);
+				if (msg_catergory == ConstantValues.NOTIFICATION) {
+
+					TextMessageBody txtBody = (TextMessageBody) message
+							.getBody();
+					String messageContent = txtBody.getMessage();
+
+					String ns = Context.NOTIFICATION_SERVICE;
+					NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+					int icon = R.drawable.ic_launcher;
+					CharSequence tickerText = "Hello";
+					long when = System.currentTimeMillis();
+					Notification notification = new Notification(icon,
+							tickerText, when);
+					notification.flags |= Notification.FLAG_AUTO_CANCEL;
+					CharSequence contentTitle = "约么提醒"; // 通知栏标题
+					CharSequence contentText = messageContent + " 也加入了您参与的相约"; // 通知栏内容
+					Intent notificationIntent = new Intent(
+							getApplicationContext(),
+							ParticipatedInfosActivity.class); // 点击该通知后要跳转的Activity
+					PendingIntent contentIntent = PendingIntent.getActivity(
+							MainActivity.this, 0, notificationIntent, 0);
+					notification.setLatestEventInfo(getApplicationContext(),
+							contentTitle, contentText, contentIntent);
+					mNotificationManager.notify(0, notification);
+				}
+
+			} catch (EaseMobException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+
 		}
 
 	}

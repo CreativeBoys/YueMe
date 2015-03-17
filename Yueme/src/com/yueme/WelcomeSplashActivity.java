@@ -1,12 +1,16 @@
 package com.yueme;
 
+import com.yueme.values.ConstantValues;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 public class WelcomeSplashActivity extends Activity{
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -17,7 +21,14 @@ public class WelcomeSplashActivity extends Activity{
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				startActivity(new Intent(WelcomeSplashActivity.this, LoginRegisterActivity.class));
+				SharedPreferences ini = getSharedPreferences("data", 0);
+				
+				if(ini.getBoolean(ConstantValues.IS_LOGINED, false)==false) {
+					startActivity(new Intent(WelcomeSplashActivity.this, LoginRegisterActivity.class));
+				} else{
+					startActivity(new Intent(WelcomeSplashActivity.this	, MainActivity.class));
+				}
+				Log.d("hello", ini.getBoolean(ConstantValues.IS_LOGINED, false)+"");
 				finish();
 			}
 			

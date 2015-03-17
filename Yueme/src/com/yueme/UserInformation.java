@@ -49,6 +49,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.domain.User;
+import com.yueme.ui.ChangeHeadDialog;
 import com.yueme.util.EncodeUtil;
 import com.yueme.util.NetUtil;
 import com.yueme.util.StreamUtil;
@@ -158,6 +159,7 @@ public class UserInformation extends SwipeBackActivity implements
 		changGender = builder.create();
 		changGender.setView(view, 0, 0, 0, 0);
 		changGender.show();
+		
 
 	}
 
@@ -182,6 +184,7 @@ public class UserInformation extends SwipeBackActivity implements
 			
 			break;
 		case R.id.user_back:
+			overridePendingTransition(0, R.anim.base_slide_right_out);
 			finish();
 			break;
 		case R.id.user_gender_value:
@@ -215,15 +218,51 @@ public class UserInformation extends SwipeBackActivity implements
 	// 显示对话框
 	private void showDialog() {
 
-		AlertDialog.Builder builder = new Builder(UserInformation.this);
-		View view = View.inflate(UserInformation.this,
-				R.layout.change_head_alertdialog, null);
-		from_picture = (TextView) view.findViewById(R.id.from_picture);
-		from_camera = (TextView) view.findViewById(R.id.from_camera);
-		cancel = (TextView) view.findViewById(R.id.cancel);
-
-		from_picture.setOnClickListener(new OnClickListener() {
-
+//		AlertDialog.Builder builder = new Builder(UserInformation.this);
+//		View view = View.inflate(UserInformation.this,
+//				R.layout.change_head_alertdialog, null);
+//		from_picture = (TextView) view.findViewById(R.id.from_picture);
+//		from_camera = (TextView) view.findViewById(R.id.from_camera);
+//		cancel = (TextView) view.findViewById(R.id.cancel);
+//
+//		from_picture.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				Intent intentFromGallery = new Intent(Intent.ACTION_PICK, null);
+//				intentFromGallery
+//						.setDataAndType(
+//								MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//								"image/*");
+//				startActivityForResult(intentFromGallery, IMAGE_REQUEST_CODE);
+//			}
+//		});
+//		from_camera.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				Intent cameraIntent = new Intent(
+//						MediaStore.ACTION_IMAGE_CAPTURE);
+//				cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
+//						.fromFile(new File(Environment
+//								.getExternalStorageDirectory(), "head.jpg")));
+//				startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+//			}
+//		});
+//		cancel.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				dialog.dismiss();
+//			}
+//		});
+//		dialog = builder.create();
+//		dialog.setView(view, 0, 0, 0, 0);
+//		dialog.show();
+		
+		ChangeHeadDialog dialog = ChangeHeadDialog.getInstance(this);
+		dialog.setFromPicture(new OnClickListener() {
+			
 			@Override
 			public void onClick(View v) {
 				Intent intentFromGallery = new Intent(Intent.ACTION_PICK, null);
@@ -233,9 +272,8 @@ public class UserInformation extends SwipeBackActivity implements
 								"image/*");
 				startActivityForResult(intentFromGallery, IMAGE_REQUEST_CODE);
 			}
-		});
-		from_camera.setOnClickListener(new OnClickListener() {
-
+		}).setFromCamera(new OnClickListener() {
+			
 			@Override
 			public void onClick(View v) {
 				Intent cameraIntent = new Intent(
@@ -245,17 +283,8 @@ public class UserInformation extends SwipeBackActivity implements
 								.getExternalStorageDirectory(), "head.jpg")));
 				startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
 			}
-		});
-		cancel.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-		dialog = builder.create();
-		dialog.setView(view, 0, 0, 0, 0);
-		dialog.show();
+		}).setCancel().show();
+		
 	}
 
 	@Override

@@ -40,7 +40,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:textColor="#FFFFFF"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:focusable="true"
             android:text="发表" />
 
@@ -53,7 +53,8 @@
         android:layout_height="150dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/topLayout"
-        
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
         android:gravity="left"
        />
 
@@ -61,10 +62,10 @@
         android:id="@+id/layout1"
         android:background="#FFFFFF"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/requirementContent"
-        android:layout_marginTop="16dp" 
+        android:layout_marginTop="10dp" 
         >
 
         <TextView
@@ -76,7 +77,7 @@
             android:layout_marginLeft="14dp"
             android:text="分类"
             android:textColor="#5CACEE"
-            android:textSize="27sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView4"
@@ -95,7 +96,7 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:gravity="center_horizontal"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:layout_toRightOf="@+id/textView4"
              />
 
@@ -105,10 +106,10 @@
         android:id="@+id/layout2"
         android:background="#FFFFFF"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/layout1"
-        android:layout_marginTop="16dp" >
+        android:layout_marginTop="10dp" >
 
         <TextView
             android:id="@+id/textView131"
@@ -119,7 +120,7 @@
             android:layout_marginLeft="14dp"
             android:text="有效期"
             android:textColor="#5CACEE"
-            android:textSize="27sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView14"
@@ -137,7 +138,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
             android:gravity="center_horizontal"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:text="(请点击设置)"
             android:layout_marginRight="12dp"
             android:layout_toRightOf="@+id/textView14"
@@ -148,10 +149,10 @@
     <RelativeLayout
         android:background="#FFFFFF"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/layout2"
-        android:layout_marginTop="16dp" >
+        android:layout_marginTop="10dp" >
 
         <TextView
             android:id="@+id/textView1231"
@@ -162,12 +163,12 @@
             android:layout_marginLeft="14dp"
             android:text="参与人数"
             android:textColor="#5CACEE"
-            android:textSize="27sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView124"
             android:layout_width="2dp"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/textView1231"
             android:layout_marginLeft="5dp"
@@ -182,7 +183,7 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:gravity="center_horizontal"
-            android:textSize="25sp"
+            android:textSize="20sp"
             
             android:layout_toRightOf="@+id/textView124"
              />

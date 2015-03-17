@@ -86,4 +86,29 @@ public class ConstantValues {
 	 * 添加子评论
 	 */
 	public static final int ADD_SUB_COMMENT = 17;
+	/**
+	 * 是否登录SharedPreferences标记
+	 */
+	public static final String IS_LOGINED="IS_LOGINED";
+	
+	/*
+	 * 判断消息是否为通知的常量
+	 */
+	
+	public static final String MSG_NOTIFICATION = "_NOTIFICATION_";
+	
+	/**
+	 * 消息类型
+	 */
+	public static final String MSG_CATEGAORY = "MSG_CATAGARY";
+	/**
+	 * 通知类型
+	 */
+	public static final int NOTIFICATION = 0;
+	
+	/**
+	 * 消息类型
+	 */
+	
+	public static final int MSG = 1;
 }

@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
@@ -26,11 +25,11 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
+        android:name="YueMeApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-         android:name="YueMeApplication" >
+        android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         <activity android:name=".WelcomeSplashActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -75,7 +74,7 @@
             android:theme="@android:style/Theme.Translucent"
             android:windowSoftInputMode="adjustPan" >
         </activity>
-         <activity
+        <activity
             android:name=".ParticipantsActivity"
             android:label="@string/title_activity_participants" >
         </activity>
@@ -83,6 +82,11 @@
             android:name=".ParticipatedInfosActivity"
             android:label="@string/title_activity_participated_infos" >
         </activity>
+        <activity android:name=".ChatGroupActivity" >
+        </activity>
+        <activity 
+            android:name=".MyIntegrate"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
         <!-- Required. AppKey copied from Portal -->
         <meta-data
             android:name="EASEMOB_APPKEY"
