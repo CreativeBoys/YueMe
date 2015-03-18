@@ -1,13 +1,17 @@
 package com.yueme.fragment;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.yueme.CreditPeople;
 import com.yueme.R;
 import com.yueme.fragment.base.BaseFragment;
 
@@ -64,7 +68,32 @@ public class DiscoveryFragment extends BaseFragment{
 	@Override
 	protected void setListenerAndAdapter() {
 		// TODO Auto-generated method stub
-		
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = null;
+				switch (position) {
+				case 0:
+					
+					break;
+				case 1:   //信誉达人
+					intent = new Intent(getActivity(),CreditPeople.class);
+					startActivity(intent);
+					
+					break;
+				case 2:
+					
+					break;
+				case 3:
+					
+					break;
+				default:
+					break;
+				}
+			}
+		});
 	}
 
 }

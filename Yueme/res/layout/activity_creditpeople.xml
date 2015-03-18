@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#f6f6f6" >
     <RelativeLayout
         android:id="@+id/topLayout"
         android:layout_width="fill_parent"
@@ -30,8 +31,11 @@
             android:src="@drawable/back_icon" />
         
     </RelativeLayout>
-	<android.support.v7.widget.RecyclerView
+	<ListView
+	    android:id="@+id/listView"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
+	    android:dividerHeight="5dp"
+	    android:divider="#f6f6f6"
 	    android:layout_below="@id/topLayout"/>
 </RelativeLayout>
