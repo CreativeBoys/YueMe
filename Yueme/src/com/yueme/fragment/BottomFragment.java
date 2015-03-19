@@ -13,7 +13,6 @@ import com.yueme.interfaces.OnBottomClickListener;
 public class BottomFragment extends BaseFragment {
 	public RadioGroup rg_bottom;
 	public OnBottomClickListener onBottomClickListener;
-	
 	public void setOnBottomClickListener(OnBottomClickListener onBottomClickListener) {
 		this.onBottomClickListener = onBottomClickListener;
 	}

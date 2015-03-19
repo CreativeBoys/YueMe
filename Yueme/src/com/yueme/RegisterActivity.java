@@ -14,6 +14,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -222,6 +224,10 @@ public class RegisterActivity extends SwipeBackActivity {
 							public void run() {
 								
 								closeRegisterProgressDialog();
+								SharedPreferences sp = getSharedPreferences("yueme", MODE_PRIVATE);
+								Editor edit = sp.edit();
+								edit.putString("userID", GlobalValues.USER_ID);
+								edit.commit();
 								startActivity(new Intent(RegisterActivity.this, MainActivity.class));
 								Log.d("hello", "登录成功！");
 								//Toast.makeText(RegisterActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
