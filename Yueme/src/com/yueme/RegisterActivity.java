@@ -258,6 +258,7 @@ public class RegisterActivity extends SwipeBackActivity {
 	 * 请求验证码
 	 */
 	private void RequestVerificationCode() {
+		
 		final String phoneNumber = phoneNumEt.getText().toString().trim();
 		if(vfc) {
 			vfc = false; //防止对此点击发送按钮
@@ -268,6 +269,8 @@ public class RegisterActivity extends SwipeBackActivity {
 					@Override
 					public void run() {
 						try {
+							System.out.println("请求验证码");
+							System.out.println("phone="+phoneNumber);
 							StringBuffer sbf = new StringBuffer();
 							sbf.append(ConstantValues.HOST+"/servlet/VerifyPhoneNumberServlet?phoneNumber="+phoneNumber);   //验证手机号是否注册接口
 							//若未注册 返回签名,作为请求验证码的参数
@@ -279,9 +282,11 @@ public class RegisterActivity extends SwipeBackActivity {
 								if(resp.getResponseCode()==0) {
 									//未注册
 									String key = resp.getResponse();
+									System.out.println("返回签名"+key);
 									getVerificationCode(phoneNumber,key);
 								} else {
 									//已注册
+									
 								}
 							}
 						} catch (Exception e) {
@@ -306,14 +311,15 @@ public class RegisterActivity extends SwipeBackActivity {
 				if(arg1.getReason()== 300250) {
 					Message message = Message.obtain();
 					switch (arg0) {
-					case 1:
+					case 0:
+						System.out.println("发送短信");
 						vfc_result=true;
 						mUiHandler.sendEmptyMessage(1);
 						message.obj = "短信";
 						message.what = 4;
 						mUiHandler.sendMessage(message);
 						break;
-
+				
 					default:
 						break;
 					}
