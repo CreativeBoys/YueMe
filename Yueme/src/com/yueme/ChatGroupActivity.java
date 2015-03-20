@@ -28,9 +28,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.easemob.EMCallBack;
 import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMConversation;
+import com.easemob.chat.EMGroup;
+import com.easemob.chat.EMGroupManager;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
+import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.exceptions.EaseMobException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -51,6 +56,9 @@ public class ChatGroupActivity extends Activity {
 	private ChatAdapter chatAdapter;
 	private NewMessageBroadcastReceiver msgReceiver;
 	private EditText et_msg;
+	private String groupId;
+	// 获取到与聊天人的会话对象。参数username为聊天人的userid或者groupid，后文中的username皆是如此
+	EMConversation conversation;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +66,12 @@ public class ChatGroupActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat_group);
 		info = (Info) getIntent().getSerializableExtra("info");
-		initView();
+		groupId = info.getGroup_id();
 
+		if (groupId == null) {
+			ToastUtil.showToast("没有加入群组", ChatGroupActivity.this);
+		} 
+		initView();
 		getNetInfo();
 		setEvents();
 	}
@@ -68,35 +80,40 @@ public class ChatGroupActivity extends Activity {
 		chatAdapter = new ChatAdapter();
 		chatListView = (ListView) findViewById(R.id.chatListView);
 		et_msg = (EditText) findViewById(R.id.et_sendmessage);
-		
 
 	}
 
+	private void getNetInfo() {
+		new ParticipantsAsyncTast().execute();
+	}
+
 	private void setEvents() {
+		
 		chatListView.setAdapter(chatAdapter);
 		// 注册message receiver 接收消息
 		msgReceiver = new NewMessageBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(EMChatManager
 				.getInstance().getNewMessageBroadcastAction());
 		registerReceiver(msgReceiver, intentFilter);
-		
+
 	}
 
 	public void back(View v) {
 		finish();
 	}
 
-	class ChatItem{
+	class ChatItem {
 		Bitmap bitmap;
 		String userName;
 		String msg;
 	}
+
 	class ChatAdapter extends BaseAdapter {
 		private class ViewHolder {
 			ImageView iv_userIcon;
 			TextView tv_userName;
 			TextView tv_msg;
-			
+
 		}
 
 		@Override
@@ -129,13 +146,14 @@ public class ChatGroupActivity extends Activity {
 				viewHolder = new ViewHolder();
 				viewHolder.iv_userIcon = (ImageView) convertView
 						.findViewById(R.id.user_icon);
-				viewHolder.tv_userName = (TextView)convertView.findViewById(R.id.user_name);
+				viewHolder.tv_userName = (TextView) convertView
+						.findViewById(R.id.user_name);
 				viewHolder.tv_msg = (TextView) convertView
 						.findViewById(R.id.msg_content);
 				convertView.setTag(viewHolder);
 			}
 			ChatItem chatItem = chatItems.get(position);
-			viewHolder.iv_userIcon.setImageBitmap(chatItem.bitmap);
+			//viewHolder.iv_userIcon.setImageBitmap(chatItem.bitmap);
 			viewHolder.tv_userName.setText(chatItem.userName);
 			viewHolder.tv_msg.setText(chatItem.msg);
 			return convertView;
@@ -143,29 +161,55 @@ public class ChatGroupActivity extends Activity {
 
 	}
 
-	private void getNetInfo() {
-		
-
-		new ParticipantsAsyncTast().execute();
-	}
-
 	public void onSendTxtMsg(View view) {
-		String msgContent = ""+et_msg.getText().toString().trim();
+		final String msgContent = et_msg.getText().toString().trim();
 		et_msg.setText("");
-		EMMessage msg = EMMessage.createSendMessage(EMMessage.Type.TXT);
-		for (User user : users) {
-			msg.setReceipt(user.getId());
-			msg.setAttribute(ConstantValues.MSG_CATEGAORY, ConstantValues.MSG);
-			TextMessageBody body = new TextMessageBody(msgContent);
-			msg.addBody(body);
+		final EMMessage msg = EMMessage.createSendMessage(EMMessage.Type.TXT);
+		msg.setChatType(ChatType.GroupChat);
+		msg.setAttribute(ConstantValues.MSG_CATEGAORY,
+				ConstantValues.MSG);
 
-			try {
-				EMChatManager.getInstance().sendMessage(msg);
-
-			} catch (Exception e) {
-				e.printStackTrace();
+		TextMessageBody body = new TextMessageBody(msgContent);
+		msg.addBody(body);
+		Log.d("mychat", "sendText groupId" + groupId);
+		msg.setReceipt(groupId);
+		
+		ChatItem chatItem = new ChatItem();
+		User user;
+		for (int i = 0; i < users.size(); i++) {
+			user = users.get(i);
+			if (user.getId().equals(msg.getFrom())) {
+				//chatItem.bitmap = bitmaps.get(i);
+				chatItem.userName = user.getNickname();
+				break;
 			}
 		}
+		chatItem.msg = msgContent;
+		chatItems.add(chatItem);
+		chatAdapter.notifyDataSetChanged();
+		// conversation.addMessage(msg);
+		// 发送消息
+		EMChatManager.getInstance().sendMessage(msg, new EMCallBack() {
+
+			@Override
+			public void onError(int arg0, String arg1) {
+				// TODO Auto-generated method stub
+				Log.d("mychat", "onsend msg onError");
+			}
+
+			@Override
+			public void onProgress(int arg0, String arg1) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess() {
+				// TODO Auto-generated method stub
+				Log.d("mychat", "onsend msg success");
+				
+
+			}
+		});
 
 	}
 
@@ -179,23 +223,30 @@ public class ChatGroupActivity extends Activity {
 			String msgId = intent.getStringExtra("msgid"); // 消息id
 			// 从SDK 根据消息ID 可以获得消息对象
 			EMMessage message = EMChatManager.getInstance().getMessage(msgId);
-			Log.d("main",
-					"new message id:" + msgId + " from:" + message.getFrom()
-							+ " type:" + message.getType() + " body:"
-							+ message.getBody());
+			
+			
 			try {
+				Log.d("main", "chat group new message id:" + msgId + " from:"
+						+ message.getFrom() + " type:" + message.getType());
 				int msg_catergory = message
 						.getIntAttribute(ConstantValues.MSG_CATEGAORY);
-				if (msg_catergory != ConstantValues.NOTIFICATION) {
-
+				Log.d("main", ""+msg_catergory);
+				if (msg_catergory == ConstantValues.NOTIFICATION) {
+					return;
+				}
+				
+				Log.d("main", "chatgroup get global type");
+				if (message.getChatType() == ChatType.GroupChat) {
+					Log.d("main", "chatgroup get grouptype");
 					switch (message.getType()) {
 					case TXT:
+						Log.d("main", "chatgroup  get message");
 						ChatItem chatItem = new ChatItem();
 						User user;
-						for(int i=0; i< users.size();i++){
+						for (int i = 0; i < users.size(); i++) {
 							user = users.get(i);
-							if(user.getId().equals(message.getFrom())) {
-								chatItem.bitmap = bitmaps.get(i);
+							if (user.getId().equals(message.getFrom())) {
+								//chatItem.bitmap = bitmaps.get(i);
 								chatItem.userName = user.getNickname();
 								break;
 							}
@@ -206,9 +257,22 @@ public class ChatGroupActivity extends Activity {
 						chatItems.add(chatItem);
 						chatAdapter.notifyDataSetChanged();
 						break;
+					case CMD:
+						break;
+					case FILE:
+						break;
+					case IMAGE:
+						break;
+					case LOCATION:
+						break;
+					case VIDEO:
+						break;
+					case VOICE:
+						break;
+					default:
+						break;
 
 					}
-
 				}
 
 			} catch (EaseMobException e) {
@@ -220,9 +284,53 @@ public class ChatGroupActivity extends Activity {
 
 	}
 
+	private void loadConversation(){
+		EMConversation conversation = EMChatManager.getInstance().getConversation(groupId);
+		List<EMMessage> messages = conversation.getAllMessages();
+		Log.d("mychat", "Chat group activity:  messages.size()"+messages.size());
+		
+		ChatItem chatItem;
+		for(EMMessage message:messages){
+			chatItem = new ChatItem(); 
+			switch (message.getType()) {
+			case TXT:
+				User user;
+				for (int i = 0; i < users.size(); i++) {
+					user = users.get(i);
+					if (user.getId().equals(message.getFrom())) {
+						//chatItem.bitmap = bitmaps.get(i);
+						chatItem.userName = user.getNickname();
+						break;
+					}
+				}
+				TextMessageBody txtBody = (TextMessageBody) message
+						.getBody();
+				chatItem.msg = txtBody.getMessage();
+				chatItems.add(chatItem);
+				chatAdapter.notifyDataSetChanged();
+				break;
+			case CMD:
+				break;
+			case FILE:
+				break;
+			case IMAGE:
+				break;
+			case LOCATION:
+				break;
+			case VIDEO:
+				break;
+			case VOICE:
+				break;
+			default:
+				break;
+
+			}
+		}
+		
+	}
 	private class ParticipantsAsyncTast extends
 			AsyncTask<Void, Void, ProtocalResponse> {
-
+		int i;
 		@Override
 		protected ProtocalResponse doInBackground(Void... params) {
 			try {
@@ -250,9 +358,12 @@ public class ChatGroupActivity extends Activity {
 				ToastUtil.showToast("网络错误", ChatGroupActivity.this);
 			} else {
 				String json = result.getResponse();
+				
 				users = new Gson().fromJson(json, new TypeToken<List<User>>() {
 				}.getType());
-				for (final User user : users) {
+				loadConversation();
+				for (i=0; i < users.size(); i++) {
+					final User user = users.get(i);
 					new AsyncTask<Void, Void, Bitmap>() {
 
 						@Override
@@ -263,11 +374,26 @@ public class ChatGroupActivity extends Activity {
 
 						protected void onPostExecute(Bitmap result) {
 							bitmaps.add(result);
-							/* adapter.notifyDataSetChanged(); */
+							
 						}
 					}.execute();
 				}
 			}
 		}
 	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		// 注销接收聊天消息的message receiver
+		if (msgReceiver != null) {
+			try {
+				unregisterReceiver(msgReceiver);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		super.onDestroy();
+	}
+
 }

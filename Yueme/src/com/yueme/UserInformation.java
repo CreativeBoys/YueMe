@@ -24,6 +24,8 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -181,7 +183,12 @@ public class UserInformation extends SwipeBackActivity implements
 			saveInformation();
 			break;
 		case R.id.backlogin: // 退出登录
-			
+			SharedPreferences sp = getSharedPreferences("yueme", MODE_PRIVATE);
+			Editor edit = sp.edit();
+			edit.remove("userID");
+			GlobalValues.USER_ID = null;
+			edit.commit();
+			this.finish();
 			break;
 		case R.id.user_back:
 			overridePendingTransition(0, R.anim.base_slide_right_out);

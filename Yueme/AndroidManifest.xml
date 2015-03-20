@@ -61,6 +61,7 @@
         </activity>
         <activity
             android:name=".SingleRequireDetailsActivity"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
         <activity
@@ -85,6 +86,8 @@
         </activity>
         <activity 
             android:name=".MyIntegrate"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+        <activity android:name=".CreditPeople"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
         <!-- Required. AppKey copied from Portal -->
         <meta-data

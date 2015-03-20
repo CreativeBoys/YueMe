@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+       xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:background="#ffffff">
+	       <ImageView 
+	        android:id="@+id/level_num"
+	        android:layout_width="25dp"
+	        android:layout_height="25dp"
+	        android:src="@drawable/level_num"/>
+			<ImageView 
+			    android:id="@+id/user_head"
+			    android:layout_height="50dp"
+			    android:layout_width="40dp"
+			    android:layout_toRightOf="@id/level_num"
+			    android:layout_marginLeft="10dp"
+			    android:src="@drawable/user_head"/>
+			<LinearLayout 
+			    android:layout_height="wrap_content"
+			    android:layout_width="wrap_content"
+			    android:orientation="vertical"
+			    android:layout_toRightOf="@id/user_head"
+			    android:layout_marginLeft="10dp">
+			    <TextView 
+			        android:id="@+id/nickname"
+			        android:layout_height="wrap_content"
+			        android:layout_width="wrap_content"
+			        android:text="Mr He"
+			        android:layout_marginTop="8dp"/>
+			    <TextView 
+			        android:id="@+id/level"
+			        android:layout_height="wrap_content"
+			        android:layout_width="wrap_content"
+			        android:layout_marginTop="5dp"
+			        android:text="一级星"/>
+			</LinearLayout>
+			<TextView 
+			    android:id="@+id/integrate"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="56积分"
+			    android:layout_centerVertical="true"
+			    android:layout_alignParentRight="true"
+			    android:layout_marginRight="10dp"
+			    android:textSize="16sp"/>
+</RelativeLayout>
+  

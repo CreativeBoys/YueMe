@@ -12,7 +12,14 @@ public class Info implements Serializable{
 	private long deadline;
 	private String category;
 	private String nickname;
+	private String group_id;
 	
+	public String getGroup_id() {
+		return group_id;
+	}
+	public void setGroup_id(String group_id) {
+		this.group_id = group_id;
+	}
 	public String getNickname() {
 		return nickname;
 	}

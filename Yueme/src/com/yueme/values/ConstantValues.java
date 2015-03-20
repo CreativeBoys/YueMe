@@ -48,8 +48,6 @@ public class ConstantValues {
 	/**
 	 * 主机URL
 	 */
-	
-	
 //	public static final String HOST = "http://192.168.253.1/yueme";
 	public static final String HOST = "http://182.92.239.129/yueme";
 	/**
@@ -76,7 +74,18 @@ public class ConstantValues {
 	 * 得到某个用户参加的所有活动
 	 */
 	public static final int GET_USER_ALL_PARTICIPATED_INFO = 14;
-	
+	/**
+	 * 添加主评论
+	 */
+	public static final int ADD_COMMENT = 15;
+	/**
+	 * 得到评论
+	 */
+	public static final int GET_COMMENT = 16;
+	/**
+	 * 添加子评论
+	 */
+	public static final int ADD_SUB_COMMENT = 17;
 	/**
 	 * 是否登录SharedPreferences标记
 	 */
