@@ -206,6 +206,8 @@ public class RegisterActivity extends SwipeBackActivity {
 			}
 			if(result.getResponseCode()==0) {
 				GlobalValues.USER_ID = result.getResponse();
+				SharedPreferences.Editor editor = getSharedPreferences("data", 0).edit();
+				editor.putString("NICK_NAME", nickname).commit();
 				Log.d("hello", "注册成功");
 				CreateChatAccountTask task = new CreateChatAccountTask();
 				
