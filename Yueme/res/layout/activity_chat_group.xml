@@ -105,14 +105,21 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp" 
+            android:background="#E5E5E5"/>
+
         <GridView
             android:id="@+id/emotions_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:horizontalSpacing="3dp"
             android:numColumns="7"
-            android:verticalSpacing="3dp"
+            android:paddingBottom="30dp"
+            android:paddingTop="15dp"
             android:stretchMode="columnWidth"
+            android:verticalSpacing="6dp"
             android:visibility="gone" >
         </GridView>
     </LinearLayout>
