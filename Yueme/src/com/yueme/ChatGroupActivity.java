@@ -281,7 +281,13 @@ public class ChatGroupActivity extends Activity {
 				convertView.setTag(viewHolder);
 			}
 			ChatItem chatItem = chatItems.get(position);
-			viewHolder.iv_userIcon.setImageBitmap(chatGroupInfo.getHeadIcon(chatItem.userName));
+			Bitmap bitmap = chatGroupInfo.getHeadIcon(chatItem.userName);
+			if(bitmap!=null) {
+				viewHolder.iv_userIcon.setImageBitmap(chatGroupInfo.getHeadIcon(chatItem.userName));
+			} else{
+				viewHolder.iv_userIcon.setImageResource(R.drawable.user_head);
+			}
+			
 			// viewHolder.iv_userIcon.setImageBitmap(chatItem.bitmap);
 			viewHolder.tv_userName.setText(chatItem.userName);
 			viewHolder.tv_msg.setText(chatItem.msg);

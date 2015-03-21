@@ -198,10 +198,14 @@ public class HomeFragment extends BaseFragment {
 			holder.tv_rest_time.setText("还有"
 					+ RestTimeUtil.getRestTime((deadline - new Date().getTime())));
 			holder.tv_nickname.setText(infos.get(position).getNickname());
-			if (bitmaps.size() > position)
-				// holder.iv_head.setBackgroundDrawable(new
-				// BitmapDrawable(bitmaps.get(position)));
-				holder.iv_head.setImageBitmap(bitmaps.get(position));
+			if (bitmaps.size() > position){
+				Bitmap bitmap = bitmaps.get(position);
+				if(bitmap!=null) {
+					holder.iv_head.setImageBitmap(bitmaps.get(position));
+				} else{
+					holder.iv_head.setImageResource(R.drawable.user_head);
+				}
+			}
 			return view;
 		}
 

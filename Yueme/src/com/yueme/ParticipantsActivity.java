@@ -188,8 +188,15 @@ public class ParticipantsActivity extends Activity {
 					.findViewById(R.id.tv_participant_nickname);
 			TextView tv_academy = (TextView) view
 					.findViewById(R.id.tv_participant_academy);
-			if (bitmaps.size() > position)
-				iv_head.setImageBitmap(bitmaps.get(position));
+			if (bitmaps.size() > position){
+				Bitmap bitmap = bitmaps.get(position);
+				if(bitmap!=null) {
+					iv_head.setImageBitmap(bitmaps.get(position));
+				} else{
+					iv_head.setImageResource(R.drawable.user_head);
+				}
+			}
+				
 			tv_academy
 					.setText((users.get(position).getAcademy() == null ? "无学院"
 							: users.get(position).getAcademy()));

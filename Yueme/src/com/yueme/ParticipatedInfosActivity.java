@@ -42,6 +42,7 @@ public class ParticipatedInfosActivity extends Activity {
 	private ParticipatedInfoAdapter adapter;
 	private TextView tv_no_infos;
 	private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,7 +52,7 @@ public class ParticipatedInfosActivity extends Activity {
 		setListenerAndAdapter();
 		new AllParticipatedInfosAsyncTask().execute();
 	}
-	
+
 	private void setListenerAndAdapter() {
 		adapter = new ParticipatedInfoAdapter();
 		lv_participated_infos.setAdapter(adapter);
@@ -61,7 +62,8 @@ public class ParticipatedInfosActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(ParticipatedInfosActivity.this,ParticipantsActivity.class);
+				Intent intent = new Intent(ParticipatedInfosActivity.this,
+						ParticipantsActivity.class);
 				intent.putExtra("info", infos.get(position));
 				startActivity(intent);
 			}
@@ -72,7 +74,7 @@ public class ParticipatedInfosActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			if(infos==null) {
+			if (infos == null) {
 				return 0;
 			}
 			return infos.size();
@@ -90,31 +92,46 @@ public class ParticipatedInfosActivity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = View.inflate(ParticipatedInfosActivity.this, R.layout.participated_items,null);
-			TextView tv_content = (TextView) view.findViewById(R.id.tv_participant_nickname);
-			TextView tv_startTime = (TextView) view.findViewById(R.id.tv_start_time);
-			ImageView iv_head = (ImageView) view.findViewById(R.id.iv_participant_head);
+			View view = View.inflate(ParticipatedInfosActivity.this,
+					R.layout.participated_items, null);
+			TextView tv_content = (TextView) view
+					.findViewById(R.id.tv_participant_nickname);
+			TextView tv_startTime = (TextView) view
+					.findViewById(R.id.tv_start_time);
+			ImageView iv_head = (ImageView) view
+					.findViewById(R.id.iv_participant_head);
 			tv_content.setText(infos.get(position).getContent());
-			tv_startTime.setText(DateFormat.format("yyyy-MM-dd-hh时mm分ss秒", infos.get(position).getDeadline()));
-			if(bitmaps.size()>position)
-				iv_head.setImageBitmap(bitmaps.get(position));
+			tv_startTime.setText(DateFormat.format("yyyy-MM-dd-hh时mm分ss秒",
+					infos.get(position).getDeadline()));
+			if (bitmaps.size() > position) {
+				Bitmap bitmap = bitmaps.get(position);
+				if (bitmap != null) {
+					iv_head.setImageBitmap(bitmaps.get(position));
+				} else {
+					iv_head.setImageResource(R.drawable.user_head);
+				}
+			}
+
 			return view;
 		}
 	}
-	
-	private class AllParticipatedInfosAsyncTask extends AsyncTask<Void, Void,ProtocalResponse> {
+
+	private class AllParticipatedInfosAsyncTask extends
+			AsyncTask<Void, Void, ProtocalResponse> {
 
 		@Override
 		protected ProtocalResponse doInBackground(Void... params) {
 			try {
 				LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-				map.put(ConstantValues.REQUESTPARAM, ConstantValues.GET_USER_ALL_PARTICIPATED_INFO+"");
+				map.put(ConstantValues.REQUESTPARAM,
+						ConstantValues.GET_USER_ALL_PARTICIPATED_INFO + "");
 				map.put("userID", GlobalValues.USER_ID);
 				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
 				HttpClient client = new DefaultHttpClient();
 				HttpResponse response = client.execute(get);
-				if(response.getStatusLine().getStatusCode()==200) {
-					String json = StreamUtil.getString(response.getEntity().getContent());
+				if (response.getStatusLine().getStatusCode() == 200) {
+					String json = StreamUtil.getString(response.getEntity()
+							.getContent());
 					return new Gson().fromJson(json, ProtocalResponse.class);
 				}
 			} catch (Exception e) {
@@ -122,14 +139,17 @@ public class ParticipatedInfosActivity extends Activity {
 			}
 			return null;
 		}
+
 		@Override
 		protected void onPostExecute(ProtocalResponse result) {
-			if(result!=null) {
-				if(result.getResponseCode()==1) {
-					//尚未参加
+			if (result != null) {
+				if (result.getResponseCode() == 1) {
+					// 尚未参加
 					tv_no_infos.setVisibility(View.VISIBLE);
 				} else {
-					infos = new Gson().fromJson(result.getResponse(), new TypeToken<List<Info>>(){}.getType());
+					infos = new Gson().fromJson(result.getResponse(),
+							new TypeToken<List<Info>>() {
+							}.getType());
 					for (final Info info : infos) {
 						new AsyncTask<Void, Void, Bitmap>() {
 
@@ -139,15 +159,19 @@ public class ParticipatedInfosActivity extends Activity {
 									String id = info.getId();
 									LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 									map.put(ConstantValues.REQUESTPARAM,
-											ConstantValues.GET_INFO_HEAD_IMG + "");
+											ConstantValues.GET_INFO_HEAD_IMG
+													+ "");
 									map.put("infoID", id);
-									HttpGet get = new HttpGet(NetUtil.getUrlString(map));
+									HttpGet get = new HttpGet(
+											NetUtil.getUrlString(map));
 									HttpClient client = new DefaultHttpClient();
 									HttpResponse response = client.execute(get);
-									if (response.getStatusLine().getStatusCode() == 200) {
-										InputStream inputStream = response.getEntity()
-												.getContent();
-										return BitmapFactory.decodeStream(inputStream);
+									if (response.getStatusLine()
+											.getStatusCode() == 200) {
+										InputStream inputStream = response
+												.getEntity().getContent();
+										return BitmapFactory
+												.decodeStream(inputStream);
 									}
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -168,7 +192,7 @@ public class ParticipatedInfosActivity extends Activity {
 			}
 		}
 	}
-	
+
 	public void back(View view) {
 		finish();
 	}
