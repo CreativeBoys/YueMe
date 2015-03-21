@@ -1,22 +1,17 @@
 package com.yueme;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +25,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,15 +36,7 @@ import com.easemob.chat.EMMessage;
 import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.exceptions.EaseMobException;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.yueme.domain.ChatGroupInfo;
-import com.yueme.domain.Info;
-import com.yueme.domain.ProtocalResponse;
-import com.yueme.domain.User;
-import com.yueme.util.NetUtil;
-import com.yueme.util.StreamUtil;
-import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
 
 public class ChatGroupActivity extends Activity {
@@ -60,24 +48,26 @@ public class ChatGroupActivity extends Activity {
 	private NewMessageBroadcastReceiver msgReceiver;
 	private EditText et_msg;
 	private String groupId;
-	private GridView emotions_layout;
 	private ImageView iv_emoticon;
 	// 获取到与聊天人的会话对象。参数username为聊天人的userid或者groupid，后文中的username皆是如此
 	EMConversation conversation;
 	private InputMethodManager manager;
 	private ChatGroupInfo chatGroupInfo;
+	private ViewPager emotionsViewPager;
+	private LinearLayout emotionsLayout;
+	private ImageView ivState1, ivState2;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat_group);
-		chatGroupInfo = (ChatGroupInfo) getIntent().getSerializableExtra("chatGroupInfo");
+		/*chatGroupInfo = (ChatGroupInfo) getIntent().getSerializableExtra("chatGroupInfo");
 		groupId = chatGroupInfo.getGroup_id();
 
 		if (groupId == null) {
 			ToastUtil.showToast("没有加入群组", ChatGroupActivity.this);
 		}
-		loadConversation();
+		loadConversation();*/
 		initView();
 		setEvents();
 		
@@ -88,20 +78,11 @@ public class ChatGroupActivity extends Activity {
 		chatListView = (ListView) findViewById(R.id.chatListView);
 		et_msg = (EditText) findViewById(R.id.et_sendmessage);
 		iv_emoticon = (ImageView) findViewById(R.id.iv_emoticons_normal);
-		emotions_layout = (GridView) findViewById(R.id.emotions_layout);
-		emotions_layout.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				// TODO Auto-generated method stub
-				TextView tv = (TextView) view;
-				et_msg.append(tv.getText());
-				int len = et_msg.getText().length();
-				et_msg.setSelection(len);
-
-			}
-		});
+		emotionsLayout = (LinearLayout) findViewById(R.id.emotionsLayout);
+		emotionsViewPager = (ViewPager) findViewById(R.id.emotionsViewPager);
+		ivState1 = (ImageView) findViewById(R.id.ivState1);
+		ivState2 = (ImageView)findViewById(R.id.ivState2);
+		
 		manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -111,39 +92,156 @@ public class ChatGroupActivity extends Activity {
 
 	private void setEvents() {
 
-		chatListView.setAdapter(chatAdapter);
-		chatListView.setSelection(msgCount-1);
+		/*chatListView.setAdapter(chatAdapter);
+		chatListView.setSelection(msgCount-1);*/
 		iv_emoticon.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if (emotions_layout.getVisibility() == View.GONE) {
-					emotions_layout.setVisibility(View.VISIBLE);
+				if (emotionsLayout.getVisibility() == View.GONE) {
+					emotionsLayout.setVisibility(View.VISIBLE);
 					hideKeyboard();
 				} else {
-					emotions_layout.setVisibility(View.GONE);
+					emotionsLayout.setVisibility(View.GONE);
 				}
 			}
 		});
-		emotions_layout.setAdapter(new EmotionsAdapter());
+		
+		emotionsViewPager.setAdapter(new EmotionsViewPagerAdapter());
+		emotionsViewPager.setCurrentItem(0);
+		emotionsViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+			
+			@Override
+			public void onPageSelected(int arg0) {
+				// TODO Auto-generated method stub
+				switch(arg0){
+				case 0:
+					ivState1.setImageResource(R.drawable.point_checked);
+					ivState2.setImageResource(R.drawable.point_uncheck);
+					break;
+				case 1:
+					ivState1.setImageResource(R.drawable.point_uncheck);
+					ivState2.setImageResource(R.drawable.point_checked);
+					break;
+				}
+			}
+			
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		// 注册message receiver 接收消息
-		msgReceiver = new NewMessageBroadcastReceiver();
+		/*msgReceiver = new NewMessageBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(EMChatManager
 				.getInstance().getNewMessageBroadcastAction());
-		registerReceiver(msgReceiver, intentFilter);
+		registerReceiver(msgReceiver, intentFilter);*/
 
 	}
 
+	private class EmotionsViewPagerAdapter extends PagerAdapter{
+		private List<View> pagerViews;
+		public EmotionsViewPagerAdapter() {
+			super();
+			pagerViews = new ArrayList<View>();
+			int emotions1[] = { 0x1F604, 0x1F60a, 0x1F603, 0x1F632, 0x1F609,
+					0x1F60D, 0x1F618, 0x1F61A, 0x1F633, 0x1F601, 0x1F60C, 0x1F61C,
+					0x1F61D, 0x1F612, 0x1F60F, 0x1F613, 0x1F614, 0x1F61E, 0x1F616,
+					0x1F625, 0x1F630 };
+			int emotions2[] = { 0x1F628, 0x1F623, 0x1F622, 0x1F62D, 0x1F602,
+					0x1F632, 0x1F631, 0x1F620, 0x1F621, 0x1F62A, 0x1F637, 0x1F37A,
+					0x270C, 0x1F4A9, 0x1F44D, 0x1F525, 0x2728, 0x1F31F, 0x1F4AA,
+					0x1F4A4, 0x1F3B5 };
+			View v1 = LayoutInflater.from(ChatGroupActivity.this).inflate(R.layout.emotions_gridview, null);
+			View v2 = LayoutInflater.from(ChatGroupActivity.this).inflate(R.layout.emotions_gridview, null);
+			GridView gv1 = (GridView) v1;
+			GridView gv2 = (GridView)v2;
+			
+			gv1.setAdapter(new EmotionsGridViewAdapter(emotions1));
+			gv2.setAdapter(new EmotionsGridViewAdapter(emotions2));
+			gv1.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					// TODO Auto-generated method stub
+					TextView tv = (TextView) view;
+					et_msg.append(tv.getText());
+					int len = et_msg.getText().length();
+					et_msg.setSelection(len);
+				}
+			});
+			
+			gv2.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					// TODO Auto-generated method stub
+					TextView tv = (TextView) view;
+					et_msg.append(tv.getText());
+					int len = et_msg.getText().length();
+					et_msg.setSelection(len);
+				}
+			});
+			pagerViews.add(v1);
+			pagerViews.add(v2);
+		}
+		
+
+		@Override
+		public void destroyItem(View container, int position, Object object) {
+			// TODO Auto-generated method stub
+			super.destroyItem(container, position, object);
+			((ViewPager)container).removeView(pagerViews.get(position));
+		}
+
+
+		@Override
+		public Object instantiateItem(View container, int position) {
+			// TODO Auto-generated method stub
+			((ViewPager)container).addView(pagerViews.get(position));
+			return pagerViews.get(position);
+			
+		}
+
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return pagerViews.size();
+		}
+
+		@Override
+		public boolean isViewFromObject(View arg0, Object arg1) {
+			// TODO Auto-generated method stub
+			return arg0==arg1;
+		}
+		
+	}
+	
 	private String emotionCode(int hax) {
 		return String.valueOf(Character.toChars(hax));
 	}
 
-	class EmotionsAdapter extends BaseAdapter {
-		int emotions[] = { 0x1F604, 0x1F60a, 0x1F603, 0x1F632, 0x1F609,
-				0x1F60D, 0x1F618, 0x1F61A, 0x1F633, 0x1F601, 0x1F60C, 0x1F61C,
-				0x1F61D, 0x1F612, 0x1F60F, 0x1F613, 0x1F614, 0x1F61E, 0x1F616,
-				0x1F625, 0x1F630 };
+	class EmotionsGridViewAdapter extends BaseAdapter {
+		private int emotions[];
+		
+		
+
+		public EmotionsGridViewAdapter(int[] emotions) {
+			super();
+			this.emotions = emotions;
+		}
 
 		@Override
 		public int getCount() {
@@ -183,8 +281,8 @@ public class ChatGroupActivity extends Activity {
 	}
 
 	public void editText_check(View v) {
-		if (emotions_layout.getVisibility() == View.VISIBLE) {
-			emotions_layout.setVisibility(View.GONE);
+		if (emotionsViewPager.getVisibility() == View.VISIBLE) {
+			emotionsViewPager.setVisibility(View.GONE);
 		}
 	}
 
