@@ -37,75 +37,84 @@
         </RelativeLayout>
 
         <ListView
-            android:padding="8dp"
-            android:dividerHeight="10dp"
             android:id="@+id/chatListView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:cacheColorHint="#00000000"
             android:divider="@null"
+            android:dividerHeight="10dp"
             android:listSelector="#00000000"
+            android:padding="8dp"
             android:scrollbarStyle="outsideOverlay"
             android:transcriptMode="normal" />
 
-        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignTop="@+id/bar_bottom"
+            android:background="#666667" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_alignTop="@+id/bar_bottom"
-                android:background="#666667" />
+        <LinearLayout
+            android:id="@+id/bar_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#f2f0eb"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="2dip"
+            android:paddingTop="2dip" >
 
-            <LinearLayout
-                android:id="@+id/bar_bottom"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/iv_emoticons_normal"
+                android:layout_width="24dip"
+                android:layout_height="24dip"
+                android:layout_margin="1dip"
+                android:scaleType="fitCenter"
+                android:src="@drawable/chatting_biaoqing_btn_normal"
+                android:visibility="visible" />
+
+            <EditText
+                android:id="@+id/et_sendmessage"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="#f2f0eb"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingBottom="2dip"
-                android:paddingTop="2dip" >
+                android:layout_weight="1"
+                android:background="@null"
+                android:maxLines="3"
+                android:minHeight="40dp"
+                android:onClick="editText_check"
+                android:paddingBottom="3dp"
+                android:paddingLeft="1dp"
+                android:paddingRight="1dp"
+                android:paddingTop="3dp"
+                android:textSize="18sp" >
 
-                <ImageView
-                    android:id="@+id/iv_emoticons_normal"
-                    android:layout_width="24dip"
-                    android:layout_height="24dip"
-                    android:layout_margin="1dip"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/chatting_biaoqing_btn_normal"
-                    android:visibility="visible" />
+                <requestFocus />
+            </EditText>
 
-                <EditText
-                    android:id="@+id/et_sendmessage"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:maxLines="3"
-                    android:minHeight="40dp"
-                    android:paddingBottom="3dp"
-                    android:paddingLeft="1dp"
-                    android:paddingRight="1dp"
-                    android:paddingTop="3dp"
-                    android:textSize="18sp" >
+            <Button
+                android:id="@+id/btn_send"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/chat_send_btn_selector"
+                android:onClick="onSendTxtMsg"
+                android:text="发送"
+                android:textColor="#666666"
+                android:textSize="16sp" />
+        </LinearLayout>
 
-                    <requestFocus />
-                </EditText>
-
-                <Button
-                    android:id="@+id/btn_send"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@drawable/chat_send_btn_selector"
-                    android:onClick="onSendTxtMsg"
-                    android:text="发送"
-                    android:textColor="#666666"
-                    android:textSize="16sp" />
-            </LinearLayout>
-        
+        <GridView
+            android:id="@+id/emotions_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:horizontalSpacing="3dp"
+            android:numColumns="7"
+            android:verticalSpacing="3dp"
+            android:stretchMode="columnWidth"
+            android:visibility="gone" >
+        </GridView>
     </LinearLayout>
 
 </FrameLayout>

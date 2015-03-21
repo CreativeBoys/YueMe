@@ -20,10 +20,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,11 +36,9 @@ import android.widget.TextView;
 import com.easemob.EMCallBack;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMConversation;
-import com.easemob.chat.EMGroup;
-import com.easemob.chat.EMGroupManager;
 import com.easemob.chat.EMMessage;
-import com.easemob.chat.TextMessageBody;
 import com.easemob.chat.EMMessage.ChatType;
+import com.easemob.chat.TextMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -57,8 +60,11 @@ public class ChatGroupActivity extends Activity {
 	private NewMessageBroadcastReceiver msgReceiver;
 	private EditText et_msg;
 	private String groupId;
+	private GridView emotions_layout;
+	private ImageView iv_emoticon;
 	// 获取到与聊天人的会话对象。参数username为聊天人的userid或者groupid，后文中的username皆是如此
 	EMConversation conversation;
+	private InputMethodManager manager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +86,24 @@ public class ChatGroupActivity extends Activity {
 		chatAdapter = new ChatAdapter();
 		chatListView = (ListView) findViewById(R.id.chatListView);
 		et_msg = (EditText) findViewById(R.id.et_sendmessage);
+		iv_emoticon = (ImageView) findViewById(R.id.iv_emoticons_normal);
+		emotions_layout = (GridView) findViewById(R.id.emotions_layout);
+		emotions_layout.setOnItemClickListener(new OnItemClickListener() {
 
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				TextView tv = (TextView)view;
+				et_msg.append(tv.getText());
+				int len = et_msg.getText().length();
+				et_msg.setSelection(len);
+				
+			}
+		});
+		manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
 	private void getNetInfo() {
@@ -90,6 +113,20 @@ public class ChatGroupActivity extends Activity {
 	private void setEvents() {
 
 		chatListView.setAdapter(chatAdapter);
+		iv_emoticon.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (emotions_layout.getVisibility() == View.GONE) {
+					emotions_layout.setVisibility(View.VISIBLE);
+					hideKeyboard();
+				} else {
+					emotions_layout.setVisibility(View.GONE);
+				}
+			}
+		});
+		emotions_layout.setAdapter(new EmotionsAdapter());
 		// 注册message receiver 接收消息
 		msgReceiver = new NewMessageBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(EMChatManager
@@ -98,8 +135,67 @@ public class ChatGroupActivity extends Activity {
 
 	}
 
+	private String emotionCode(int hax) {
+		return String.valueOf(Character.toChars(hax));
+	}
+
+	class EmotionsAdapter extends BaseAdapter {
+		int emotions[] = { 0x1F604, 0x1F60a, 0x1F603, 0x1F632, 0x1F609, 0x1F60D,
+				0x1F618, 0x1F61A, 0x1F633, 0x1F601, 0x1F60C, 0x1F61C, 0x1F61D,
+				0x1F612, 0x1F60F, 0x1F613, 0x1F614,0x1F61E,0x1F616,0x1F625,0x1F630 };
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return emotions.length;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return emotionCode(emotions[position]);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+
+			if (convertView == null) {
+				convertView = LayoutInflater.from(ChatGroupActivity.this)
+						.inflate(R.layout.emotion_griditem, null);
+			}
+			String emotion = emotionCode(emotions[position]);
+			((TextView) convertView).setText(emotion);
+			return convertView;
+		}
+
+	}
+
 	public void back(View v) {
 		finish();
+	}
+
+	public void editText_check(View v) {
+		if (emotions_layout.getVisibility() == View.VISIBLE) {
+			emotions_layout.setVisibility(View.GONE);
+		}
+	}
+
+	/**
+	 * 隐藏软键盘
+	 */
+	private void hideKeyboard() {
+		if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+			if (getCurrentFocus() != null)
+				manager.hideSoftInputFromWindow(getCurrentFocus()
+						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+		}
 	}
 
 	class ChatItem {
@@ -114,18 +210,20 @@ public class ChatGroupActivity extends Activity {
 			TextView tv_msg;
 
 		}
+
 		private final int SELF_TEXT_TYPE = 0;
 		private final int OTHERS_TEXT_TYPE = 1;
-		
+
 		@Override
 		public int getItemViewType(int position) {
 			// TODO Auto-generated method stub
 			String currentNickName = chatItems.get(position).userName;
-			String currentUserNickName = getSharedPreferences("data", 0).getString("NICK_NAME", "");
-			
-			if(currentNickName.equals(currentUserNickName)) {
+			String currentUserNickName = getSharedPreferences("data", 0)
+					.getString("NICK_NAME", "");
+
+			if (currentNickName.equals(currentUserNickName)) {
 				return SELF_TEXT_TYPE;
-			} else{
+			} else {
 				return OTHERS_TEXT_TYPE;
 			}
 		}
@@ -165,17 +263,17 @@ public class ChatGroupActivity extends Activity {
 				switch (type) {
 				case SELF_TEXT_TYPE:
 					convertView = LayoutInflater.from(ChatGroupActivity.this)
-					.inflate(R.layout.chat_listitem_metxt, null);
+							.inflate(R.layout.chat_listitem_metxt, null);
 					break;
 				case OTHERS_TEXT_TYPE:
 					convertView = LayoutInflater.from(ChatGroupActivity.this)
-					.inflate(R.layout.chat_listitem_otherstxt, null);
+							.inflate(R.layout.chat_listitem_otherstxt, null);
 					break;
 
 				default:
 					break;
 				}
-				
+
 				viewHolder = new ViewHolder();
 				viewHolder.iv_userIcon = (ImageView) convertView
 						.findViewById(R.id.user_icon);
@@ -194,8 +292,9 @@ public class ChatGroupActivity extends Activity {
 						viewHolder.iv_userIcon.setImageBitmap(bitmaps.get(i));
 
 					}
-				} else{
-					viewHolder.iv_userIcon.setImageResource(R.drawable.ic_launcher);
+				} else {
+					viewHolder.iv_userIcon
+							.setImageResource(R.drawable.ic_launcher);
 				}
 			}
 			// viewHolder.iv_userIcon.setImageBitmap(chatItem.bitmap);
@@ -418,9 +517,9 @@ public class ChatGroupActivity extends Activity {
 						}
 
 						protected void onPostExecute(Bitmap result) {
-							
+
 							bitmaps.add(result);
-							if(result!=null) {
+							if (result != null) {
 								chatAdapter.notifyDataSetChanged();
 							}
 						}
