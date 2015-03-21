@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yueme.domain.ChatGroupInfo;
 import com.yueme.domain.Info;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.domain.User;
@@ -43,10 +44,14 @@ public class ParticipantsActivity extends Activity {
 	private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
 	private ParticipantsAdapter adapter;
 	private TextView tv_info;
+	private ChatGroupInfo chatGroupInfo;
+	private boolean isNetInfoLoaded;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_participants);
+		info = (Info) getIntent().getSerializableExtra("info");
+		chatGroupInfo = new ChatGroupInfo(info.getGroup_id());
 		initView();
 		getNetInfo();
 		setListenerAndAdapter();
@@ -55,15 +60,21 @@ public class ParticipantsActivity extends Activity {
 	private void setListenerAndAdapter() {
 		adapter = new ParticipantsAdapter();
 		lv_participants.setAdapter(adapter);
-		Button btn_group_talk = (Button)findViewById(R.id.btn_group_talk);
+		Button btn_group_talk = (Button) findViewById(R.id.btn_group_talk);
 		btn_group_talk.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(ParticipantsActivity.this,ChatGroupActivity.class);
-				intent.putExtra("info", info);
-				startActivity(intent);
+				if(isNetInfoLoaded) {
+					Intent intent = new Intent(ParticipantsActivity.this,
+							ChatGroupActivity.class);
+					intent.putExtra("chatGroupInfo", chatGroupInfo);
+					startActivity(intent);
+				} else{
+					ToastUtil.showToast("信息尚未加载完毕，请稍等。。。", ParticipantsActivity.this);
+				}
+				
 			}
 		});
 	}
@@ -71,13 +82,16 @@ public class ParticipantsActivity extends Activity {
 	public void back(View v) {
 		finish();
 	}
+
 	private void getNetInfo() {
-		info = (Info) getIntent().getSerializableExtra("info");
+		
 		tv_info.setText(info.getContent());
-		tv_createTime.setText("创建时间："
-				+ DateFormat.format("yyyy-MM-dd-hh-mm-ss",info.getCreate_day()));
+		tv_createTime
+				.setText("创建时间："
+						+ DateFormat.format("yyyy-MM-dd-hh-mm-ss",
+								info.getCreate_day()));
 		tv_destTime.setText("开始时间："
-				+ DateFormat.format("yyyy-MM-dd-hh-mm-ss",info.getDeadline()));
+				+ DateFormat.format("yyyy-MM-dd-hh-mm-ss", info.getDeadline()));
 		new ParticipantsAsyncTast().execute();
 	}
 
@@ -90,7 +104,7 @@ public class ParticipantsActivity extends Activity {
 
 	private class ParticipantsAsyncTast extends
 			AsyncTask<Void, Void, ProtocalResponse> {
-
+		int i;
 		@Override
 		protected ProtocalResponse doInBackground(Void... params) {
 			try {
@@ -120,7 +134,8 @@ public class ParticipantsActivity extends Activity {
 				String json = result.getResponse();
 				users = new Gson().fromJson(json, new TypeToken<List<User>>() {
 				}.getType());
-				for (final User user : users) {
+				for (i=0; i< users.size(); i++) {
+					final User user = users.get(i);
 					new AsyncTask<Void, Void, Bitmap>() {
 
 						@Override
@@ -132,6 +147,10 @@ public class ParticipantsActivity extends Activity {
 						protected void onPostExecute(Bitmap result) {
 							bitmaps.add(result);
 							adapter.notifyDataSetChanged();
+							chatGroupInfo.addMember(user.getId(),user.getNickname(), result);
+							if(i+1>=users.size()) {
+								isNetInfoLoaded = true;
+							}
 						}
 					}.execute();
 				}
@@ -143,9 +162,10 @@ public class ParticipantsActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			if(users!=null)
-			return users.size();
-			else return 0;
+			if (users != null)
+				return users.size();
+			else
+				return 0;
 		}
 
 		@Override
@@ -162,12 +182,17 @@ public class ParticipantsActivity extends Activity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View view = View.inflate(ParticipantsActivity.this,
 					R.layout.participant_liset_item, null);
-			ImageView iv_head = (ImageView) view.findViewById(R.id.iv_participant_head);
-			TextView tv_nickname = (TextView) view.findViewById(R.id.tv_participant_nickname);
-			TextView tv_academy = (TextView) view.findViewById(R.id.tv_participant_academy);
-			if(bitmaps.size()>position)
-			iv_head.setImageBitmap(bitmaps.get(position));
-			tv_academy.setText((users.get(position).getAcademy()==null?"无学院":users.get(position).getAcademy()));
+			ImageView iv_head = (ImageView) view
+					.findViewById(R.id.iv_participant_head);
+			TextView tv_nickname = (TextView) view
+					.findViewById(R.id.tv_participant_nickname);
+			TextView tv_academy = (TextView) view
+					.findViewById(R.id.tv_participant_academy);
+			if (bitmaps.size() > position)
+				iv_head.setImageBitmap(bitmaps.get(position));
+			tv_academy
+					.setText((users.get(position).getAcademy() == null ? "无学院"
+							: users.get(position).getAcademy()));
 			tv_nickname.setText(users.get(position).getNickname());
 			return view;
 		}

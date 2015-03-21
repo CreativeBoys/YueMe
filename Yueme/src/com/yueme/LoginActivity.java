@@ -14,7 +14,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -125,6 +128,10 @@ public class LoginActivity extends SwipeBackActivity {
 
 								@Override
 								public void onSuccess() {
+									SharedPreferences sp = getSharedPreferences("yueme", MODE_PRIVATE);
+									Editor edit = sp.edit();
+									edit.putString("userID", GlobalValues.USER_ID);
+									edit.commit();
 									runOnUiThread(new Runnable() {
 										public void run() {
 											closeLoginProgressDialog();

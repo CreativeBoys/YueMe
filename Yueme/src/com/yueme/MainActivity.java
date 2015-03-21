@@ -10,7 +10,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -25,10 +24,7 @@ import android.widget.RadioButton;
 
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
-import com.easemob.chat.EMChatOptions;
 import com.easemob.chat.EMMessage;
-import com.easemob.chat.EMMessage.ChatType;
-import com.easemob.chat.OnNotificationClickListener;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.yueme.fragment.BottomFragment;
@@ -39,6 +35,7 @@ import com.yueme.fragment.UserFragment;
 import com.yueme.fragment.base.BaseFragment;
 import com.yueme.interfaces.OnBottomClickListener;
 import com.yueme.values.ConstantValues;
+import com.yueme.values.GlobalValues;
 
 public class MainActivity extends FragmentActivity {
 	private FrameLayout fl_title;
@@ -52,19 +49,29 @@ public class MainActivity extends FragmentActivity {
 	private DiscoveryFragment discoveryFragment;
 	private UserFragment userFragment;
 	private NewMessageBroadcastReceiver msgReceiver;
-
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if(GlobalValues.USER_ID==null) {
+			this.finish();
+			return;
+		}
+	}
 	@Override
 	protected void onCreate(Bundle arg0) {
 		// TODO Auto-generated method stub
 		super.onCreate(arg0);
 		setContentView(R.layout.activity_main);
+		if(GlobalValues.USER_ID==null) {
+			this.finish();
+			return;
+		}
 		fragments = new ArrayList<BaseFragment>();
 		fl_bottom = (FrameLayout) findViewById(R.id.fl_bottom);
 		fl_title = (FrameLayout) findViewById(R.id.fl_title);
 		vp_middle = (ViewPager) findViewById(R.id.vp_middle);
 		vp_middle.setOffscreenPageLimit(2);
 		adapter = new HomePagerAdapter(getSupportFragmentManager());
-
 		initFragments();
 		setListenerAndAdapter();
 	}
@@ -127,8 +134,7 @@ public class MainActivity extends FragmentActivity {
 		EMChat.getInstance().setAppInited();
 	}
 
-	private class HomePagerAdapter extends FragmentPagerAdapter {
-
+	private class HomePagerAdapter extends FragmentPagerAdapter{
 		public HomePagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
@@ -142,7 +148,6 @@ public class MainActivity extends FragmentActivity {
 		public int getCount() {
 			return fragments.size();
 		}
-
 	}
 
 	/**

@@ -14,6 +14,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -189,7 +191,7 @@ public class RegisterActivity extends SwipeBackActivity {
 		}else {
 			FLAG = true;
 		}
-		
+	
 	}
 	private class CreateYueMeAccountTask extends AsyncTask<Void,Void, ProtocalResponse>{
 		;
@@ -236,6 +238,8 @@ public class RegisterActivity extends SwipeBackActivity {
 			}
 			if(result.getResponseCode()==0) {
 				GlobalValues.USER_ID = result.getResponse();
+				SharedPreferences.Editor editor = getSharedPreferences("data", 0).edit();
+				editor.putString("NICK_NAME", nickname).commit();
 				Log.d("hello", "注册成功");
 				CreateChatAccountTask task = new CreateChatAccountTask();
 				
@@ -282,6 +286,10 @@ public class RegisterActivity extends SwipeBackActivity {
 							public void run() {
 								
 								closeRegisterProgressDialog();
+								SharedPreferences sp = getSharedPreferences("yueme", MODE_PRIVATE);
+								Editor edit = sp.edit();
+								edit.putString("userID", GlobalValues.USER_ID);
+								edit.commit();
 								startActivity(new Intent(RegisterActivity.this, MainActivity.class));
 								Log.d("hello", "登录成功！");
 								//Toast.makeText(RegisterActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
@@ -348,7 +356,7 @@ public class RegisterActivity extends SwipeBackActivity {
 									getVerificationCode(phoneNumber,key);
 								} else {
 									mUiHandler.sendEmptyMessage(3);
-								}
+								} 
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -489,22 +497,22 @@ public class RegisterActivity extends SwipeBackActivity {
 					break;
 				case 2:
 					Toast.makeText(RegisterActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
-					break;
+					return;
 				case 3:
 					Toast.makeText(RegisterActivity.this, "验证码过期", Toast.LENGTH_SHORT).show();
-					break;
+					return ;
 				case 4:
 					Toast.makeText(RegisterActivity.this, "30秒内重复请求", Toast.LENGTH_SHORT).show();
-					break;
+					return;
 				case 5:
 					Toast.makeText(RegisterActivity.this, "签名错误", Toast.LENGTH_SHORT).show();
 					break;
 				case 6:
 					Toast.makeText(RegisterActivity.this, "手机号码无效", Toast.LENGTH_SHORT).show();
-					break;
+					return ;
 				case 7:
 					Toast.makeText(RegisterActivity.this, "已经注册过", Toast.LENGTH_SHORT).show();
-					break;
+					return;
 				case 8:
 					Toast.makeText(RegisterActivity.this, "未创建智能短信模板", Toast.LENGTH_SHORT).show();
 					break;
