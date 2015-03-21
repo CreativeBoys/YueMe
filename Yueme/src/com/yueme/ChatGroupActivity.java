@@ -42,6 +42,7 @@ import com.easemob.chat.TextMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yueme.domain.ChatGroupInfo;
 import com.yueme.domain.Info;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.domain.User;
@@ -51,9 +52,7 @@ import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
 
 public class ChatGroupActivity extends Activity {
-	private Info info;
-	private List<User> users;
-	private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
+	
 	private List<ChatItem> chatItems = new ArrayList<ChatItem>();
 	private ListView chatListView;
 	private ChatAdapter chatAdapter;
@@ -65,20 +64,19 @@ public class ChatGroupActivity extends Activity {
 	// 获取到与聊天人的会话对象。参数username为聊天人的userid或者groupid，后文中的username皆是如此
 	EMConversation conversation;
 	private InputMethodManager manager;
-
+	private ChatGroupInfo chatGroupInfo;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat_group);
-		info = (Info) getIntent().getSerializableExtra("info");
-		groupId = info.getGroup_id();
+		chatGroupInfo = (ChatGroupInfo) getIntent().getSerializableExtra("chatGroupInfo");
+		groupId = chatGroupInfo.getGroup_id();
 
 		if (groupId == null) {
 			ToastUtil.showToast("没有加入群组", ChatGroupActivity.this);
 		}
 		initView();
-		getNetInfo();
 		setEvents();
 	}
 
@@ -94,11 +92,11 @@ public class ChatGroupActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				TextView tv = (TextView)view;
+				TextView tv = (TextView) view;
 				et_msg.append(tv.getText());
 				int len = et_msg.getText().length();
 				et_msg.setSelection(len);
-				
+
 			}
 		});
 		manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -106,9 +104,7 @@ public class ChatGroupActivity extends Activity {
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
-	private void getNetInfo() {
-		new ParticipantsAsyncTast().execute();
-	}
+	
 
 	private void setEvents() {
 
@@ -140,9 +136,10 @@ public class ChatGroupActivity extends Activity {
 	}
 
 	class EmotionsAdapter extends BaseAdapter {
-		int emotions[] = { 0x1F604, 0x1F60a, 0x1F603, 0x1F632, 0x1F609, 0x1F60D,
-				0x1F618, 0x1F61A, 0x1F633, 0x1F601, 0x1F60C, 0x1F61C, 0x1F61D,
-				0x1F612, 0x1F60F, 0x1F613, 0x1F614,0x1F61E,0x1F616,0x1F625,0x1F630 };
+		int emotions[] = { 0x1F604, 0x1F60a, 0x1F603, 0x1F632, 0x1F609,
+				0x1F60D, 0x1F618, 0x1F61A, 0x1F633, 0x1F601, 0x1F60C, 0x1F61C,
+				0x1F61D, 0x1F612, 0x1F60F, 0x1F613, 0x1F614, 0x1F61E, 0x1F616,
+				0x1F625, 0x1F630 };
 
 		@Override
 		public int getCount() {
@@ -284,19 +281,7 @@ public class ChatGroupActivity extends Activity {
 				convertView.setTag(viewHolder);
 			}
 			ChatItem chatItem = chatItems.get(position);
-			User user;
-			for (int i = 0; i < users.size(); i++) {
-				user = users.get(i);
-				if (user.getNickname().equals(chatItem.userName)) {
-					if (i < bitmaps.size()) {
-						viewHolder.iv_userIcon.setImageBitmap(bitmaps.get(i));
-
-					}
-				} else {
-					viewHolder.iv_userIcon
-							.setImageResource(R.drawable.ic_launcher);
-				}
-			}
+			viewHolder.iv_userIcon.setImageBitmap(chatGroupInfo.getHeadIcon(chatItem.userName));
 			// viewHolder.iv_userIcon.setImageBitmap(chatItem.bitmap);
 			viewHolder.tv_userName.setText(chatItem.userName);
 			viewHolder.tv_msg.setText(chatItem.msg);
@@ -318,15 +303,8 @@ public class ChatGroupActivity extends Activity {
 		msg.setReceipt(groupId);
 
 		ChatItem chatItem = new ChatItem();
-		User user;
-		for (int i = 0; i < users.size(); i++) {
-			user = users.get(i);
-			if (user.getId().equals(msg.getFrom())) {
-				// chatItem.bitmap = bitmaps.get(i);
-				chatItem.userName = user.getNickname();
-				break;
-			}
-		}
+		chatItem.userName = getSharedPreferences("data", 0).getString("NICK_NAME", "");
+		
 		chatItem.msg = msgContent;
 		chatItems.add(chatItem);
 		chatAdapter.notifyDataSetChanged();
@@ -383,15 +361,8 @@ public class ChatGroupActivity extends Activity {
 					case TXT:
 						Log.d("main", "chatgroup  get message");
 						ChatItem chatItem = new ChatItem();
-						User user;
-						for (int i = 0; i < users.size(); i++) {
-							user = users.get(i);
-							if (user.getId().equals(message.getFrom())) {
-								// chatItem.bitmap = bitmaps.get(i);
-								chatItem.userName = user.getNickname();
-								break;
-							}
-						}
+						chatItem.userName = chatGroupInfo.getNickName(message.getFrom());
+						
 						TextMessageBody txtBody = (TextMessageBody) message
 								.getBody();
 						chatItem.msg = txtBody.getMessage();
@@ -437,15 +408,8 @@ public class ChatGroupActivity extends Activity {
 			chatItem = new ChatItem();
 			switch (message.getType()) {
 			case TXT:
-				User user;
-				for (int i = 0; i < users.size(); i++) {
-					user = users.get(i);
-					if (user.getId().equals(message.getFrom())) {
-						// chatItem.bitmap = bitmaps.get(i);
-						chatItem.userName = user.getNickname();
-						break;
-					}
-				}
+				
+				chatItem.userName = chatGroupInfo.getNickName(message.getFrom());
 				TextMessageBody txtBody = (TextMessageBody) message.getBody();
 				chatItem.msg = txtBody.getMessage();
 				chatItems.add(chatItem);
@@ -471,63 +435,7 @@ public class ChatGroupActivity extends Activity {
 
 	}
 
-	private class ParticipantsAsyncTast extends
-			AsyncTask<Void, Void, ProtocalResponse> {
-		int i;
-
-		@Override
-		protected ProtocalResponse doInBackground(Void... params) {
-			try {
-				LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-				map.put(ConstantValues.REQUESTPARAM,
-						ConstantValues.GET_PARTICIPANTS + "");
-				map.put("infoID", info.getId());
-				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
-				HttpClient client = new DefaultHttpClient();
-				HttpResponse response = client.execute(get);
-				if (response.getStatusLine().getStatusCode() == 200) {
-					String json = StreamUtil.getString(response.getEntity()
-							.getContent());
-					return new Gson().fromJson(json, ProtocalResponse.class);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(ProtocalResponse result) {
-			if (result == null) {
-				ToastUtil.showToast("网络错误", ChatGroupActivity.this);
-			} else {
-				String json = result.getResponse();
-
-				users = new Gson().fromJson(json, new TypeToken<List<User>>() {
-				}.getType());
-				loadConversation();
-				for (i = 0; i < users.size(); i++) {
-					final User user = users.get(i);
-					new AsyncTask<Void, Void, Bitmap>() {
-
-						@Override
-						protected Bitmap doInBackground(Void... params) {
-							return NetUtil.getBitmapFromServer(user
-									.getHead_img_path());
-						}
-
-						protected void onPostExecute(Bitmap result) {
-
-							bitmaps.add(result);
-							if (result != null) {
-								chatAdapter.notifyDataSetChanged();
-							}
-						}
-					}.execute();
-				}
-			}
-		}
-	}
+	
 
 	@Override
 	protected void onDestroy() {
