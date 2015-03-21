@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -188,6 +189,9 @@ protected void onPostExecute(final ProtocalResponse result) {
 				if(result!=null)
 					iv_head.setImageDrawable(drawable);
 				tv_name.setText(user.getNickname());
+				SharedPreferences.Editor editor = getActivity().getSharedPreferences("data", 0).edit();
+				editor.putString("NICK_NAME", user.getNickname()).commit();
+				
 			};
 		}.execute();
 

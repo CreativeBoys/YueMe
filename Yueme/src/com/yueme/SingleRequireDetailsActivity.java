@@ -43,6 +43,11 @@ import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.easemob.chat.EMGroupManager;
+import com.easemob.chat.EMMessage;
+import com.easemob.chat.TextMessageBody;
+import com.easemob.exceptions.EaseMobException;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yueme.domain.Comment;
 import com.yueme.domain.Info;
@@ -93,6 +98,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 	private static int commentPos = 0;
 	private static int subCommentPos = 0;
 
+	private String groupId;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_single_require_activity);
@@ -114,6 +120,8 @@ public class SingleRequireDetailsActivity extends Activity implements
 				showReplyBox();
 			}
 		});
+		info = (Info) getIntent().getSerializableExtra("info");
+		groupId = info.getGroup_id();
 		initView();
 		getComments();
 	}
@@ -137,6 +145,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 		TextView demandContent = (TextView) findViewById(R.id.demandContent);
 		tv_counter = (TextView) findViewById(R.id.tv_counter);
 		info = (Info) getIntent().getSerializableExtra("info");
+		
 		String createTime = "";
 		long create_day = info.getCreate_day();
 		if (DateUtils.isToday(create_day)) {
@@ -190,6 +199,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 					@Override
 					protected void onPostExecute(ProtocalResponse result) {
 						if (result != null) {
+							new JoinGroupAsyncTask().execute();
 							ToastUtil.showToast(result.getResponse(),
 									SingleRequireDetailsActivity.this);
 						} else {
@@ -202,6 +212,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 						intent.putExtra("info", info);
 						startActivity(intent);
 						finish();
+						
 					}
 				}.execute();
 				new ParticipantsAsyncTast().execute();
@@ -259,6 +270,36 @@ public class SingleRequireDetailsActivity extends Activity implements
 		}
 	}
 
+	private class JoinGroupAsyncTask extends AsyncTask<Void, Void, String> {
+
+		@Override
+		protected String doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			try {
+				EMGroupManager.getInstance().joinGroup(groupId);
+				return "OK";
+			} catch (EaseMobException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			if (result != null) {
+				new ParticipantsAsyncTast().execute();
+				Intent intent = new Intent(SingleRequireDetailsActivity.this,
+						ParticipantsActivity.class);
+				intent.putExtra("info", info);
+				startActivity(intent);
+
+			}
+			super.onPostExecute(result);
+		}
+
+	}
 	private void showReplyBox() {
 		ll_reply.setVisibility(View.VISIBLE);
 		et_reply = (EditText) ll_reply.findViewById(R.id.et_reply);
