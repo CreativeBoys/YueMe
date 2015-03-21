@@ -25,6 +25,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,16 +47,20 @@ public class RegisterActivity extends SwipeBackActivity {
 	private ImageView backBtn;
 	private EditText phoneNumEt, verifiEt, passwordEText, et_nickname;
 	private Button btn_register,verifyBtn;
-	private TextView hadAcccountTv, forgetPasswordTv;
+	private TextView hadAcccountTv, forgetPasswordTv,tv_title;
 	private boolean vfc = true;
-	private boolean vfc_result = false;
 	private Timer mTimer = null;
 	private ProgressDialog progressDialog;
 	private static boolean FLAG=false; //用来判断能否注册的条件
+	private static boolean PhoneAndCode = false; //校验手机号和验证码是否正确
 	private String phone_number;
 	private String password;
 	private String nickname;
 	private String verifyCode; //短信验证码
+	private RelativeLayout one;  //三步操作
+	private RelativeLayout two;
+	private RelativeLayout three;
+	private int numpage = 1;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -75,12 +80,17 @@ public class RegisterActivity extends SwipeBackActivity {
 		forgetPasswordTv = (TextView) findViewById(R.id.forgetPasswordTv);
 		et_nickname = (EditText) findViewById(R.id.et_nickname);
 		btn_register = (Button) findViewById(R.id.btn_register);
+		one = (RelativeLayout) findViewById(R.id.rl_one);
+		two =  (RelativeLayout) findViewById(R.id.rl_two);
+		three = (RelativeLayout) findViewById(R.id.rl_three);
+		tv_title = (TextView) findViewById(R.id.tv_title);
 		setListenerAndAdapter();
 
 	}
 
 	private void setListenerAndAdapter() {
 		
+		//退出
 		backBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -89,7 +99,7 @@ public class RegisterActivity extends SwipeBackActivity {
 				overridePendingTransition(0, R.anim.base_slide_right_out);
 			}
 		});
-
+		//已有账号 登录
 		hadAcccountTv.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -112,6 +122,7 @@ public class RegisterActivity extends SwipeBackActivity {
 				System.out.println("发送验证码");
 			}
 		});
+		//忘记密码
 		forgetPasswordTv.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -124,20 +135,38 @@ public class RegisterActivity extends SwipeBackActivity {
 			}
 		});
 		
-		
-		
 		btn_register.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				justForm();
-				StartVerificationCode();
-				if(FLAG==false) {
-					ToastUtil.showToast("请将信息填写完整", RegisterActivity.this);
-					return ;
+				System.out.println("numpage="+numpage);
+				switch (numpage) {
+				case 1:     //请求验证码
+					String phone = phoneNumEt.getText().toString();
+					System.out.println("phone="+phone);
+					if(phone==null||phone.length()<=0) {
+						ToastUtil.showToast("亲,填写手机号",RegisterActivity.this);
+						return ;
+					}
+					RequestVerificationCode();
+					break;
+				case 2:    //验证码验证
+					StartVerificationCode();
+					break;
+				case 3:   //提交注册
+					justForm();
+					if(FLAG==false) {
+						ToastUtil.showToast("请将信息填写完整", RegisterActivity.this);
+						return ;
+					}else {
+						showRegisterProgressDialog();
+						new CreateYueMeAccountTask().execute();
+					}
+					
+					break;
+				default:
+					break;
 				}
-				showRegisterProgressDialog();
-				new CreateYueMeAccountTask().execute();
 				
 				
 			}
@@ -155,9 +184,12 @@ public class RegisterActivity extends SwipeBackActivity {
 		password = passwordEText.getText().toString();
 		nickname = et_nickname.getText().toString();
 		verifyCode = verifiEt.getText().toString().trim();
-		if(phone_number==null||password==null||nickname==null||verifyCode==null) {
+		if(phone_number.length()<=0||password.length()<=0||nickname==null||verifyCode==null) {
 			FLAG = false;
+		}else {
+			FLAG = true;
 		}
+		
 	}
 	private class CreateYueMeAccountTask extends AsyncTask<Void,Void, ProtocalResponse>{
 		;
@@ -210,6 +242,7 @@ public class RegisterActivity extends SwipeBackActivity {
 				task.execute(GlobalValues.USER_ID, password);
 				
 			} else {
+				closeRegisterProgressDialog();
 				ToastUtil.showToast(result.getResponse(), RegisterActivity.this);
 			}
 		}
@@ -289,7 +322,7 @@ public class RegisterActivity extends SwipeBackActivity {
 		final String phoneNumber = phoneNumEt.getText().toString().trim();
 		if(vfc) {
 			vfc = false; //防止对此点击发送按钮
-			verifyBtn.setText("60秒后重发");
+			//verifyBtn.setText("60秒后重发");
 			if(phoneNumber!=null && phoneNumber.length()>0) {
 				new Thread(new Runnable() {
 					
@@ -305,17 +338,16 @@ public class RegisterActivity extends SwipeBackActivity {
 							HttpClient client = new DefaultHttpClient();
 							HttpResponse response = client.execute(get);
 							if(response.getStatusLine().getStatusCode()==200) {
+								System.out.println("未注册");
 								ProtocalResponse resp = new Gson().fromJson(StreamUtil.getString(response.getEntity().getContent()), ProtocalResponse.class);
 								if(resp.getResponseCode()==0) {
 									//未注册
 									String key = resp.getResponse();
 									System.out.println("返回签名"+key);
+									//得到验证码
 									getVerificationCode(phoneNumber,key);
 								} else {
-									//已注册
-									
-									ToastUtil.showToast("该手机号已注册", RegisterActivity.this);
-									return;
+									mUiHandler.sendEmptyMessage(3);
 								}
 							}
 						} catch (Exception e) {
@@ -338,16 +370,13 @@ public class RegisterActivity extends SwipeBackActivity {
 			public void onVerificationCode(int arg0, UcsReason arg1) {
 				vfc = true;
 				if(arg1.getReason()== 300250) {
-					Message message = Message.obtain();
 					switch (arg0) {
 					case 0:
-						vfc_result=true;
-						mUiHandler.sendEmptyMessage(1);
-						message.obj = "短信";
-						message.what = 1;
-						mUiHandler.sendMessage(message);
+						mUiHandler.sendEmptyMessage(2);
 						break;
-				
+					case 1:
+						mUiHandler.sendEmptyMessage(1);
+						break;
 					default:
 						break;
 					}
@@ -396,8 +425,6 @@ public class RegisterActivity extends SwipeBackActivity {
 	 * 开始对验证码进行验证
 	 */
 	private void StartVerificationCode() {
-		if(vfc_result) {
-			vfc_result = false;
 			String phone = phoneNumEt.getText().toString().trim();
 			String verify_code = verifiEt.getText().toString().trim();
 			VerificationCode.doVerificationCode(RegisterActivity.this, phone, verify_code, "39f696d3d0bf962335af97293a5200d0", "35f6f0033d354885a76bc495ae874d42", new VerificationCodeListener() {
@@ -407,8 +434,9 @@ public class RegisterActivity extends SwipeBackActivity {
 					switch (arg1.getReason()) {
 					case 300250:
 						//验证成功
+						mUiHandler.sendEmptyMessage(2);
 						mRequestHandler.sendEmptyMessage(0);
-						mUiHandler.sendEmptyMessage(1);
+						PhoneAndCode = true;
 						break;
 					case 300251:
 						mRequestHandler.sendEmptyMessage(1);
@@ -444,14 +472,10 @@ public class RegisterActivity extends SwipeBackActivity {
 						mRequestHandler.sendEmptyMessage(99);
 						break;
 					}
-					vfc_result=true;
 				}
 			});
-		}
 	}
-	/**
-	 * http 请求反馈
-	 */
+	
 	private Handler mRequestHandler = new Handler(){
 		@Override
 		public void dispatchMessage(Message msg) {
@@ -465,22 +489,22 @@ public class RegisterActivity extends SwipeBackActivity {
 					break;
 				case 2:
 					Toast.makeText(RegisterActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
-					return;
+					break;
 				case 3:
 					Toast.makeText(RegisterActivity.this, "验证码过期", Toast.LENGTH_SHORT).show();
-					return ;
+					break;
 				case 4:
 					Toast.makeText(RegisterActivity.this, "30秒内重复请求", Toast.LENGTH_SHORT).show();
-					return;
+					break;
 				case 5:
 					Toast.makeText(RegisterActivity.this, "签名错误", Toast.LENGTH_SHORT).show();
 					break;
 				case 6:
 					Toast.makeText(RegisterActivity.this, "手机号码无效", Toast.LENGTH_SHORT).show();
-					return ;
+					break;
 				case 7:
 					Toast.makeText(RegisterActivity.this, "已经注册过", Toast.LENGTH_SHORT).show();
-					return;
+					break;
 				case 8:
 					Toast.makeText(RegisterActivity.this, "未创建智能短信模板", Toast.LENGTH_SHORT).show();
 					break;
@@ -510,8 +534,14 @@ public class RegisterActivity extends SwipeBackActivity {
 					verifyBtn.setText("重新获取验证码");
 				}
 				break;
-			case 1: //验证成功
-				FLAG = true;
+			case 1: 
+				setSecondCodeLayout();
+				break;
+			case 2:
+				setThirdLayout();
+				break;
+			case 3:
+				ToastUtil.showToast("该手机号已注册",RegisterActivity.this);
 				break;
 			default:
 				break;
@@ -520,6 +550,26 @@ public class RegisterActivity extends SwipeBackActivity {
 		
 	};
 	
+	/**
+	 * 第二步输入验证码UI
+	 */
+	private void setSecondCodeLayout(){
+		numpage++;
+		two.setVisibility(View.VISIBLE);
+		one.setVisibility(View.VISIBLE);
+		startCallTimer();
+	}
+	/**
+	 * 第三步 填写信息ui
+	 */
+	private void setThirdLayout() {
+		numpage++;
+		one.setVisibility(View.GONE);
+		two.setVisibility(View.GONE);
+		three.setVisibility(View.VISIBLE);
+		tv_title.setText("注册(2/2)");
+		btn_register.setText("完成");
+	}
 	/**
 	 * 验证码定时器
 	 */
@@ -539,8 +589,6 @@ public class RegisterActivity extends SwipeBackActivity {
 					sencond = 60;
 					stopCallTimer();
 					vfc = true;
-					mUiHandler.sendEmptyMessage(0);
-					verifyBtn.setClickable(true);
 				}
 				Message message = Message.obtain();
 				message.what = 0;
