@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    android:orientation="vertical">
+    android:background="#ffffff">
 <!-- 注册页面 -->
     <RelativeLayout
         android:id="@+id/topLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:background="@drawable/titlebar_bg" >
 
         <TextView
-            android:id="@+id/tv_title"
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="注册(1/2)"
+            android:text="@string/register"
             android:textColor="#FFFFFF"
             android:textSize="25sp" />
 
@@ -32,24 +33,38 @@
     </RelativeLayout>
 
     
-  <RelativeLayout 
-      android:id="@+id/rl_one"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="5dp"
-      android:visibility="visible">
-      <EditText
+     <EditText
+        android:id="@+id/et_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textSize="18sp"
+        android:layout_marginRight="22dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="@null"
+        android:hint="填写昵称"
+        android:layout_below="@id/topLayout"
+        android:layout_centerHorizontal="true" />
+     <TextView 
+         android:layout_width="match_parent"
+         android:layout_height="1dp"
+        android:background="#CBC4C4"
+         android:layout_marginLeft="20dp"
+         android:layout_marginRight="20dp"
+         android:layout_below="@id/et_nickname"/>
+    <EditText
         android:id="@+id/phoneNumEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="22dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
+        android:layout_below="@id/et_nickname"
         android:layout_centerHorizontal="true"
         android:textSize="18sp"
         android:background="@null"
         android:ems="10"
-        android:numeric="integer"
         android:hint="输入手机号" />
 	<TextView 
          android:layout_width="match_parent"
@@ -58,134 +73,90 @@
          android:layout_marginLeft="20dp"
          android:layout_marginRight="20dp"
          android:layout_below="@id/phoneNumEt"/>
-      
-  </RelativeLayout>
+   
+
+    <EditText
+        android:id="@+id/verifiEt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="22dp"
+        android:textSize="18sp"
+        android:layout_centerHorizontal="true"
+        android:hint="填写短信验证码"
+        android:layout_marginTop="20dp"
+         android:layout_marginLeft="20dp"
+        android:background="@null"
+        android:layout_below="@id/phoneNumEt"/>
+    <TextView 
+         android:layout_width="match_parent"
+         android:layout_height="1dp"
+        android:background="#CBC4C4"
+         android:layout_marginLeft="20dp"
+         android:layout_marginRight="100dp"
+         android:layout_below="@id/verifiEt"/>
+
+    <Button
+        android:id="@+id/verifiBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/verifiEt"
+        android:text="@string/click_send"
+        android:textSize="16sp"
+        android:layout_alignBaseline="@id/verifiEt"
+        android:textColor="#00CCFF" />
+
+    <EditText
+        android:id="@+id/passwordEt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="22dp"
+        android:ems="10"
+        android:textSize="18sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_centerHorizontal="true"
+        android:hint="填写密码"
+        android:inputType="textPassword"
+        android:background="@null"
+        android:layout_below="@id/verifiEt"/>
+	 <TextView 
+         android:layout_width="match_parent"
+         android:layout_height="1dp"
+        android:background="#CBC4C4"
+         android:layout_marginLeft="20dp"
+         android:layout_marginRight="20dp"
+         android:layout_below="@id/passwordEt"/>
+	  <Button
+        android:id="@+id/btn_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/passwordEt"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/login_bg"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="@string/register"
+        android:textColor="#FFFFFF"
+        android:textSize="25sp" />
     
-   
-	<RelativeLayout 
-	    android:id="@+id/rl_two"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:visibility="gone">
-	     <EditText
-	        android:id="@+id/verifiEt"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginRight="22dp"
-	        android:textSize="18sp"
-	        android:layout_centerHorizontal="true"
-	        android:hint="填写短信验证码"
-	        android:layout_marginTop="20dp"
-	        android:layout_marginLeft="20dp"
-	        android:numeric="integer"
-	        android:background="@null"/>
-	    <TextView 
-	         android:layout_width="match_parent"
-	         android:layout_height="1dp"
-	         android:background="#CBC4C4"
-	         android:layout_marginLeft="20dp"
-	         android:layout_marginRight="100dp"
-	         android:layout_below="@id/verifiEt"/>
-	    <Button 
-	        android:id="@+id/verifiBtn"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="60秒后重发"
-	        android:layout_alignParentRight="true"
-	        android:layout_marginRight="20dp"
-		    android:textColor="#7f7f7f"
-		    android:textSize="13sp"/>
-	</RelativeLayout>
-	
-	<RelativeLayout 
-	    android:id="@+id/rl_three"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:visibility="gone">
-	    
-	    <EditText
-	        android:id="@+id/et_nickname"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:ems="10"
-	        android:textSize="18sp"
-	        android:layout_marginRight="22dp"
-	        android:layout_marginTop="20dp"
-	        android:layout_marginLeft="20dp"
-	        android:background="@null"
-	        android:hint="填写昵称"
-	        android:layout_centerHorizontal="true" />
-	     <TextView
-	         android:id="@+id/tv_nickname"
-	         android:layout_width="match_parent"
-	         android:layout_height="1dp"
-	         android:background="#CBC4C4"
-	         android:layout_marginLeft="20dp"
-	         android:layout_marginRight="20dp"
-	         android:layout_below="@id/et_nickname"/>
-	
-   
-   
-	    <EditText
-	        android:id="@+id/passwordEt"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginRight="22dp"
-	        android:ems="10"
-	        android:textSize="18sp"
-	        android:layout_marginTop="20dp"
-	        android:layout_marginLeft="20dp"
-	        android:layout_centerHorizontal="true"
-	        android:hint="填写密码"
-	        android:inputType="textPassword"
-	        android:layout_below="@id/tv_nickname"
-	        android:background="@null"/>
-		 <TextView 
-	         android:layout_width="match_parent"
-	         android:layout_height="1dp"
-	         android:background="#CBC4C4"
-	         android:layout_marginLeft="20dp"
-	         android:layout_marginRight="20dp"
-	         android:layout_below="@id/passwordEt"/>
-	    
-	    
-	</RelativeLayout>
-	 
-	<RelativeLayout 
-	    android:id="@+id/rl_four"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content">
-	     <Button
-	        android:id="@+id/btn_register"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginTop="36dp"
-	        android:background="@drawable/login_bg"
-	        android:layout_marginLeft="20dp"
-	        android:layout_marginRight="20dp"
-	        android:text="下一步"
-	        android:textColor="#FFFFFF"
-	        android:textSize="25sp" />
-    
-	    <TextView
-	        android:id="@+id/forgetPasswordTv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/btn_register"
-	        android:layout_marginTop="21dp"
-	        android:layout_marginLeft="20dp"
-	        android:text="@string/forget_password" />
+    <TextView
+        android:id="@+id/forgetPasswordTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_register"
+        android:layout_marginTop="21dp"
+        android:layout_marginLeft="20dp"
+        android:text="@string/forget_password" />
 
     
-	    <TextView
-	        android:id="@+id/hadAccountTv"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/btn_register"
-	        android:text="@string/had_account"
-	        android:layout_marginTop="21dp"
-	        android:layout_marginRight="20dp"
-	        android:layout_alignParentRight="true" />
-	</RelativeLayout>
-	 
-</LinearLayout>
+    <TextView
+        android:id="@+id/hadAccountTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_register"
+        android:text="@string/had_account"
+        android:layout_marginTop="21dp"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentRight="true" />
+  
+</RelativeLayout>

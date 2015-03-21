@@ -1,6 +1,5 @@
 package com.yueme;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -8,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -39,10 +37,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.easemob.chat.EMChatManager;
-import com.easemob.chat.EMMessage;
-import com.easemob.chat.TextMessageBody;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.easemob.chat.EMGroupManager;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
@@ -97,7 +91,6 @@ public class SingleRequireDetailsActivity extends Activity implements
 	private List<User> users;
 	private static int commentPos = 0;
 	private static int subCommentPos = 0;
-
 	private String groupId;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -144,7 +137,6 @@ public class SingleRequireDetailsActivity extends Activity implements
 		TextView userName = (TextView) findViewById(R.id.userName);
 		TextView demandContent = (TextView) findViewById(R.id.demandContent);
 		tv_counter = (TextView) findViewById(R.id.tv_counter);
-		info = (Info) getIntent().getSerializableExtra("info");
 		
 		String createTime = "";
 		long create_day = info.getCreate_day();
@@ -206,12 +198,6 @@ public class SingleRequireDetailsActivity extends Activity implements
 							ToastUtil.showToast("网络错误",
 									SingleRequireDetailsActivity.this);
 						}
-						Intent intent = new Intent(
-								SingleRequireDetailsActivity.this,
-								ParticipantsActivity.class);
-						intent.putExtra("info", info);
-						startActivity(intent);
-						finish();
 						
 					}
 				}.execute();

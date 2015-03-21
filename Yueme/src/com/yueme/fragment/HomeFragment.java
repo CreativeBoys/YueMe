@@ -42,7 +42,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -56,13 +55,10 @@ import com.yueme.fragment.base.BaseFragment;
 import com.yueme.util.NetUtil;
 import com.yueme.util.RestTimeUtil;
 import com.yueme.util.StreamUtil;
-import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
 
 public class HomeFragment extends BaseFragment {
-	private int pos = 0;
-	private TextView tv_tip;
-	public static List<Info> infos = new ArrayList<Info>();
+	public static List<Info> infos;
 	private HomeListAdapter adapter;
 	View fragmentView;
 	PopupWindow popupWindow;
@@ -70,11 +66,6 @@ public class HomeFragment extends BaseFragment {
 	private static List<Bitmap> bitmaps = new ArrayList<Bitmap>();
 	ListView listView;
 	SwipeRefreshLayout swipeRefresh;
-	private boolean isSwipeToRefresh = false;
-	private boolean isPullUpToLoadMore = false;
-	private boolean shouldGetInfo = true;
-	private int listBottomVisibility = View.VISIBLE;
-	private String listBottomShowString = "加载中。。。";
 	Handler refreshHandler = new Handler() {
 
 		@Override
@@ -94,7 +85,6 @@ public class HomeFragment extends BaseFragment {
 
 	@Override
 	protected void init() {
-		tv_tip = (TextView) findViewById(R.id.tv_tip);
 		listView = (ListView) findViewById(R.id.homeListView);
 		infos = new ArrayList<Info>();
 		getInfo();
@@ -112,7 +102,6 @@ public class HomeFragment extends BaseFragment {
 		fragmentView = inflater.inflate(R.layout.fragment_home, null);
 		homeAddBtn = (Button) fragmentView.findViewById(R.id.home_addBtn);
 		listView = (ListView) fragmentView.findViewById(R.id.homeListView);
-
 		swipeRefresh = (SwipeRefreshLayout) fragmentView
 				.findViewById(R.id.home_refresh);
 
@@ -143,10 +132,6 @@ public class HomeFragment extends BaseFragment {
 
 			@Override
 			public void onRefresh() {
-				tv_tip.setVisibility(View.INVISIBLE);
-				isSwipeToRefresh = true;
-				pos = 0;
-				isPullUpToLoadMore = false;
 				getInfo();
 			}
 		});
@@ -164,7 +149,7 @@ public class HomeFragment extends BaseFragment {
 
 		@Override
 		public int getCount() {
-			return infos.size() + 1;
+			return infos.size();
 		}
 
 		@Override
@@ -181,19 +166,7 @@ public class HomeFragment extends BaseFragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View view;
 			ViewHolder holder;
-			if (position == infos.size()) {
-				view = View.inflate(getActivity(),
-						R.layout.home_list_load_more, null);
-				view.setVisibility(listBottomVisibility);
-				((TextView)view).setText(listBottomShowString);
-				isPullUpToLoadMore = true;
-				isSwipeToRefresh = false;
-				if(shouldGetInfo)
-				new HomeAsyncTask().execute();
-				shouldGetInfo = true;
-				return view;
-			}
-			if (convertView != null && convertView instanceof RelativeLayout) {
+			if (convertView != null) {
 				view = convertView;
 				holder = (ViewHolder) view.getTag();
 			} else {
@@ -222,16 +195,14 @@ public class HomeFragment extends BaseFragment {
 			}
 			holder.tv_create_time.setText(createTime);
 			long deadline = infos.get(position).getDeadline();
-			holder.tv_rest_time
-					.setText("还有"
-							+ RestTimeUtil.getRestTime((deadline - new Date()
-									.getTime())));
+			holder.tv_rest_time.setText("还有"
+					+ RestTimeUtil.getRestTime((deadline - new Date().getTime())));
 			holder.tv_nickname.setText(infos.get(position).getNickname());
-			if (bitmaps.size() > position) {
+			if (bitmaps.size() > position){
 				Bitmap bitmap = bitmaps.get(position);
-				if (bitmap != null) {
+				if(bitmap!=null) {
 					holder.iv_head.setImageBitmap(bitmaps.get(position));
-				} else {
+				} else{
 					holder.iv_head.setImageResource(R.drawable.user_head);
 				}
 			}
@@ -255,8 +226,6 @@ public class HomeFragment extends BaseFragment {
 		@Override
 		protected void onPreExecute() {
 			swipeRefresh.setRefreshing(true);
-//			if(listView!=null&&listView.getCount()>0)
-//			listView.getChildAt(listView.getCount()-1).setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -266,7 +235,6 @@ public class HomeFragment extends BaseFragment {
 				LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 				map.put(ConstantValues.REQUESTPARAM,
 						ConstantValues.GET_HOME_PAGE_INFO + "");
-				map.put("pos", pos + "");
 				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
 				HttpResponse response = client.execute(get);
 				if (response.getStatusLine().getStatusCode() == 200) {
@@ -284,12 +252,8 @@ public class HomeFragment extends BaseFragment {
 
 		@Override
 		protected void onPostExecute(List<Info> result) {
-			if (isSwipeToRefresh) {
-				bitmaps.clear();
-				infos = result;
-			} else {
-				infos.addAll(result);
-			}
+			bitmaps.clear();
+			infos = result;
 			for (final Info info : result) {
 				new AsyncTask<Void, Void, Bitmap>() {
 
@@ -317,29 +281,11 @@ public class HomeFragment extends BaseFragment {
 
 					protected void onPostExecute(Bitmap result) {
 						bitmaps.add(result);
-						if (result != null) {
-							adapter.notifyDataSetChanged();
-						}
-//						listView.getChildAt(listView.getCount()-1).setVisibility(View.INVISIBLE);
-						
+						adapter.notifyDataSetChanged();
 					};
 				}.execute();
 			}
-			if(isPullUpToLoadMore)adapter.notifyDataSetChanged();
-			else listView.setAdapter(adapter);
-			pos = infos.size();
-			if (pos == 0) {
-				// 一条信息都没有
-				tv_tip.setText("暂无搜索结果");
-				tv_tip.setVisibility(View.VISIBLE);
-				shouldGetInfo = false;
-				listBottomVisibility = View.GONE;
-			} else if (pos % 10 != 0) {
-				// 没有更多的信息
-				shouldGetInfo = false;
-				listBottomShowString = "没有更多的结果";
-				listBottomVisibility = View.VISIBLE;
-			}
+			listView.setAdapter(adapter);
 			swipeRefresh.setRefreshing(false);
 		}
 
@@ -365,6 +311,7 @@ public class HomeFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					Intent intent = new Intent(getActivity(),
 							PubRequireActivity.class);
 					Bundle bundle = new Bundle();
@@ -380,6 +327,7 @@ public class HomeFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					Intent intent = new Intent(getActivity(),
 							PubRequireActivity.class);
 					intent.putExtra("CLASSIFY", "约回家");
@@ -393,6 +341,7 @@ public class HomeFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					Intent intent = new Intent(getActivity(),
 							PubRequireActivity.class);
 					intent.putExtra("CLASSIFY", "约其他");
