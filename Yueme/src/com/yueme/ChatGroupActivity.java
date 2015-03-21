@@ -55,6 +55,7 @@ public class ChatGroupActivity extends Activity {
 	
 	private List<ChatItem> chatItems = new ArrayList<ChatItem>();
 	private ListView chatListView;
+	private int msgCount;
 	private ChatAdapter chatAdapter;
 	private NewMessageBroadcastReceiver msgReceiver;
 	private EditText et_msg;
@@ -111,6 +112,7 @@ public class ChatGroupActivity extends Activity {
 	private void setEvents() {
 
 		chatListView.setAdapter(chatAdapter);
+		chatListView.setSelection(msgCount-1);
 		iv_emoticon.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -410,7 +412,7 @@ public class ChatGroupActivity extends Activity {
 		List<EMMessage> messages = conversation.getAllMessages();
 		Log.d("mychat",
 				"Chat group activity:  messages.size()" + messages.size());
-
+		msgCount = messages.size();
 		ChatItem chatItem;
 		for (EMMessage message : messages) {
 			chatItem = new ChatItem();
