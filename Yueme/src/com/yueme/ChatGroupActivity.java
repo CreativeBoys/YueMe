@@ -76,8 +76,10 @@ public class ChatGroupActivity extends Activity {
 		if (groupId == null) {
 			ToastUtil.showToast("没有加入群组", ChatGroupActivity.this);
 		}
+		loadConversation();
 		initView();
 		setEvents();
+		
 	}
 
 	private void initView() {
@@ -419,7 +421,6 @@ public class ChatGroupActivity extends Activity {
 				TextMessageBody txtBody = (TextMessageBody) message.getBody();
 				chatItem.msg = txtBody.getMessage();
 				chatItems.add(chatItem);
-				chatAdapter.notifyDataSetChanged();
 				break;
 			case CMD:
 				break;
