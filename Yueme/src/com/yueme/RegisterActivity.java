@@ -54,7 +54,6 @@ public class RegisterActivity extends SwipeBackActivity {
 	private Timer mTimer = null;
 	private ProgressDialog progressDialog;
 	private static boolean FLAG=false; //用来判断能否注册的条件
-	private static boolean PhoneAndCode = false; //校验手机号和验证码是否正确
 	private String phone_number;
 	private String password;
 	private String nickname;
@@ -377,6 +376,7 @@ public class RegisterActivity extends SwipeBackActivity {
 			@Override
 			public void onVerificationCode(int arg0, UcsReason arg1) {
 				vfc = true;
+				System.out.println(arg1);
 				if(arg1.getReason()== 300250) {
 					switch (arg0) {
 					case 0:
@@ -444,7 +444,6 @@ public class RegisterActivity extends SwipeBackActivity {
 						//验证成功
 						mUiHandler.sendEmptyMessage(2);
 						mRequestHandler.sendEmptyMessage(0);
-						PhoneAndCode = true;
 						break;
 					case 300251:
 						mRequestHandler.sendEmptyMessage(1);
