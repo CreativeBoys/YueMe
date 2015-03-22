@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -37,6 +38,7 @@ import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.yueme.domain.ChatGroupInfo;
+import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
 
 public class ChatGroupActivity extends Activity {
@@ -61,13 +63,13 @@ public class ChatGroupActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat_group);
-		/*chatGroupInfo = (ChatGroupInfo) getIntent().getSerializableExtra("chatGroupInfo");
+		chatGroupInfo = (ChatGroupInfo) getIntent().getSerializableExtra("chatGroupInfo");
 		groupId = chatGroupInfo.getGroup_id();
 
 		if (groupId == null) {
 			ToastUtil.showToast("没有加入群组", ChatGroupActivity.this);
 		}
-		loadConversation();*/
+		loadConversation();
 		initView();
 		setEvents();
 		
@@ -92,8 +94,8 @@ public class ChatGroupActivity extends Activity {
 
 	private void setEvents() {
 
-		/*chatListView.setAdapter(chatAdapter);
-		chatListView.setSelection(msgCount-1);*/
+		chatListView.setAdapter(chatAdapter);
+		chatListView.setSelection(msgCount-1);
 		iv_emoticon.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -141,10 +143,10 @@ public class ChatGroupActivity extends Activity {
 		});
 		
 		// 注册message receiver 接收消息
-		/*msgReceiver = new NewMessageBroadcastReceiver();
+		msgReceiver = new NewMessageBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(EMChatManager
 				.getInstance().getNewMessageBroadcastAction());
-		registerReceiver(msgReceiver, intentFilter);*/
+		registerReceiver(msgReceiver, intentFilter);
 
 	}
 
