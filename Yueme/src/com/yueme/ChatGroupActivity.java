@@ -1,5 +1,6 @@
 package com.yueme;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,8 +9,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -36,18 +42,19 @@ import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.EMMessage.ChatType;
+import com.easemob.chat.ImageMessageBody;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.yueme.domain.ChatGroupInfo;
 import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
 
-public class ChatGroupActivity extends Activity {
-	
+public class ChatGroupActivity extends Activity implements OnClickListener {
+
 	private List<ChatItem> chatItems = new ArrayList<ChatItem>();
 	private ListView chatListView;
 	private int msgCount;
-	private ChatAdapter chatAdapter;
+	private ChatListAdapter chatAdapter;
 	private NewMessageBroadcastReceiver msgReceiver;
 	private EditText et_msg;
 	private String groupId;
@@ -61,12 +68,17 @@ public class ChatGroupActivity extends Activity {
 	private ImageView ivState1, ivState2;
 	private ImageView iv_more;
 	private RelativeLayout moreLayout;
+	private ImageView iv_chat_image, iv_chat_camera, iv_chat_location;
+	private static final int REQUEST_CODE_LOCAL_IMAGE = 1;
+	private static final int REQUEST_CODE_CAMERA = 2;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat_group);
-		chatGroupInfo = (ChatGroupInfo) getIntent().getSerializableExtra("chatGroupInfo");
+		chatGroupInfo = (ChatGroupInfo) getIntent().getSerializableExtra(
+				"chatGroupInfo");
 		groupId = chatGroupInfo.getGroup_id();
 
 		if (groupId == null) {
@@ -75,60 +87,43 @@ public class ChatGroupActivity extends Activity {
 		loadConversation();
 		initView();
 		setEvents();
-		
+
 	}
 
 	private void initView() {
-		chatAdapter = new ChatAdapter();
+		chatAdapter = new ChatListAdapter();
 		chatListView = (ListView) findViewById(R.id.chatListView);
 		et_msg = (EditText) findViewById(R.id.et_sendmessage);
 		iv_emotion = (ImageView) findViewById(R.id.iv_emoticons_normal);
 		emotionsLayout = (LinearLayout) findViewById(R.id.emotionsLayout);
 		emotionsViewPager = (ViewPager) findViewById(R.id.emotionsViewPager);
 		ivState1 = (ImageView) findViewById(R.id.ivState1);
-		ivState2 = (ImageView)findViewById(R.id.ivState2);
-		
+		ivState2 = (ImageView) findViewById(R.id.ivState2);
+
 		iv_more = (ImageView) findViewById(R.id.iv_more);
 		moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
-		
-		
+		iv_chat_camera = (ImageView) findViewById(R.id.iv_chat_camera);
+		iv_chat_image = (ImageView) findViewById(R.id.iv_chat_image);
+		iv_chat_location = (ImageView) findViewById(R.id.iv_chat_location);
+
 		manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
-	
-
 	private void setEvents() {
 
 		chatListView.setAdapter(chatAdapter);
-		chatListView.setSelection(msgCount-1);
-		iv_emotion.setOnClickListener(new OnClickListener() {
+		chatListView.setSelection(msgCount - 1);
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if (emotionsLayout.getVisibility() == View.GONE) {
-					hideKeyboard();
-					moreLayout.setVisibility(View.GONE);
-					iv_emotion.setImageResource(R.drawable.chatting_biaoqing_btn_enable);
-					emotionsLayout.setVisibility(View.VISIBLE);
-					
-				} else {
-					iv_emotion.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
-					emotionsLayout.setVisibility(View.GONE);
-				}
-			}
-		});
-		
 		emotionsViewPager.setAdapter(new EmotionsViewPagerAdapter());
 		emotionsViewPager.setCurrentItem(0);
 		emotionsViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-			
+
 			@Override
 			public void onPageSelected(int arg0) {
 				// TODO Auto-generated method stub
-				switch(arg0){
+				switch (arg0) {
 				case 0:
 					ivState1.setImageResource(R.drawable.point_checked);
 					ivState2.setImageResource(R.drawable.point_uncheck);
@@ -139,36 +134,25 @@ public class ChatGroupActivity extends Activity {
 					break;
 				}
 			}
-			
+
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-		
-		iv_more.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if(moreLayout.getVisibility()==View.GONE) {
-					moreLayout.setVisibility(View.VISIBLE);
-					hideKeyboard();
-					
-					iv_emotion.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
-					emotionsLayout.setVisibility(View.GONE);
-				} else{
-					moreLayout.setVisibility(View.GONE);
-				}
-			}
-		});
+
+		iv_emotion.setOnClickListener(this);
+		iv_more.setOnClickListener(this);
+		iv_chat_camera.setOnClickListener(this);
+		iv_chat_image.setOnClickListener(this);
+		iv_chat_location.setOnClickListener(this);
 		// 注册message receiver 接收消息
 		msgReceiver = new NewMessageBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(EMChatManager
@@ -177,24 +161,27 @@ public class ChatGroupActivity extends Activity {
 
 	}
 
-	private class EmotionsViewPagerAdapter extends PagerAdapter{
+	private class EmotionsViewPagerAdapter extends PagerAdapter {
 		private List<View> pagerViews;
+
 		public EmotionsViewPagerAdapter() {
 			super();
 			pagerViews = new ArrayList<View>();
 			int emotions1[] = { 0x1F604, 0x1F60a, 0x1F603, 0x1F632, 0x1F609,
-					0x1F60D, 0x1F618, 0x1F61A, 0x1F633, 0x1F601, 0x1F60C, 0x1F61C,
-					0x1F61D, 0x1F612, 0x1F60F, 0x1F613, 0x1F614, 0x1F61E, 0x1F616,
-					0x1F625, 0x1F630 };
+					0x1F60D, 0x1F618, 0x1F61A, 0x1F633, 0x1F601, 0x1F60C,
+					0x1F61C, 0x1F61D, 0x1F612, 0x1F60F, 0x1F613, 0x1F614,
+					0x1F61E, 0x1F616, 0x1F625, 0x1F630 };
 			int emotions2[] = { 0x1F628, 0x1F623, 0x1F622, 0x1F62D, 0x1F602,
-					0x1F632, 0x1F631, 0x1F620, 0x1F621, 0x1F62A, 0x1F637, 0x1F37A,
-					0x270C, 0x1F4A9, 0x1F44D, 0x1F525, 0x2728, 0x1F31F, 0x1F4AA,
-					0x1F4A4, 0x1F3B5 };
-			View v1 = LayoutInflater.from(ChatGroupActivity.this).inflate(R.layout.emotions_gridview, null);
-			View v2 = LayoutInflater.from(ChatGroupActivity.this).inflate(R.layout.emotions_gridview, null);
+					0x1F632, 0x1F631, 0x1F620, 0x1F621, 0x1F62A, 0x1F637,
+					0x1F37A, 0x270C, 0x1F4A9, 0x1F44D, 0x1F525, 0x2728,
+					0x1F31F, 0x1F4AA, 0x1F4A4, 0x1F3B5 };
+			View v1 = LayoutInflater.from(ChatGroupActivity.this).inflate(
+					R.layout.emotions_gridview, null);
+			View v2 = LayoutInflater.from(ChatGroupActivity.this).inflate(
+					R.layout.emotions_gridview, null);
 			GridView gv1 = (GridView) v1;
-			GridView gv2 = (GridView)v2;
-			
+			GridView gv2 = (GridView) v2;
+
 			gv1.setAdapter(new EmotionsGridViewAdapter(emotions1));
 			gv2.setAdapter(new EmotionsGridViewAdapter(emotions2));
 			gv1.setOnItemClickListener(new OnItemClickListener() {
@@ -209,7 +196,7 @@ public class ChatGroupActivity extends Activity {
 					et_msg.setSelection(len);
 				}
 			});
-			
+
 			gv2.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
@@ -225,24 +212,21 @@ public class ChatGroupActivity extends Activity {
 			pagerViews.add(v1);
 			pagerViews.add(v2);
 		}
-		
 
 		@Override
 		public void destroyItem(View container, int position, Object object) {
 			// TODO Auto-generated method stub
 			super.destroyItem(container, position, object);
-			((ViewPager)container).removeView(pagerViews.get(position));
+			((ViewPager) container).removeView(pagerViews.get(position));
 		}
-
 
 		@Override
 		public Object instantiateItem(View container, int position) {
 			// TODO Auto-generated method stub
-			((ViewPager)container).addView(pagerViews.get(position));
+			((ViewPager) container).addView(pagerViews.get(position));
 			return pagerViews.get(position);
-			
-		}
 
+		}
 
 		@Override
 		public int getCount() {
@@ -253,19 +237,17 @@ public class ChatGroupActivity extends Activity {
 		@Override
 		public boolean isViewFromObject(View arg0, Object arg1) {
 			// TODO Auto-generated method stub
-			return arg0==arg1;
+			return arg0 == arg1;
 		}
-		
+
 	}
-	
+
 	private String emotionCode(int hax) {
 		return String.valueOf(Character.toChars(hax));
 	}
 
 	class EmotionsGridViewAdapter extends BaseAdapter {
 		private int emotions[];
-		
-		
 
 		public EmotionsGridViewAdapter(int[] emotions) {
 			super();
@@ -309,12 +291,6 @@ public class ChatGroupActivity extends Activity {
 		finish();
 	}
 
-	public void editText_check(View v) {
-		iv_emotion.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
-		moreLayout.setVisibility(View.GONE);
-		emotionsLayout.setVisibility(View.GONE);
-	}
-
 	/**
 	 * 隐藏软键盘
 	 */
@@ -327,15 +303,20 @@ public class ChatGroupActivity extends Activity {
 	}
 
 	class ChatItem {
+		public static final int TEXT_TYPE = 1;
+		public static final int IMAGE_TYPE = 2;
 		String userName;
 		String msg;
+		int message_type;
+		Bitmap bitmapMsg;
 	}
 
-	class ChatAdapter extends BaseAdapter {
+	class ChatListAdapter extends BaseAdapter {
 		private class ViewHolder {
 			ImageView iv_userIcon;
 			TextView tv_userName;
 			TextView tv_msg;
+			ImageView iv_image;
 
 		}
 
@@ -384,6 +365,7 @@ public class ChatGroupActivity extends Activity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			ViewHolder viewHolder;
+			ChatItem chatItem = chatItems.get(position);
 			if (convertView != null) {
 				viewHolder = (ViewHolder) convertView.getTag();
 			} else {
@@ -409,19 +391,31 @@ public class ChatGroupActivity extends Activity {
 						.findViewById(R.id.user_name);
 				viewHolder.tv_msg = (TextView) convertView
 						.findViewById(R.id.msg_content);
+				viewHolder.iv_image = (ImageView) convertView
+						.findViewById(R.id.msg_image_content);
 				convertView.setTag(viewHolder);
 			}
-			ChatItem chatItem = chatItems.get(position);
+
 			Bitmap bitmap = chatGroupInfo.getHeadIcon(chatItem.userName);
-			if(bitmap!=null) {
-				viewHolder.iv_userIcon.setImageBitmap(chatGroupInfo.getHeadIcon(chatItem.userName));
-			} else{
+			if (bitmap != null) {
+				viewHolder.iv_userIcon.setImageBitmap(chatGroupInfo
+						.getHeadIcon(chatItem.userName));
+			} else {
 				viewHolder.iv_userIcon.setImageResource(R.drawable.user_head);
 			}
-			
+
 			// viewHolder.iv_userIcon.setImageBitmap(chatItem.bitmap);
 			viewHolder.tv_userName.setText(chatItem.userName);
-			viewHolder.tv_msg.setText(chatItem.msg);
+
+			if (chatItem.message_type == ChatItem.TEXT_TYPE) {
+				viewHolder.tv_msg.setText(chatItem.msg);
+				viewHolder.iv_image.setVisibility(View.GONE);
+			} else {
+				viewHolder.tv_msg.setVisibility(View.GONE);
+				viewHolder.iv_image.setVisibility(View.VISIBLE);
+				viewHolder.iv_image.setImageBitmap(chatItem.bitmapMsg);
+			}
+
 			return convertView;
 		}
 
@@ -440,9 +434,11 @@ public class ChatGroupActivity extends Activity {
 		msg.setReceipt(groupId);
 
 		ChatItem chatItem = new ChatItem();
-		chatItem.userName = getSharedPreferences("data", 0).getString("NICK_NAME", "");
-		
+		chatItem.userName = getSharedPreferences("data", 0).getString(
+				"NICK_NAME", "");
+
 		chatItem.msg = msgContent;
+		chatItem.message_type = ChatItem.TEXT_TYPE;
 		chatItems.add(chatItem);
 		chatAdapter.notifyDataSetChanged();
 		// conversation.addMessage(msg);
@@ -470,6 +466,44 @@ public class ChatGroupActivity extends Activity {
 
 	}
 
+	private void sendPictureMsg(final String filePath) {
+		final EMMessage message = EMMessage
+				.createSendMessage(EMMessage.Type.IMAGE);
+		message.setChatType(ChatType.GroupChat);
+		message.setReceipt(groupId);
+		ImageMessageBody body = new ImageMessageBody(new File(filePath));
+		message.addBody(body);
+
+		ChatItem chatItem = new ChatItem();
+		chatItem.message_type = ChatItem.IMAGE_TYPE;
+		chatItem.userName = getSharedPreferences("data", 0).getString(
+				"NICK_NAME", "");
+		chatItem.bitmapMsg = BitmapFactory.decodeFile(filePath);
+
+		chatItems.add(chatItem);
+		chatAdapter.notifyDataSetChanged();
+		EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
+
+			@Override
+			public void onSuccess() {
+				// TODO Auto-generated method stub
+				Log.d("mychat", "chatgroup pic send success");
+			}
+
+			@Override
+			public void onProgress(int arg0, String arg1) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onError(int arg0, String arg1) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+	}
+
 	/**
 	 * 接收消息的BroadcastReceiver
 	 * 
@@ -494,23 +528,31 @@ public class ChatGroupActivity extends Activity {
 				Log.d("main", "chatgroup get global type");
 				if (message.getChatType() == ChatType.GroupChat) {
 					Log.d("main", "chatgroup get grouptype");
+					ChatItem chatItem = new ChatItem();
+					chatItem.userName = chatGroupInfo.getNickName(message
+							.getFrom());
 					switch (message.getType()) {
+
 					case TXT:
 						Log.d("main", "chatgroup  get message");
-						ChatItem chatItem = new ChatItem();
-						chatItem.userName = chatGroupInfo.getNickName(message.getFrom());
-						
+
 						TextMessageBody txtBody = (TextMessageBody) message
 								.getBody();
+						chatItem.message_type = ChatItem.TEXT_TYPE;
 						chatItem.msg = txtBody.getMessage();
-						chatItems.add(chatItem);
-						chatAdapter.notifyDataSetChanged();
+
 						break;
 					case CMD:
 						break;
 					case FILE:
 						break;
 					case IMAGE:
+						ImageMessageBody imgBody = (ImageMessageBody) message.getBody();
+						chatItem.message_type = ChatItem.IMAGE_TYPE;
+						String imgPath = imgBody.getThumbnailUrl();
+						chatItem.bitmapMsg = BitmapFactory.decodeFile(imgPath);
+						
+						
 						break;
 					case LOCATION:
 						break;
@@ -522,6 +564,8 @@ public class ChatGroupActivity extends Activity {
 						break;
 
 					}
+					chatItems.add(chatItem);
+					chatAdapter.notifyDataSetChanged();
 				}
 
 			} catch (EaseMobException e) {
@@ -545,8 +589,10 @@ public class ChatGroupActivity extends Activity {
 			chatItem = new ChatItem();
 			switch (message.getType()) {
 			case TXT:
-				
-				chatItem.userName = chatGroupInfo.getNickName(message.getFrom());
+
+				chatItem.userName = chatGroupInfo
+						.getNickName(message.getFrom());
+				chatItem.message_type = ChatItem.TEXT_TYPE;
 				TextMessageBody txtBody = (TextMessageBody) message.getBody();
 				chatItem.msg = txtBody.getMessage();
 				chatItems.add(chatItem);
@@ -556,6 +602,7 @@ public class ChatGroupActivity extends Activity {
 			case FILE:
 				break;
 			case IMAGE:
+				chatItem.message_type = ChatItem.IMAGE_TYPE;
 				break;
 			case LOCATION:
 				break;
@@ -571,8 +618,6 @@ public class ChatGroupActivity extends Activity {
 
 	}
 
-	
-
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
@@ -585,6 +630,97 @@ public class ChatGroupActivity extends Activity {
 			}
 		}
 		super.onDestroy();
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+
+		switch (v.getId()) {
+		case R.id.iv_emoticons_normal:
+			if (emotionsLayout.getVisibility() == View.GONE) {
+				hideKeyboard();
+				moreLayout.setVisibility(View.GONE);
+				iv_emotion
+						.setImageResource(R.drawable.chatting_biaoqing_btn_enable);
+				emotionsLayout.setVisibility(View.VISIBLE);
+
+			} else {
+				iv_emotion
+						.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
+				emotionsLayout.setVisibility(View.GONE);
+			}
+			break;
+		case R.id.iv_more:
+			if (moreLayout.getVisibility() == View.GONE) {
+				moreLayout.setVisibility(View.VISIBLE);
+				hideKeyboard();
+
+				iv_emotion
+						.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
+				emotionsLayout.setVisibility(View.GONE);
+			} else {
+				moreLayout.setVisibility(View.GONE);
+			}
+			break;
+		case R.id.et_sendmessage:
+			iv_emotion
+					.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
+			moreLayout.setVisibility(View.GONE);
+			emotionsLayout.setVisibility(View.GONE);
+			break;
+		case R.id.iv_chat_camera:
+			break;
+		case R.id.iv_chat_image:
+			Intent intent;
+			if (Build.VERSION.SDK_INT < 19) {
+				intent = new Intent(Intent.ACTION_GET_CONTENT);
+				intent.setType("image/*");
+
+			} else {
+				intent = new Intent(
+						Intent.ACTION_PICK,
+						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+			}
+			startActivityForResult(intent, REQUEST_CODE_LOCAL_IMAGE);
+			break;
+		case R.id.iv_chat_location:
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case REQUEST_CODE_CAMERA:
+				break;
+			case REQUEST_CODE_LOCAL_IMAGE:
+				if (data != null) {
+					Uri selectedImage = data.getData();
+					if (selectedImage != null) {
+						// sendPicByUri(selectedImage);
+						String[] filePathColumn = { MediaStore.Images.Media.DATA };
+						Cursor cursor = getContentResolver()
+								.query(selectedImage, filePathColumn, null,
+										null, null);
+						cursor.moveToFirst();
+						int columnIndex = cursor
+								.getColumnIndex(filePathColumn[0]);
+						String picturePath = cursor.getString(columnIndex);
+						cursor.close();
+						sendPictureMsg(picturePath);
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
 }
