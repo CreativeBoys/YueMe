@@ -49,6 +49,7 @@ public class ConstantValues {
 	 * 主机URL
 	 */
 //	public static final String HOST = "http://192.168.253.1/yueme";
+//	public static final String HOST = "http://192.168.1.102/yueme";
 	public static final String HOST = "http://182.92.239.129/yueme";
 	/**
 	 * 发送请求的地址

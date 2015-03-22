@@ -283,8 +283,8 @@ public class ChatGroupActivity extends Activity {
 	}
 
 	public void editText_check(View v) {
-		if (emotionsViewPager.getVisibility() == View.VISIBLE) {
-			emotionsViewPager.setVisibility(View.GONE);
+		if (emotionsLayout.getVisibility() == View.VISIBLE) {
+			emotionsLayout.setVisibility(View.GONE);
 		}
 	}
 
