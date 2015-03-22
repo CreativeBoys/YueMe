@@ -153,6 +153,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		iv_chat_camera.setOnClickListener(this);
 		iv_chat_image.setOnClickListener(this);
 		iv_chat_location.setOnClickListener(this);
+		et_msg.setOnClickListener(this);
 		// 注册message receiver 接收消息
 		msgReceiver = new NewMessageBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(EMChatManager
@@ -547,12 +548,12 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 					case FILE:
 						break;
 					case IMAGE:
-						ImageMessageBody imgBody = (ImageMessageBody) message.getBody();
+						ImageMessageBody imgBody = (ImageMessageBody) message
+								.getBody();
 						chatItem.message_type = ChatItem.IMAGE_TYPE;
 						String imgPath = imgBody.getThumbnailUrl();
 						chatItem.bitmapMsg = BitmapFactory.decodeFile(imgPath);
-						
-						
+
 						break;
 					case LOCATION:
 						break;
@@ -587,15 +588,14 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		ChatItem chatItem;
 		for (EMMessage message : messages) {
 			chatItem = new ChatItem();
+			chatItem.userName = chatGroupInfo.getNickName(message.getFrom());
 			switch (message.getType()) {
 			case TXT:
 
-				chatItem.userName = chatGroupInfo
-						.getNickName(message.getFrom());
 				chatItem.message_type = ChatItem.TEXT_TYPE;
 				TextMessageBody txtBody = (TextMessageBody) message.getBody();
 				chatItem.msg = txtBody.getMessage();
-				chatItems.add(chatItem);
+
 				break;
 			case CMD:
 				break;
@@ -603,6 +603,10 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				break;
 			case IMAGE:
 				chatItem.message_type = ChatItem.IMAGE_TYPE;
+				ImageMessageBody body = (ImageMessageBody) message.getBody();
+				message.addBody(body);
+				chatItem.bitmapMsg = BitmapFactory.decodeFile(body
+						.getThumbnailUrl());
 				break;
 			case LOCATION:
 				break;
@@ -614,6 +618,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				break;
 
 			}
+			chatItems.add(chatItem);
 		}
 
 	}

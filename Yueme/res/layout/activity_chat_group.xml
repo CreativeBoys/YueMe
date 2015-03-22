@@ -99,7 +99,7 @@
                 android:paddingRight="1dp"
                 android:paddingTop="3dp"
                 android:textSize="18sp" >
-
+				
                 <requestFocus />
             </EditText>
 
