@@ -28,6 +28,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.easemob.EMCallBack;
@@ -50,7 +51,7 @@ public class ChatGroupActivity extends Activity {
 	private NewMessageBroadcastReceiver msgReceiver;
 	private EditText et_msg;
 	private String groupId;
-	private ImageView iv_emoticon;
+	private ImageView iv_emotion;
 	// 获取到与聊天人的会话对象。参数username为聊天人的userid或者groupid，后文中的username皆是如此
 	EMConversation conversation;
 	private InputMethodManager manager;
@@ -58,6 +59,8 @@ public class ChatGroupActivity extends Activity {
 	private ViewPager emotionsViewPager;
 	private LinearLayout emotionsLayout;
 	private ImageView ivState1, ivState2;
+	private ImageView iv_more;
+	private RelativeLayout moreLayout;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -79,11 +82,15 @@ public class ChatGroupActivity extends Activity {
 		chatAdapter = new ChatAdapter();
 		chatListView = (ListView) findViewById(R.id.chatListView);
 		et_msg = (EditText) findViewById(R.id.et_sendmessage);
-		iv_emoticon = (ImageView) findViewById(R.id.iv_emoticons_normal);
+		iv_emotion = (ImageView) findViewById(R.id.iv_emoticons_normal);
 		emotionsLayout = (LinearLayout) findViewById(R.id.emotionsLayout);
 		emotionsViewPager = (ViewPager) findViewById(R.id.emotionsViewPager);
 		ivState1 = (ImageView) findViewById(R.id.ivState1);
 		ivState2 = (ImageView)findViewById(R.id.ivState2);
+		
+		iv_more = (ImageView) findViewById(R.id.iv_more);
+		moreLayout = (RelativeLayout) findViewById(R.id.moreLayout);
+		
 		
 		manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		getWindow().setSoftInputMode(
@@ -96,15 +103,19 @@ public class ChatGroupActivity extends Activity {
 
 		chatListView.setAdapter(chatAdapter);
 		chatListView.setSelection(msgCount-1);
-		iv_emoticon.setOnClickListener(new OnClickListener() {
+		iv_emotion.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if (emotionsLayout.getVisibility() == View.GONE) {
-					emotionsLayout.setVisibility(View.VISIBLE);
 					hideKeyboard();
+					moreLayout.setVisibility(View.GONE);
+					iv_emotion.setImageResource(R.drawable.chatting_biaoqing_btn_enable);
+					emotionsLayout.setVisibility(View.VISIBLE);
+					
 				} else {
+					iv_emotion.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
 					emotionsLayout.setVisibility(View.GONE);
 				}
 			}
@@ -142,6 +153,22 @@ public class ChatGroupActivity extends Activity {
 			}
 		});
 		
+		iv_more.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(moreLayout.getVisibility()==View.GONE) {
+					moreLayout.setVisibility(View.VISIBLE);
+					hideKeyboard();
+					
+					iv_emotion.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
+					emotionsLayout.setVisibility(View.GONE);
+				} else{
+					moreLayout.setVisibility(View.GONE);
+				}
+			}
+		});
 		// 注册message receiver 接收消息
 		msgReceiver = new NewMessageBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(EMChatManager
@@ -283,9 +310,9 @@ public class ChatGroupActivity extends Activity {
 	}
 
 	public void editText_check(View v) {
-		if (emotionsLayout.getVisibility() == View.VISIBLE) {
-			emotionsLayout.setVisibility(View.GONE);
-		}
+		iv_emotion.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
+		moreLayout.setVisibility(View.GONE);
+		emotionsLayout.setVisibility(View.GONE);
 	}
 
 	/**

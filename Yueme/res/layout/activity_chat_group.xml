@@ -75,6 +75,15 @@
                 android:src="@drawable/chatting_biaoqing_btn_normal"
                 android:visibility="visible" />
 
+            <ImageView
+                android:id="@+id/iv_more"
+                android:layout_width="24dip"
+                android:layout_height="24dip"
+                android:layout_margin="1dip"
+                android:scaleType="fitCenter"
+                android:src="@drawable/type_select_btn_nor"
+                android:visibility="visible" />
+
             <EditText
                 android:id="@+id/et_sendmessage"
                 android:layout_width="0dp"
@@ -105,17 +114,80 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E5E5E5" />
+
+        <RelativeLayout
+            android:id="@+id/moreLayout"
+            android:layout_width="match_parent"
+            android:layout_height="145dp"
+            android:visibility="gone"
+            android:padding="10dp" >
+
+            <ImageView
+                android:id="@+id/iv_chat_camera"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:src="@drawable/chat_camera_selector" />
+
+            <ImageView
+                android:id="@+id/iv_chat_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/iv_chat_location"
+                android:layout_toRightOf="@+id/iv_chat_camera"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/chat_image_selector" />
+
+            <ImageView
+                android:id="@+id/iv_chat_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/iv_chat_camera"
+                android:layout_toRightOf="@+id/iv_chat_image"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/chat_location_selector" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="55sp"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/iv_chat_camera"
+                android:layout_below="@+id/iv_chat_camera"
+                android:layout_marginTop="8dp"
+                android:text="相机" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="55sp"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/textView2"
+                android:layout_alignBottom="@+id/textView2"
+                android:layout_alignLeft="@+id/iv_chat_image"
+                android:text="图片" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="55sp"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/textView3"
+                android:layout_alignBottom="@+id/textView3"
+                android:layout_alignLeft="@+id/iv_chat_location"
+                android:text="位置" />
+
+        </RelativeLayout>
+
         <LinearLayout
             android:id="@+id/emotionsLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="145dp"
             android:orientation="vertical"
             android:visibility="gone" >
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#E5E5E5" />
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/emotionsViewPager"
@@ -129,8 +201,6 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="5dp" >
-
-                
 
                 <ImageView
                     android:id="@+id/ivState1"
