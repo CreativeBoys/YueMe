@@ -61,8 +61,8 @@
         </activity>
         <activity
             android:name=".SingleRequireDetailsActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name=".SystemSettings"
@@ -84,11 +84,16 @@
         </activity>
         <activity android:name=".ChatGroupActivity" >
         </activity>
-        <activity 
+        <activity
             android:name=".MyIntegrate"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
-        <activity android:name=".CreditPeople"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".CreditPeople"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        <activity android:name=".ViewPictureActivity" >
+        </activity>
         <!-- Required. AppKey copied from Portal -->
         <meta-data
             android:name="EASEMOB_APPKEY"
