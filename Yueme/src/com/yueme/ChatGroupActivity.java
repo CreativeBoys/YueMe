@@ -1,8 +1,22 @@
 package com.yueme;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -13,9 +27,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -60,7 +74,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 	private String groupId;
 	private ImageView iv_emotion;
 	// 获取到与聊天人的会话对象。参数username为聊天人的userid或者groupid，后文中的username皆是如此
-	EMConversation conversation;
+	private EMConversation conversation;
 	private InputMethodManager manager;
 	private ChatGroupInfo chatGroupInfo;
 	private ViewPager emotionsViewPager;
@@ -84,6 +98,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		if (groupId == null) {
 			ToastUtil.showToast("没有加入群组", ChatGroupActivity.this);
 		}
+		conversation = EMChatManager.getInstance().getConversation(groupId);
 		loadConversation();
 		initView();
 		setEvents();
@@ -304,8 +319,10 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 	}
 
 	class ChatItem {
-		public static final int TEXT_TYPE = 1;
-		public static final int IMAGE_TYPE = 2;
+		public static final int SELF_TEXT_TYPE = 0;
+		public static final int OTHERS_TEXT_TYPE = 1;
+		public static final int SELF_IMAGE_TYPE = 2;
+		public static final int OTHERS_IMAGE_TYPE = 3;
 		String userName;
 		String msg;
 		int message_type;
@@ -321,27 +338,16 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 
 		}
 
-		private final int SELF_TEXT_TYPE = 0;
-		private final int OTHERS_TEXT_TYPE = 1;
-
 		@Override
 		public int getItemViewType(int position) {
-			// TODO Auto-generated method stub
-			String currentNickName = chatItems.get(position).userName;
-			String currentUserNickName = getSharedPreferences("data", 0)
-					.getString("NICK_NAME", "");
+			return chatItems.get(position).message_type;
 
-			if (currentNickName.equals(currentUserNickName)) {
-				return SELF_TEXT_TYPE;
-			} else {
-				return OTHERS_TEXT_TYPE;
-			}
 		}
 
 		@Override
 		public int getViewTypeCount() {
 			// TODO Auto-generated method stub
-			return 2;
+			return 4;
 		}
 
 		@Override
@@ -367,35 +373,53 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 			// TODO Auto-generated method stub
 			ViewHolder viewHolder;
 			ChatItem chatItem = chatItems.get(position);
-			if (convertView != null) {
-				viewHolder = (ViewHolder) convertView.getTag();
-			} else {
-				int type = getItemViewType(position);
-				switch (type) {
-				case SELF_TEXT_TYPE:
-					convertView = LayoutInflater.from(ChatGroupActivity.this)
-							.inflate(R.layout.chat_listitem_metxt, null);
-					break;
-				case OTHERS_TEXT_TYPE:
-					convertView = LayoutInflater.from(ChatGroupActivity.this)
-							.inflate(R.layout.chat_listitem_otherstxt, null);
-					break;
-
-				default:
-					break;
-				}
-
-				viewHolder = new ViewHolder();
-				viewHolder.iv_userIcon = (ImageView) convertView
-						.findViewById(R.id.user_icon);
-				viewHolder.tv_userName = (TextView) convertView
-						.findViewById(R.id.user_name);
+			/*
+			 * if (convertView != null) { viewHolder = (ViewHolder)
+			 * convertView.getTag(); } else {
+			 */
+			viewHolder = new ViewHolder();
+			int type = getItemViewType(position);
+			switch (type) {
+			case ChatItem.SELF_TEXT_TYPE:
+				convertView = LayoutInflater.from(ChatGroupActivity.this)
+						.inflate(R.layout.chat_listitem_metxt, null);
 				viewHolder.tv_msg = (TextView) convertView
 						.findViewById(R.id.msg_content);
+				viewHolder.tv_msg.setText(chatItem.msg);
+				break;
+			case ChatItem.OTHERS_TEXT_TYPE:
+				convertView = LayoutInflater.from(ChatGroupActivity.this)
+						.inflate(R.layout.chat_listitem_otherstxt, null);
+				viewHolder.tv_msg = (TextView) convertView
+						.findViewById(R.id.msg_content);
+				viewHolder.tv_msg.setText(chatItem.msg);
+				break;
+			case ChatItem.SELF_IMAGE_TYPE:
+				convertView = LayoutInflater.from(ChatGroupActivity.this)
+						.inflate(R.layout.chat_listitem_me_image, null);
 				viewHolder.iv_image = (ImageView) convertView
 						.findViewById(R.id.msg_image_content);
-				convertView.setTag(viewHolder);
+				viewHolder.iv_image.setImageBitmap(chatItem.bitmapMsg);
+				break;
+			case ChatItem.OTHERS_IMAGE_TYPE:
+				convertView = LayoutInflater.from(ChatGroupActivity.this)
+						.inflate(R.layout.chat_listitem_others_image, null);
+				viewHolder.iv_image = (ImageView) convertView
+						.findViewById(R.id.msg_image_content);
+				viewHolder.iv_image.setImageBitmap(chatItem.bitmapMsg);
+				break;
+			default:
+				break;
 			}
+
+			viewHolder.iv_userIcon = (ImageView) convertView
+					.findViewById(R.id.user_icon);
+			viewHolder.tv_userName = (TextView) convertView
+					.findViewById(R.id.user_name);
+
+			/*
+			 * convertView.setTag(viewHolder); }
+			 */
 
 			Bitmap bitmap = chatGroupInfo.getHeadIcon(chatItem.userName);
 			if (bitmap != null) {
@@ -404,18 +428,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 			} else {
 				viewHolder.iv_userIcon.setImageResource(R.drawable.user_head);
 			}
-
-			// viewHolder.iv_userIcon.setImageBitmap(chatItem.bitmap);
 			viewHolder.tv_userName.setText(chatItem.userName);
-
-			if (chatItem.message_type == ChatItem.TEXT_TYPE) {
-				viewHolder.tv_msg.setText(chatItem.msg);
-				viewHolder.iv_image.setVisibility(View.GONE);
-			} else {
-				viewHolder.tv_msg.setVisibility(View.GONE);
-				viewHolder.iv_image.setVisibility(View.VISIBLE);
-				viewHolder.iv_image.setImageBitmap(chatItem.bitmapMsg);
-			}
 
 			return convertView;
 		}
@@ -439,10 +452,10 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				"NICK_NAME", "");
 
 		chatItem.msg = msgContent;
-		chatItem.message_type = ChatItem.TEXT_TYPE;
+		chatItem.message_type = ChatItem.SELF_TEXT_TYPE;
 		chatItems.add(chatItem);
 		chatAdapter.notifyDataSetChanged();
-		// conversation.addMessage(msg);
+		conversation.addMessage(msg);
 		// 发送消息
 		EMChatManager.getInstance().sendMessage(msg, new EMCallBack() {
 
@@ -471,12 +484,13 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		final EMMessage message = EMMessage
 				.createSendMessage(EMMessage.Type.IMAGE);
 		message.setChatType(ChatType.GroupChat);
+		message.setAttribute(ConstantValues.MSG_CATEGAORY, ConstantValues.MSG);
 		message.setReceipt(groupId);
 		ImageMessageBody body = new ImageMessageBody(new File(filePath));
 		message.addBody(body);
-
+		conversation.addMessage(message);
 		ChatItem chatItem = new ChatItem();
-		chatItem.message_type = ChatItem.IMAGE_TYPE;
+		chatItem.message_type = ChatItem.SELF_IMAGE_TYPE;
 		chatItem.userName = getSharedPreferences("data", 0).getString(
 				"NICK_NAME", "");
 		chatItem.bitmapMsg = BitmapFactory.decodeFile(filePath);
@@ -529,9 +543,10 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				Log.d("main", "chatgroup get global type");
 				if (message.getChatType() == ChatType.GroupChat) {
 					Log.d("main", "chatgroup get grouptype");
-					ChatItem chatItem = new ChatItem();
+					final ChatItem chatItem = new ChatItem();
 					chatItem.userName = chatGroupInfo.getNickName(message
 							.getFrom());
+
 					switch (message.getType()) {
 
 					case TXT:
@@ -539,21 +554,71 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 
 						TextMessageBody txtBody = (TextMessageBody) message
 								.getBody();
-						chatItem.message_type = ChatItem.TEXT_TYPE;
+						chatItem.message_type = ChatItem.OTHERS_TEXT_TYPE;
 						chatItem.msg = txtBody.getMessage();
-
+						chatItems.add(chatItem);
+						chatAdapter.notifyDataSetChanged();
+						chatListView.setSelection(chatItems.size() - 1);
 						break;
 					case CMD:
 						break;
 					case FILE:
 						break;
 					case IMAGE:
-						ImageMessageBody imgBody = (ImageMessageBody) message
+						final ImageMessageBody imgBody = (ImageMessageBody) message
 								.getBody();
-						chatItem.message_type = ChatItem.IMAGE_TYPE;
-						String imgPath = imgBody.getThumbnailUrl();
-						chatItem.bitmapMsg = BitmapFactory.decodeFile(imgPath);
+						Log.d("mychat",
+								"thumbnailUrl: " + imgBody.getThumbnailUrl()
+										+ "; rmote url: " + imgBody.getRemoteUrl());
+						chatItem.message_type = ChatItem.OTHERS_IMAGE_TYPE;
 
+						String imgPath = imgBody.getLocalUrl();
+						final String thumnailPath = imgPath.replace("image/", "image/th");
+						/*String pathArry[] = imgPath.split("/");
+						pathArry[pathArry.length - 1] = "th"
+								+ pathArry[pathArry.length - 1];
+						StringBuffer stringBuffer = new StringBuffer(
+								pathArry[0]);
+						for (int i = 1; i < pathArry.length; i++) {
+							stringBuffer.append("/").append(pathArry[i]);
+						}
+
+						imgPath = stringBuffer.toString();*/
+						Log.d("mychat", "img path: " + imgPath);
+						//imgBody.setLocalUrl(imgPath);
+						/*imgBody.setDownloadCallback(new EMCallBack() {
+							
+							@Override
+							public void onSuccess() {
+								// TODO Auto-generated method stub
+								chatItem.bitmapMsg = BitmapFactory.decodeFile(thumnailPath);
+								chatItems.add(chatItem);
+								
+								chatAdapter.notifyDataSetChanged();
+								
+								chatListView.setSelection(chatItems.size() - 1);
+								chatAdapter.notifyDataSetChanged();
+								
+								
+							}
+							
+							@Override
+							public void onProgress(int arg0, String arg1) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void onError(int arg0, String arg1) {
+								// TODO Auto-generated method stub
+								
+							}
+						});*/
+						new LoadRmoteImageAsyntask(imgBody.getRemoteUrl(), chatItem, imgBody.getLocalUrl()).execute();
+						
+						Log.d("mychat", "bitmap img: " + chatItem.bitmapMsg);
+						
+						
 						break;
 					case LOCATION:
 						break;
@@ -565,8 +630,14 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 						break;
 
 					}
-					chatItems.add(chatItem);
+
+					
 					chatAdapter.notifyDataSetChanged();
+					chatListView.setSelection(chatItems.size() - 1);
+					
+					conversation.addMessage(message);
+					
+
 				}
 
 			} catch (EaseMobException e) {
@@ -578,6 +649,86 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 
 	}
 
+	private class LoadRmoteImageAsyntask extends AsyncTask<Void, Void, Bitmap>{
+		private String url;
+		private ChatItem chatItem;
+		private String localUrl;
+		public LoadRmoteImageAsyntask(String url, ChatItem chatItem, String localUrl) {
+			this.url = url;
+			this.chatItem = chatItem;
+			this.localUrl = localUrl;
+		}
+
+		@Override
+		protected Bitmap doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			return loadRmoteImage(url);
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			chatItem.bitmapMsg = result;
+			chatItems.add(chatItem);
+			chatAdapter.notifyDataSetChanged();
+			File file = new File(localUrl);
+			
+			
+			try {
+				//file.mkdirs();
+				file.createNewFile();
+				FileOutputStream outputStream = new FileOutputStream(file);
+				
+				chatItem.bitmapMsg.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
+				outputStream.flush();
+				outputStream.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	private Bitmap loadRmoteImage(String imgUrl) {
+		URL fileURL = null;
+		Bitmap bitmap = null;
+		try {
+			fileURL = new URL(imgUrl);
+		} catch (MalformedURLException err) {
+			err.printStackTrace();
+		}
+		try {
+			HttpURLConnection conn = (HttpURLConnection) fileURL
+					.openConnection();
+			conn.setDoInput(true);
+			conn.connect();
+			InputStream is = conn.getInputStream();
+			int length = (int) conn.getContentLength();
+			if (length != -1) {
+				byte[] imgData = new byte[length];
+				byte[] buffer = new byte[512];
+				int readLen = 0;
+				int destPos = 0;
+				while ((readLen = is.read(buffer)) > 0) {
+					System.arraycopy(buffer, 0, imgData, destPos,
+
+					readLen);
+					destPos += readLen;
+				}
+				bitmap = BitmapFactory.decodeByteArray(imgData, 0,
+						imgData.length);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return bitmap;
+	}
+
 	private void loadConversation() {
 		EMConversation conversation = EMChatManager.getInstance()
 				.getConversation(groupId);
@@ -586,13 +737,21 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				"Chat group activity:  messages.size()" + messages.size());
 		msgCount = messages.size();
 		ChatItem chatItem;
+		String currentUserNickName = getSharedPreferences("data", 0).getString(
+				"NICK_NAME", "");
+
 		for (EMMessage message : messages) {
 			chatItem = new ChatItem();
 			chatItem.userName = chatGroupInfo.getNickName(message.getFrom());
+
 			switch (message.getType()) {
 			case TXT:
+				if (chatItem.userName.equals(currentUserNickName)) {
+					chatItem.message_type = ChatItem.SELF_TEXT_TYPE;
+				} else {
+					chatItem.message_type = ChatItem.OTHERS_TEXT_TYPE;
+				}
 
-				chatItem.message_type = ChatItem.TEXT_TYPE;
 				TextMessageBody txtBody = (TextMessageBody) message.getBody();
 				chatItem.msg = txtBody.getMessage();
 
@@ -602,11 +761,20 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 			case FILE:
 				break;
 			case IMAGE:
-				chatItem.message_type = ChatItem.IMAGE_TYPE;
+				if (chatItem.userName.equals(currentUserNickName)) {
+					chatItem.message_type = ChatItem.SELF_IMAGE_TYPE;
+				} else {
+					chatItem.message_type = ChatItem.OTHERS_IMAGE_TYPE;
+				}
 				ImageMessageBody body = (ImageMessageBody) message.getBody();
 				message.addBody(body);
-				chatItem.bitmapMsg = BitmapFactory.decodeFile(body
-						.getThumbnailUrl());
+
+				Log.d("mychat", "local url:　" + body.getLocalUrl());
+
+				String imgPath = body.getLocalUrl();
+				//final String thumnailPath = imgPath.replace("image/", "image/th");
+				chatItem.bitmapMsg = BitmapFactory.decodeFile(imgPath);
+
 				break;
 			case LOCATION:
 				break;
@@ -709,16 +877,22 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 					Uri selectedImage = data.getData();
 					if (selectedImage != null) {
 						// sendPicByUri(selectedImage);
-						String[] filePathColumn = { MediaStore.Images.Media.DATA };
-						Cursor cursor = getContentResolver()
-								.query(selectedImage, filePathColumn, null,
-										null, null);
-						cursor.moveToFirst();
-						int columnIndex = cursor
-								.getColumnIndex(filePathColumn[0]);
-						String picturePath = cursor.getString(columnIndex);
-						cursor.close();
-						sendPictureMsg(picturePath);
+						// String[] filePathColumn = {
+						// MediaStore.Images.Media.DATA };
+						Cursor cursor = getContentResolver().query(
+								selectedImage, null, null, null, null);
+						if (cursor != null) {
+							cursor.moveToFirst();
+							int columnIndex = cursor.getColumnIndex("_data");
+							String picturePath = cursor.getString(columnIndex);
+							cursor.close();
+							cursor = null;
+							if (picturePath != null) {
+								sendPictureMsg(picturePath);
+							}
+
+						}
+
 					}
 				}
 				break;

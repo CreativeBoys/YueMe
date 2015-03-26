@@ -6,5 +6,13 @@
 	<classpathentry kind="lib" path="libs/gson-2.3.1.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="E:/Software/Android SDK/platforms/android-22/android.jar" sourcepath="E:/Software/Android SDK/sources/android-22">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/E:/Software/Android SDK/docs/reference"/>
+		</attributes>
+		<accessrules>
+			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
+		</accessrules>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
