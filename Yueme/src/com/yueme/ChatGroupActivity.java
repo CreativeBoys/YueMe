@@ -43,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.easemob.EMCallBack;
@@ -83,7 +82,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 	private static final int REQUEST_CODE_LOCAL_IMAGE = 1;
 	private static final int REQUEST_CODE_CAMERA = 2;
 	private File cameraFile;
-
+    private ImageView deleteConversation;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -118,7 +117,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		iv_chat_camera = (ImageView) findViewById(R.id.iv_chat_camera);
 		iv_chat_image = (ImageView) findViewById(R.id.iv_chat_image);
 		iv_chat_location = (ImageView) findViewById(R.id.iv_chat_location);
-
+		deleteConversation = (ImageView) findViewById(R.id.deleteBtn);
 		manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -128,23 +127,21 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 
 		chatListView.setAdapter(chatAdapter);
 		chatListView.setSelection(msgCount - 1);
-		/*
-		 * chatListView.setOnItemClickListener(new OnItemClickListener() {
-		 * 
-		 * @Override public void onItemClick(AdapterView<?> parent, View view,
-		 * int position, long id) { // TODO Auto-generated method stub int
-		 * viewType = chatListView.getAdapter().getItemViewType(position);
-		 * if(viewType==ChatItem.SELF_IMAGE_TYPE ||
-		 * viewType==ChatItem.OTHERS_IMAGE_TYPE){ Intent intent = new
-		 * Intent(ChatGroupActivity.this, ViewPictureActivity.class);
-		 * intent.putExtra("bitmap", chatItems.get(position).bitmapMsg);
-		 * 
-		 * 
-		 * }
-		 * 
-		 * } });
-		 */
+		chatListView.setOnItemClickListener(new OnItemClickListener() {
 
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				hideKeyboard();
+				iv_emotion
+						.setImageResource(R.drawable.chatting_biaoqing_btn_normal);
+				moreLayout.setVisibility(View.GONE);
+				emotionsLayout.setVisibility(View.GONE);
+			}
+		});
+
+		/* chatListView.setOnClickListener(this); */
 		emotionsViewPager.setAdapter(new EmotionsViewPagerAdapter());
 		emotionsViewPager.setCurrentItem(0);
 		emotionsViewPager.setOnPageChangeListener(new OnPageChangeListener() {
@@ -183,6 +180,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		iv_chat_image.setOnClickListener(this);
 		iv_chat_location.setOnClickListener(this);
 		et_msg.setOnClickListener(this);
+		deleteConversation.setOnClickListener(this);
 		// 注册message receiver 接收消息
 		msgReceiver = new NewMessageBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(EMChatManager
@@ -414,7 +412,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 						.inflate(R.layout.chat_listitem_me_image, null);
 				viewHolder.iv_image = (ImageView) convertView
 						.findViewById(R.id.msg_image_content);
-				
+
 				viewHolder.iv_image.setImageBitmap(chatItem.bitmapMsg);
 				viewHolder.iv_image.setOnClickListener(new OnClickListener() {
 
@@ -435,9 +433,9 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 						.inflate(R.layout.chat_listitem_others_image, null);
 				viewHolder.iv_image = (ImageView) convertView
 						.findViewById(R.id.msg_image_content);
-				
+
 				viewHolder.iv_image.setImageBitmap(chatItem.bitmapMsg);
-				
+
 				viewHolder.iv_image.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -540,12 +538,13 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				"NICK_NAME", "");
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(filePath,options);
-		
-		options.inSampleSize = BitmapTool.computeSampleSize(options, -1, 250*250);
+		BitmapFactory.decodeFile(filePath, options);
+
+		options.inSampleSize = BitmapTool.computeSampleSize(options, -1,
+				250 * 250);
 		options.inJustDecodeBounds = false;
-		
-		chatItem.bitmapMsg = BitmapFactory.decodeFile(filePath,options);
+
+		chatItem.bitmapMsg = BitmapFactory.decodeFile(filePath, options);
 		/*
 		 * try { FileOutputStream fos = new FileOutputStream(cameraFile);
 		 * chatItem.bitmapMsg.compress(Bitmap.CompressFormat.JPEG, 20, fos);
@@ -556,7 +555,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 
 		chatItems.add(chatItem);
 		chatAdapter.notifyDataSetChanged();
-		chatListView.setSelection(chatItems.size()-1);
+		chatListView.setSelection(chatItems.size() - 1);
 		EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
 
 			@Override
@@ -636,44 +635,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 						String imgPath = imgBody.getLocalUrl();
 						final String thumnailPath = imgPath.replace("image/",
 								"image/th");
-						/*
-						 * String pathArry[] = imgPath.split("/");
-						 * pathArry[pathArry.length - 1] = "th" +
-						 * pathArry[pathArry.length - 1]; StringBuffer
-						 * stringBuffer = new StringBuffer( pathArry[0]); for
-						 * (int i = 1; i < pathArry.length; i++) {
-						 * stringBuffer.append("/").append(pathArry[i]); }
-						 * 
-						 * imgPath = stringBuffer.toString();
-						 */
-						Log.d("mychat", "img path: " + imgPath);
-						// imgBody.setLocalUrl(imgPath);
-						/*
-						 * imgBody.setDownloadCallback(new EMCallBack() {
-						 * 
-						 * @Override public void onSuccess() { // TODO
-						 * Auto-generated method stub chatItem.bitmapMsg =
-						 * BitmapFactory.decodeFile(thumnailPath);
-						 * chatItems.add(chatItem);
-						 * 
-						 * chatAdapter.notifyDataSetChanged();
-						 * 
-						 * chatListView.setSelection(chatItems.size() - 1);
-						 * chatAdapter.notifyDataSetChanged();
-						 * 
-						 * 
-						 * }
-						 * 
-						 * @Override public void onProgress(int arg0, String
-						 * arg1) { // TODO Auto-generated method stub
-						 * 
-						 * }
-						 * 
-						 * @Override public void onError(int arg0, String arg1)
-						 * { // TODO Auto-generated method stub
-						 * 
-						 * } });
-						 */
+
 						new LoadRmoteImageAsyntask(imgBody.getRemoteUrl(),
 								chatItem, imgBody.getLocalUrl()).execute();
 
@@ -729,7 +691,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		protected void onPostExecute(Bitmap result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			
+
 			File file = new File(localUrl);
 
 			try {
@@ -737,22 +699,23 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				file.createNewFile();
 				FileOutputStream outputStream = new FileOutputStream(file);
 
-				result.compress(Bitmap.CompressFormat.PNG, 90,
-						outputStream);
+				result.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
 				outputStream.flush();
 				outputStream.close();
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(localUrl,options);
-				
-				options.inSampleSize = BitmapTool.computeSampleSize(options, -1, 250*250);
+				BitmapFactory.decodeFile(localUrl, options);
+
+				options.inSampleSize = BitmapTool.computeSampleSize(options,
+						-1, 250 * 250);
 				options.inJustDecodeBounds = false;
-				
-				chatItem.bitmapMsg = BitmapFactory.decodeFile(localUrl,options);
+
+				chatItem.bitmapMsg = BitmapFactory
+						.decodeFile(localUrl, options);
 				chatItem.bitmapUri = localUrl;
 				chatItems.add(chatItem);
 				chatAdapter.notifyDataSetChanged();
-				chatListView.setSelection(chatItems.size()-1);
+				chatListView.setSelection(chatItems.size() - 1);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -848,13 +811,13 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				// "image/th");
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(imgPath,options);
-				
-				options.inSampleSize = BitmapTool.computeSampleSize(options, -1, 250*250);
+				BitmapFactory.decodeFile(imgPath, options);
+
+				options.inSampleSize = BitmapTool.computeSampleSize(options,
+						-1, 250 * 250);
 				options.inJustDecodeBounds = false;
-				
-				chatItem.bitmapMsg = BitmapFactory.decodeFile(imgPath,options);
-				
+
+				chatItem.bitmapMsg = BitmapFactory.decodeFile(imgPath, options);
 
 				break;
 			case LOCATION:
@@ -947,6 +910,11 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.iv_chat_location:
 			break;
+		case R.id.deleteBtn:
+			EMChatManager.getInstance().clearConversation(groupId);
+			chatItems.clear();
+			chatAdapter.notifyDataSetChanged();
+			break;
 		default:
 			break;
 		}
@@ -967,9 +935,6 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				if (data != null) {
 					Uri selectedImage = data.getData();
 					if (selectedImage != null) {
-						// sendPicByUri(selectedImage);
-						// String[] filePathColumn = {
-						// MediaStore.Images.Media.DATA };
 						Cursor cursor = getContentResolver().query(
 								selectedImage, null, null, null, null);
 						if (cursor != null) {
