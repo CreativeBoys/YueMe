@@ -82,7 +82,8 @@
             android:name=".ParticipatedInfosActivity"
             android:label="@string/title_activity_participated_infos" >
         </activity>
-        <activity android:name=".ChatGroupActivity" >
+        <activity android:name=".ChatGroupActivity"
+            android:launchMode="singleTop" >
         </activity>
         <activity
             android:name=".MyIntegrate"

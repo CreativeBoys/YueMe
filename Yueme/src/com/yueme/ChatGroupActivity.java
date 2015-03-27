@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -63,7 +65,6 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 
 	private List<ChatItem> chatItems = new ArrayList<ChatItem>();
 	private ListView chatListView;
-	private int msgCount;
 	private ChatListAdapter chatAdapter;
 	private NewMessageBroadcastReceiver msgReceiver;
 	private EditText et_msg;
@@ -82,7 +83,8 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 	private static final int REQUEST_CODE_LOCAL_IMAGE = 1;
 	private static final int REQUEST_CODE_CAMERA = 2;
 	private File cameraFile;
-    private ImageView deleteConversation;
+	private ImageView deleteConversation;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -96,9 +98,10 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 			ToastUtil.showToast("没有加入群组", ChatGroupActivity.this);
 		}
 		conversation = EMChatManager.getInstance().getConversation(groupId);
-		loadConversation();
+
 		initView();
 		setEvents();
+		new LoadConversationSynctask().execute();
 
 	}
 
@@ -126,7 +129,6 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 	private void setEvents() {
 
 		chatListView.setAdapter(chatAdapter);
-		chatListView.setSelection(msgCount - 1);
 		chatListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -541,7 +543,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		BitmapFactory.decodeFile(filePath, options);
 
 		options.inSampleSize = BitmapTool.computeSampleSize(options, -1,
-				250 * 250);
+				128 * 128);
 		options.inJustDecodeBounds = false;
 
 		chatItem.bitmapMsg = BitmapFactory.decodeFile(filePath, options);
@@ -707,7 +709,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 				BitmapFactory.decodeFile(localUrl, options);
 
 				options.inSampleSize = BitmapTool.computeSampleSize(options,
-						-1, 250 * 250);
+						-1, 128 * 128);
 				options.inJustDecodeBounds = false;
 
 				chatItem.bitmapMsg = BitmapFactory
@@ -763,74 +765,99 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		return bitmap;
 	}
 
-	private void loadConversation() {
+	private class LoadConversationSynctask extends
+			AsyncTask<Void, ChatItem, Void> {
 		EMConversation conversation = EMChatManager.getInstance()
 				.getConversation(groupId);
 		List<EMMessage> messages = conversation.getAllMessages();
-		Log.d("mychat",
-				"Chat group activity:  messages.size()" + messages.size());
-		msgCount = messages.size();
+
 		ChatItem chatItem;
 		String currentUserNickName = getSharedPreferences("data", 0).getString(
 				"NICK_NAME", "");
 
-		for (EMMessage message : messages) {
-			chatItem = new ChatItem();
-			chatItem.userName = chatGroupInfo.getNickName(message.getFrom());
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			for (EMMessage message : messages) {
+				chatItem = new ChatItem();
+				chatItem.userName = chatGroupInfo
+						.getNickName(message.getFrom());
 
-			switch (message.getType()) {
-			case TXT:
-				if (chatItem.userName.equals(currentUserNickName)) {
-					chatItem.message_type = ChatItem.SELF_TEXT_TYPE;
-				} else {
-					chatItem.message_type = ChatItem.OTHERS_TEXT_TYPE;
+				switch (message.getType()) {
+				case TXT:
+					if (chatItem.userName.equals(currentUserNickName)) {
+						chatItem.message_type = ChatItem.SELF_TEXT_TYPE;
+					} else {
+						chatItem.message_type = ChatItem.OTHERS_TEXT_TYPE;
+					}
+
+					TextMessageBody txtBody = (TextMessageBody) message
+							.getBody();
+					chatItem.msg = txtBody.getMessage();
+
+					break;
+				case CMD:
+					break;
+				case FILE:
+					break;
+				case IMAGE:
+					if (chatItem.userName.equals(currentUserNickName)) {
+						chatItem.message_type = ChatItem.SELF_IMAGE_TYPE;
+					} else {
+						chatItem.message_type = ChatItem.OTHERS_IMAGE_TYPE;
+					}
+					ImageMessageBody body = (ImageMessageBody) message
+							.getBody();
+					message.addBody(body);
+
+					Log.d("mychat", "local url:　" + body.getLocalUrl());
+
+					String imgPath = body.getLocalUrl();
+					chatItem.bitmapUri = imgPath;
+					// final String thumnailPath = imgPath.replace("image/",
+					// "image/th");
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inJustDecodeBounds = true;
+					BitmapFactory.decodeFile(imgPath, options);
+
+					options.inSampleSize = BitmapTool.computeSampleSize(
+							options, -1, 128 * 128);
+					options.inJustDecodeBounds = false;
+
+					chatItem.bitmapMsg = BitmapFactory.decodeFile(imgPath,
+							options);
+
+					break;
+				case LOCATION:
+					break;
+				case VIDEO:
+					break;
+				case VOICE:
+					break;
+				default:
+					break;
+
 				}
-
-				TextMessageBody txtBody = (TextMessageBody) message.getBody();
-				chatItem.msg = txtBody.getMessage();
-
-				break;
-			case CMD:
-				break;
-			case FILE:
-				break;
-			case IMAGE:
-				if (chatItem.userName.equals(currentUserNickName)) {
-					chatItem.message_type = ChatItem.SELF_IMAGE_TYPE;
-				} else {
-					chatItem.message_type = ChatItem.OTHERS_IMAGE_TYPE;
-				}
-				ImageMessageBody body = (ImageMessageBody) message.getBody();
-				message.addBody(body);
-
-				Log.d("mychat", "local url:　" + body.getLocalUrl());
-
-				String imgPath = body.getLocalUrl();
-				chatItem.bitmapUri = imgPath;
-				// final String thumnailPath = imgPath.replace("image/",
-				// "image/th");
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(imgPath, options);
-
-				options.inSampleSize = BitmapTool.computeSampleSize(options,
-						-1, 250 * 250);
-				options.inJustDecodeBounds = false;
-
-				chatItem.bitmapMsg = BitmapFactory.decodeFile(imgPath, options);
-
-				break;
-			case LOCATION:
-				break;
-			case VIDEO:
-				break;
-			case VOICE:
-				break;
-			default:
-				break;
+				chatItems.add(chatItem);
 
 			}
-			chatItems.add(chatItem);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			chatAdapter.notifyDataSetChanged();
+			chatListView.setSelection(chatItems.size() - 1);
+		}
+
+		@Override
+		protected void onProgressUpdate(ChatItem... values) {
+			// TODO Auto-generated method stub
+			super.onProgressUpdate(values);
+
 		}
 
 	}
@@ -911,9 +938,33 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		case R.id.iv_chat_location:
 			break;
 		case R.id.deleteBtn:
-			EMChatManager.getInstance().clearConversation(groupId);
-			chatItems.clear();
-			chatAdapter.notifyDataSetChanged();
+			new AlertDialog.Builder(ChatGroupActivity.this)
+					.setTitle("清空聊天记录")
+					.setMessage("确认清空聊天记录？")
+					.setPositiveButton("确定",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									EMChatManager.getInstance()
+											.clearConversation(groupId);
+									chatItems.clear();
+									chatAdapter.notifyDataSetChanged();
+								}
+							})
+					.setNegativeButton("取消",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+
+								}
+							}).create().show();
+
 			break;
 		default:
 			break;
