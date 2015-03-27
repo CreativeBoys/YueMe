@@ -13,4 +13,13 @@
         android:layout_centerVertical="true"
         android:src="@drawable/chat_image_normal" />
 
+    <Button
+        android:id="@+id/viewOriginPic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="viewOriginPic"
+        android:text="查看原图" />
+
 </RelativeLayout>

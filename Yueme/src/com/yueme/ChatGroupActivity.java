@@ -84,6 +84,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 	private static final int REQUEST_CODE_CAMERA = 2;
 	private File cameraFile;
 	private ImageView deleteConversation;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
