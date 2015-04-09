@@ -32,6 +32,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -1135,4 +1136,18 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		Log.d("yue", "onStop");
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if(keyCode==KeyEvent.KEYCODE_BACK){
+			if(moreLayout.getVisibility()==View.VISIBLE || emotionsLayout.getVisibility()==View.VISIBLE){
+				moreLayout.setVisibility(View.GONE);
+				emotionsLayout.setVisibility(View.GONE);
+				return false;
+			}
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	
 }
