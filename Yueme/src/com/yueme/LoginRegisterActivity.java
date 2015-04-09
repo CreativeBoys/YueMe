@@ -11,7 +11,7 @@ import android.widget.Button;
 
 /*注册登录选择的activity*/
 public class LoginRegisterActivity extends Activity{
-	Button loginButton, registerButton;
+	private Button loginButton, registerButton;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub

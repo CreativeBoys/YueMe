@@ -40,10 +40,10 @@ import com.yueme.values.ConstantValues;
 import com.yueme.values.GlobalValues;
 
 public class LoginActivity extends SwipeBackActivity {
-	ImageView backBtn;
-	EditText userNameEt, passwordEt;
-	Button loginBtn;
-	TextView quickRegTv, forgetPasswordTv;
+	private ImageView backBtn;
+	private EditText userNameEt, passwordEt;
+	private Button loginBtn;
+	private TextView quickRegTv, forgetPasswordTv;
 	private ProgressDialog progressDialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

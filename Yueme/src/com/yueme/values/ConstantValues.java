@@ -111,5 +111,8 @@ public class ConstantValues {
 	 * 消息类型
 	 */
 	
-	public static final int MSG = 1;
+	public static final int TEXT_MSG = 1;
+	public static final int LOCATION_MSG = 2;
+	public static final int IMAGE_MSG = 3;
+	
 }
