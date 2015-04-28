@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 public class ChatGroupInfo implements Serializable {
 	

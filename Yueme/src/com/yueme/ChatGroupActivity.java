@@ -75,7 +75,6 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 	private EditText et_msg;
 	private String groupId;
 	private ImageView iv_emotion;
-	// 获取到与聊天人的会话对象。参数username为聊天人的userid或者groupid，后文中的username皆是如此
 	private EMConversation conversation;
 	private InputMethodManager manager;
 	private ChatGroupInfo chatGroupInfo;
