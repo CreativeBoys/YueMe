@@ -64,7 +64,6 @@
         </activity>
         <activity
             android:name=".SingleRequireDetailsActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
@@ -85,8 +84,7 @@
             android:name=".ParticipatedInfosActivity"
             android:label="@string/title_activity_participated_infos" >
         </activity>
-        <activity
-            android:name=".ChatGroupActivity" >
+        <activity android:name=".ChatGroupActivity" >
         </activity>
         <activity
             android:name=".MyIntegrate"
@@ -106,6 +104,17 @@
             android:value="qxysg12732#yuemechat" />
         <!-- Required SDK核心功能 -->
         <service android:name="com.easemob.chat.EMChatService" />
+
+        <service android:name="com.yueme.service.ArrangeNotify"></service>
+
+        <service android:name=".CountingService" >
+        </service>
+
+        <activity
+            android:name=".PubInfosActivity"
+            android:label="@string/title_activity_pub_infos" >
+        </activity>
+
 
         <meta-data
             android:name="TencentMapSDK"

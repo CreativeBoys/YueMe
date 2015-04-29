@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#f6f6f6"
     tools:context="com.yueme.ParticipantsActivity" >
 
     <RelativeLayout
@@ -48,33 +49,37 @@
         android:id="@+id/tv_createTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="创建时间：2015-03-14-12时3分30秒"
-        android:textColor="#8EFF78" />
+        android:text="创建时间："
+        android:textColor="#102b6a" />
 
     <TextView
         android:id="@+id/tv_destTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="开始时间: 2015-03-14-13时3分30秒"
-        android:textColor="#FF1F39" />
+        android:text="开始时间: "
+        android:textColor="#aa2116" />
 
     <ListView
         android:id="@+id/lv_participants"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1" >
+        android:layout_weight="1" 
+        android:dividerHeight="3dp"
+        android:divider="#f6f6f6">
     </ListView>
-	  <LinearLayout
-	      android:layout_marginTop="5dip"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:orientation="horizontal"
+
+    <LinearLayout
+        android:id="@+id/ll_btn_container"
         android:layout_width="match_parent"
         android:layout_height="50dip"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
         android:layout_marginBottom="10dip"
-        >
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginTop="5dip"
+        android:orientation="horizontal" >
+
         <Button
             android:id="@+id/btn_group_talk"
             android:layout_width="wrap_content"
@@ -97,4 +102,17 @@
             android:textColor="#FFFFFF"
             android:textSize="25sp" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_begin"
+        android:layout_width="260dip"
+        android:layout_height="40dip"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="15dp"
+        android:background="@drawable/details_reply_bg"
+        android:text="开始"
+        android:textColor="#FFFFFF"
+        android:textSize="25sp"
+        android:visibility="gone" />
+
 </LinearLayout>

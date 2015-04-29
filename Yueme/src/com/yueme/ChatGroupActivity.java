@@ -62,6 +62,7 @@ import com.easemob.exceptions.EaseMobException;
 import com.easemob.util.PathUtil;
 import com.yueme.ChatGroupActivity.ChatItem;
 import com.yueme.domain.ChatGroupInfo;
+import com.yueme.ui.BaseEmotionsViewPagerAdapter;
 import com.yueme.ui.BitmapTool;
 import com.yueme.util.ToastUtil;
 import com.yueme.values.ConstantValues;
@@ -75,6 +76,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 	private EditText et_msg;
 	private String groupId;
 	private ImageView iv_emotion;
+	// 获取到与聊天人的会话对象。参数username为聊天人的userid或者groupid，后文中的username皆是如此
 	private EMConversation conversation;
 	private InputMethodManager manager;
 	private ChatGroupInfo chatGroupInfo;
@@ -150,7 +152,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		});
 
 		/* chatListView.setOnClickListener(this); */
-		emotionsViewPager.setAdapter(new EmotionsViewPagerAdapter());
+		emotionsViewPager.setAdapter(new EmotionsViewPagerAdapter(this));
 		emotionsViewPager.setCurrentItem(0);
 		emotionsViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 
@@ -198,8 +200,41 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 		registerReceiver(msgReceiver, intentFilter);
 
 	}
+private class EmotionsViewPagerAdapter extends BaseEmotionsViewPagerAdapter{
 
-	private class EmotionsViewPagerAdapter extends PagerAdapter {
+	public EmotionsViewPagerAdapter(Context context) {
+		super(context);
+		// TODO Auto-generated constructor stub
+	}
+	protected void setEvents(){
+		gv1.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				TextView tv = (TextView) view;
+				et_msg.append(tv.getText());
+				int len = et_msg.getText().length();
+				et_msg.setSelection(len);
+			}
+		});
+
+		gv2.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				TextView tv = (TextView) view;
+				et_msg.append(tv.getText());
+				int len = et_msg.getText().length();
+				et_msg.setSelection(len);
+			}
+		});
+	}
+}
+/*	private class EmotionsViewPagerAdapter extends PagerAdapter {
 		private List<View> pagerViews;
 
 		public EmotionsViewPagerAdapter() {
@@ -323,7 +358,7 @@ public class ChatGroupActivity extends Activity implements OnClickListener {
 			return convertView;
 		}
 
-	}
+	}*/
 
 	public void back(View v) {
 		finish();

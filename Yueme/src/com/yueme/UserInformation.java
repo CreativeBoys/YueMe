@@ -320,7 +320,7 @@ public class UserInformation extends SwipeBackActivity implements
 						setPicToView(head);
 						user_head.setImageBitmap(head);
 					}
-					;
+					
 				}
 				break;
 			default:
@@ -360,6 +360,7 @@ public class UserInformation extends SwipeBackActivity implements
 		String fileName = path.getAbsolutePath() + "/head.jpg"; // 图片名称
 		try {
 			fos = new FileOutputStream(fileName);
+			if(mBitmap!=null)
 			mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos); // 将数据写入文件
 		} catch (FileNotFoundException e) {
 

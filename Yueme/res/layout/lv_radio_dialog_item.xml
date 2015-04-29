@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="260dip"
+    android:layout_height="40dip"
+    android:layout_marginBottom="10dip"
+    android:layout_marginLeft="5dip"
+    android:layout_marginRight="5dip"
+    android:layout_marginTop="10dip"
+    android:background="@drawable/radio_dialog_bg"
+    android:button="@null"
+    android:gravity="center"
+    android:text="男"
+    android:textColor="@color/radio_dialog_text_color" />

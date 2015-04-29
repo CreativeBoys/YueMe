@@ -561,7 +561,7 @@ public class RegisterActivity extends SwipeBackActivity {
 	 * 第二步输入验证码UI
 	 */
 	private void setSecondCodeLayout(){
-		numpage++;
+		numpage = 2;
 		two.setVisibility(View.VISIBLE);
 		one.setVisibility(View.VISIBLE);
 		startCallTimer();
@@ -570,7 +570,7 @@ public class RegisterActivity extends SwipeBackActivity {
 	 * 第三步 填写信息ui
 	 */
 	private void setThirdLayout() {
-		numpage++;
+		numpage=3;
 		one.setVisibility(View.GONE);
 		two.setVisibility(View.GONE);
 		three.setVisibility(View.VISIBLE);

@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.yueme.MyIntegrate;
 import com.yueme.ParticipatedInfosActivity;
+import com.yueme.PubInfosActivity;
 import com.yueme.R;
 import com.yueme.SystemSettings;
 import com.yueme.UserInformation;
@@ -112,24 +113,22 @@ public class UserFragment extends BaseFragment {
 				Intent intent = null;
 				switch (position) {
 				case 0:
-					
+					intent = new Intent(getActivity(),PubInfosActivity.class);
 					break;
 				case 1:
 					//参与的
 					intent = new Intent(getActivity(),ParticipatedInfosActivity.class);
-					startActivity(intent);
 					break;
 				case 2: //我的积分
 					intent = new Intent(getActivity(),MyIntegrate.class);
-					startActivity(intent);
 					break;
 				case 3:  			//系统设置		
 					intent = new Intent(getActivity(),SystemSettings.class);
-					startActivity(intent);
 					break;
 				default:
 					break;
 				}
+				startActivity(intent);
 				
 			}
 			
@@ -171,6 +170,7 @@ protected ProtocalResponse doInBackground(Void... params) {
 
 @Override
 protected void onPostExecute(final ProtocalResponse result) {
+	if(result!=null)
 	if (result.getResponseCode() == 0) {
 		Gson gson = new Gson();
 		final User user = gson.fromJson(result.getResponse(),

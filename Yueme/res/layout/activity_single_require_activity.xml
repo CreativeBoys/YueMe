@@ -1,15 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_details"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF" >
+    android:background="#F6F6F6"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/topLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar_bg" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="详情"
+            android:textColor="#FFFFFF"
+            android:textSize="25sp" />
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:onClick="back"
+            android:src="@drawable/back_icon" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/details_layout"
         android:layout_width="match_parent"
-        android:layout_height="150dip"
-        android:layout_below="@id/topLayout"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="#FFFFFF"
         android:descendantFocusability="blocksDescendants"
         android:padding="5dp" >
 
@@ -52,24 +81,83 @@
             android:layout_marginLeft="50dp"
             android:text="TextView"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/demandContent"
+            android:gravity="center"
+            android:text="还有0天1小时15分30秒"
+            android:textColor="#ff0000" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_marginTop="5dp"
+        android:background="#FFFFFF"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="18dp"
+            android:src="@drawable/reply_icon" />
+
+        <TextView
+            android:id="@+id/tv_comments_count"
+            android:layout_marginLeft="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="评论0条" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="1dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="#F6F6F6" >
+
+        <ListView
+            android:id="@+id/lv_comments"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="#FFFFFF"
+            android:divider="@null" >
+        </ListView>
+        
+         <TextView
+            android:id="@+id/tv_comments"
+            android:visibility="gone"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:text="还没有评论！"
+            android:background="#FFFFFF">
+        </TextView>
+        
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="10dip"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:orientation="horizontal" >
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="8dp" >
 
         <Button
             android:id="@+id/replyBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
             android:layout_weight="1"
             android:background="@drawable/details_reply_bg"
             android:text="回复"
@@ -78,86 +166,100 @@
 
         <Button
             android:id="@+id/yueBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
             android:layout_weight="1"
             android:background="@drawable/details_yue_bg"
             android:text="约起"
             android:textColor="#FFFFFF"
             android:textSize="25sp" />
     </LinearLayout>
-    <RelativeLayout
-        android:id="@+id/topLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/titlebar_bg" >
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="详情"
-            android:textColor="#FFFFFF"
-            android:textSize="25sp" />
+    <LinearLayout
+        android:id="@+id/ll_reply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f2f0eb"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="2dip"
+        android:paddingTop="2dip"
+        android:visibility="gone" >
 
         <ImageView
-            android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
+            android:id="@+id/iv_emoticons_normal"
+            android:layout_width="27dip"
+            android:layout_height="27dip"
+            android:layout_margin="1dip"
+            android:paddingLeft="3dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/chatting_biaoqing_btn_normal"
+            android:visibility="visible" />
+
+        <EditText
+            android:id="@+id/et_reply"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="12dp"
-            android:onClick="back"
-            android:src="@drawable/back_icon" />
-    </RelativeLayout>
-	<ListView 
-	    android:layout_below="@id/details_layout"
-	    android:divider="@null"
-	    android:id="@+id/lv_comments"
-	    android:layout_width="match_parent"
-	    android:layout_height="150dip"
-	    android:layout_marginBottom="10dip"
-	    ></ListView>
-    <TextView
-        android:id="@+id/tv_counter"
-        android:layout_width="match_parent"
-        android:layout_height="80dip"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/lv_comments"
-        android:background="@drawable/counter_bg"
-        android:gravity="center"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:text="0天1小时15分30秒"
-        android:textColor="#ff0000"
-        android:textSize="30sp" />
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="我也说一句..."
+            android:maxLines="3"
+            android:minHeight="40dp"
+            android:paddingBottom="3dp"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingTop="3dp"
+            android:textSize="18sp" >
 
-  <LinearLayout
-      android:id="@+id/ll_reply"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignBottom="@+id/ll_bottom"
-      android:layout_alignParentBottom="true"
-      android:orientation="horizontal"
-      android:visibility="gone" >
-
-      <EditText
-          android:id="@+id/et_reply"
-          android:layout_width="0dip"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:ems="10"
-          android:hint="我也说一句..." />
+            <requestFocus />
+        </EditText>
 
         <Button
             android:id="@+id/btn_publish"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="发表" />
+            android:layout_height="32dp"
+            android:background="@drawable/chat_send_btn_selector"
+            android:text="发表"
+            android:textColor="#666666"
+            android:textSize="16sp" />
     </LinearLayout>
-</RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/emotionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="145dp"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/emotionsViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="120dp" >
+        </android.support.v4.view.ViewPager>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp" >
+
+            <ImageView
+                android:id="@+id/ivState1"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:paddingRight="3dp"
+                android:src="@drawable/point_checked" />
+
+            <ImageView
+                android:id="@+id/ivState2"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:paddingLeft="3dp"
+                android:src="@drawable/point_uncheck" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

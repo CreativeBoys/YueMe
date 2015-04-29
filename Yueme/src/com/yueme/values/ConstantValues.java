@@ -1,5 +1,6 @@
 package com.yueme.values;
 
+
 public class ConstantValues {
 	/**
 	 * 登陆
@@ -111,6 +112,23 @@ public class ConstantValues {
 	 * 消息类型
 	 */
 	
+	public static final int MSG = 1;
+	/**
+	 * 得到所有该用户发布的信息
+	 */
+	public static final int GET_ALL_PUB_INFO = 18;
+	/**
+	 * 判断用户是否是此条记录的发布者
+	 */
+	public static final int JUDGE_PUBLISHER = 19;
+	/**
+	 * 删除一条记录
+	 */
+	public static final int DELETE_INFO = 20;
+	/**
+	 * 现在立即开始
+	 */
+	public static final int BEGIN_NOW = 21;
 	public static final int TEXT_MSG = 1;
 	public static final int LOCATION_MSG = 2;
 	public static final int IMAGE_MSG = 3;
