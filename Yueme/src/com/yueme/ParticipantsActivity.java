@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -29,8 +30,17 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.easemob.EMCallBack;
+import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMConversation;
+import com.easemob.chat.EMGroupManager;
+import com.easemob.chat.EMMessage;
+import com.easemob.chat.TextMessageBody;
+import com.easemob.chat.EMMessage.ChatType;
+import com.easemob.exceptions.EaseMobException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yueme.ChatGroupActivity.ChatItem;
 import com.yueme.domain.ChatGroupInfo;
 import com.yueme.domain.Info;
 import com.yueme.domain.ProtocalResponse;
@@ -60,6 +70,7 @@ public class ParticipantsActivity extends Activity {
 	private Button btn_cancel;
 	private boolean showButton;
 	private boolean showEnd;
+	private EMConversation conversation;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +80,8 @@ public class ParticipantsActivity extends Activity {
 		showButton = getIntent().getBooleanExtra("showButton", true);
 		showEnd = getIntent().getBooleanExtra("showEnd", false);
 		chatGroupInfo = new ChatGroupInfo(info.getGroup_id());
+		conversation = EMChatManager.getInstance().getConversation(
+				info.getGroup_id());
 		initView();
 		getNetInfo();
 		setListenerAndAdapter();
@@ -135,20 +148,35 @@ public class ParticipantsActivity extends Activity {
 											int which) {
 										// 提前开始
 										Map<String, String> map = new LinkedHashMap<String, String>();
-										map.put(ConstantValues.REQUESTPARAM, ConstantValues.BEGIN_NOW+"");
+										map.put(ConstantValues.REQUESTPARAM,
+												ConstantValues.BEGIN_NOW + "");
 										map.put("infoID", info.getId());
 										new GeneralGetAsyncTask() {
 											@Override
-											public void doOnPost(ProtocalResponse response) {
-												if(response!=null&&response.getResponseCode()==0) {
-													Intent intent = new Intent(ParticipantsActivity.this,ParticipantsActivity.class);
-													intent.putExtra("info", info);
-													intent.putExtra("showEnd", true);
+											public void doOnPost(
+													ProtocalResponse response) {
+												if (response != null
+														&& response
+																.getResponseCode() == 0) {
+													Intent intent = new Intent(
+															ParticipantsActivity.this,
+															ParticipantsActivity.class);
+													intent.putExtra("info",
+															info);
+													intent.putExtra("showEnd",
+															true);
 													startActivity(intent);
-													
-													ParticipantsActivity.this.finish();
+													onSendTxtMsg(info
+															.getNickname()
+															+ "提前了活动的开始："
+															+ info.getContent());
+													ParticipantsActivity.this
+															.finish();
 												} else {
-													ToastUtil.showToast("网络错误", ParticipantsActivity.this);
+													ToastUtil
+															.showToast(
+																	"网络错误",
+																	ParticipantsActivity.this);
 												}
 											}
 										}.execute(map);
@@ -158,65 +186,143 @@ public class ParticipantsActivity extends Activity {
 				});
 			}
 		}
-		
-		if(showEnd) {
+
+		if (showEnd) {
 			btn_cancel.setText("结束");
-			
+
 			btn_cancel.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
-					DialogUtil.showConfirmDialog(ParticipantsActivity.this, "确定要结束吗？",new AlertDialog.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							//结束，发推送给其他的参与者，并弹框选择评分
-//							synchronized (users) {
-//								boolean first = true;
-//								if(!first) {
-//									try {
-//										users.wait();
-//									} catch (InterruptedException e1) {
-//										e1.printStackTrace();
-//									}
-//								}
-								if(users!=null&&users.size()>0)
-								showVerticalDialog();
-								
-//								first = false;
-							}
-//						}
+					DialogUtil.showConfirmDialog(ParticipantsActivity.this,
+							"确定要结束吗？", new AlertDialog.OnClickListener() {
 
-						private void showVerticalDialog() {
-							DialogUtil.showVerticalRadioDialog(new OnClickListener() {
-								
 								@Override
-								public void onClick(View v) {
-									DialogUtil.closeVerticalRadioDialog();
-									userPos++;
-									if(users.size()>userPos)
-									showVerticalDialog();
-									else 
-										ParticipantsActivity.this.finish();
-//										notifyAll();
-								}
-							}, new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									DialogUtil.closeVerticalRadioDialog();
-									userPos++;
-									if(users.size()>userPos)
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// 结束，发推送给其他的参与者，并弹框选择评分
+									// synchronized (users) {
+									// boolean first = true;
+									// if(!first) {
+									// try {
+									// users.wait();
+									// } catch (InterruptedException e1) {
+									// e1.printStackTrace();
+									// }
+									// }
+									new RemoveGroupAysncTask().execute();
+
+									if (users != null && users.size() > 0)
 										showVerticalDialog();
-									else 
-										ParticipantsActivity.this.finish();
-//										notifyAll();
+
+									// first = false;
 								}
-							}, "请对参与者"+users.get(userPos).getNickname()+"进行评价", ParticipantsActivity.this, "非常好","好","普通","不太好","很差劲");
-						}
-					});
+
+								// }
+
+								private void showVerticalDialog() {
+									DialogUtil.showVerticalRadioDialog(
+											new OnClickListener() {
+
+												@Override
+												public void onClick(View v) {
+													DialogUtil
+															.closeVerticalRadioDialog();
+													userPos++;
+													if (users.size() > userPos)
+														showVerticalDialog();
+													else
+														ParticipantsActivity.this
+																.finish();
+													// notifyAll();
+												}
+											},
+											new OnClickListener() {
+												@Override
+												public void onClick(View v) {
+													DialogUtil
+															.closeVerticalRadioDialog();
+													userPos++;
+													if (users.size() > userPos)
+														showVerticalDialog();
+													else
+														ParticipantsActivity.this
+																.finish();
+													// notifyAll();
+												}
+											}, "请对参与者"
+													+ users.get(userPos)
+															.getNickname()
+													+ "进行评价",
+											ParticipantsActivity.this, "非常好",
+											"好", "普通", "不太好", "很差劲");
+								}
+							});
 				}
 			});
 		}
+	}
+
+	private class RemoveGroupAysncTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			onSendTxtMsg("活动结束：" + info.getContent());
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			try {
+				EMGroupManager.getInstance().exitAndDeleteGroup(
+						info.getGroup_id());
+			} catch (EaseMobException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	private void onSendTxtMsg(String msgContent) {
+		// final String msgContent = et_msg.getText().toString().trim();
+
+		final EMMessage msg = EMMessage.createSendMessage(EMMessage.Type.TXT);
+		msg.setChatType(ChatType.GroupChat);
+		msg.setAttribute(ConstantValues.MSG_CATEGAORY,
+				ConstantValues.NOTIFICATION);
+		TextMessageBody body = new TextMessageBody(msgContent);
+		msg.addBody(body);
+		Log.d("mychat", "sendText groupId" + info.getGroup_id());
+		msg.setReceipt(info.getGroup_id());
+
+		conversation.addMessage(msg);
+		// 发送消息
+		EMChatManager.getInstance().sendMessage(msg, new EMCallBack() {
+
+			@Override
+			public void onError(int arg0, String arg1) {
+				// TODO Auto-generated method stub
+				Log.d("mychat", "onsend msg onError");
+			}
+
+			@Override
+			public void onProgress(int arg0, String arg1) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess() {
+				// TODO Auto-generated method stub
+				Log.d("mychat", "onsend msg success");
+
+			}
+		});
+
 	}
 
 	private class ParticipantsAsyncTast extends

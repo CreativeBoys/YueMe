@@ -51,6 +51,7 @@ import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMGroupManager;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
+import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.exceptions.EaseMobException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -60,12 +61,9 @@ import com.yueme.domain.Info;
 import com.yueme.domain.ProtocalResponse;
 import com.yueme.domain.Subcomment;
 import com.yueme.domain.User;
-
 import com.yueme.service.ArrangeNotify;
-
 import com.yueme.task.GeneralGetAsyncTask;
 import com.yueme.ui.BaseEmotionsViewPagerAdapter;
-
 import com.yueme.util.DensityUtil;
 import com.yueme.util.DialogUtil;
 import com.yueme.util.EncodeUtil;
@@ -194,6 +192,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 													if (response != null
 															&& response
 																	.getResponseCode() == 0) {
+														new RemoveGroupAysncTask().execute();
 														SingleRequireDetailsActivity.this
 																.finish();
 													} else {
@@ -323,23 +322,21 @@ public class SingleRequireDetailsActivity extends Activity implements
 					@Override
 					protected void onPostExecute(ProtocalResponse result) {
 						if (result != null) {
-							new JoinGroupAsyncTask().execute();
+							new JoinExistGroupAsyncTask().execute();
+							
 							ToastUtil.showToast(result.getResponse(),
 									SingleRequireDetailsActivity.this);
 						} else {
 							ToastUtil.showToast("网络错误",
 									SingleRequireDetailsActivity.this);
 						}
-						Intent intent = new Intent(
-								SingleRequireDetailsActivity.this,
-								ParticipantsActivity.class);
-						intent.putExtra("info", info);
-						startActivity(intent);
-						finish();
+						
 
 					}
 				}.execute();
-				new ParticipantsAsyncTast().execute();
+				
+				
+				//new ParticipantsAsyncTask().execute();
 			} else {
 
 				new AsyncTask<Void, Void, ProtocalResponse>() {
@@ -371,6 +368,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 					@Override
 					protected void onPostExecute(ProtocalResponse result) {
 						if (result != null) {
+							new JoinExistGroupAsyncTask().execute(info.getGroup_id());
 							ToastUtil.showToast(result.getResponse(),
 									SingleRequireDetailsActivity.this);
 						} else {
@@ -408,13 +406,20 @@ public class SingleRequireDetailsActivity extends Activity implements
 		}
 	}
 
-	private class JoinGroupAsyncTask extends AsyncTask<Void, Void, String> {
+	private class JoinExistGroupAsyncTask extends AsyncTask<String, Void, String> {
 
 		@Override
-		protected String doInBackground(Void... params) {
+		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			try {
-				EMGroupManager.getInstance().joinGroup(groupId);
+				if(params.length==0){
+					EMGroupManager.getInstance().joinGroup(groupId);
+					onSendTxtMsg("有新成员加入您的相约，点击查看详情！");
+				} else if(params.length==1){
+					EMGroupManager.getInstance().exitFromGroup(params[0]);
+					onSendTxtMsg("有成员退出了您的相约，点击查看详情！");
+				}
+				
 				return "OK";
 			} catch (EaseMobException e) {
 				// TODO Auto-generated catch block
@@ -427,11 +432,13 @@ public class SingleRequireDetailsActivity extends Activity implements
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			if (result != null) {
-				new ParticipantsAsyncTast().execute();
+				//new ParticipantsAsyncTask().execute();
+				
 				Intent intent = new Intent(SingleRequireDetailsActivity.this,
 						ParticipantsActivity.class);
 				intent.putExtra("info", info);
 				startActivity(intent);
+				finish();
 
 			}
 			super.onPostExecute(result);
@@ -547,6 +554,31 @@ public class SingleRequireDetailsActivity extends Activity implements
 
 	}
 
+	private class RemoveGroupAysncTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			onSendTxtMsg(info.getNickname()+"删除了活动：" + info.getContent());
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			try {
+				EMGroupManager.getInstance().exitAndDeleteGroup(
+						info.getGroup_id());
+			} catch (EaseMobException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 	private class CheckIsParticipatedAsyncTask extends
 			AsyncTask<Void, Void, ProtocalResponse> {
 
@@ -596,13 +628,14 @@ public class SingleRequireDetailsActivity extends Activity implements
 	 * @param view
 	 */
 
-	public void onSendTxtMsg(String user_id, String userName) {
+	public void onSendTxtMsg(String msgContent) {
 		EMMessage msg = EMMessage.createSendMessage(EMMessage.Type.TXT);
 
-		msg.setReceipt(user_id);
+		msg.setReceipt(info.getGroup_id());
+		msg.setChatType(ChatType.GroupChat);
 		msg.setAttribute(ConstantValues.MSG_CATEGAORY,
 				ConstantValues.NOTIFICATION);
-		TextMessageBody body = new TextMessageBody(userName);
+		TextMessageBody body = new TextMessageBody(msgContent);
 		msg.addBody(body);
 
 		try {
@@ -630,7 +663,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 				map.put("infoID", info.getId());
 				map.put("userID", GlobalValues.USER_ID);
 				map.put("content", EncodeUtil.chinese2URLEncode(et_reply
-						.getText().toString()));
+						.getText().toString().trim()));
 				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
 				HttpClient client = new DefaultHttpClient();
 				HttpResponse response = client.execute(get);
@@ -833,7 +866,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 				map.put(ConstantValues.REQUESTPARAM,
 						ConstantValues.ADD_SUB_COMMENT + "");
 				map.put("content", EncodeUtil.chinese2URLEncode(et_reply
-						.getText().toString()));
+						.getText().toString().trim()));
 				map.put("userID", GlobalValues.USER_ID);
 				if (subCommentPos < 0) {
 					map.put("t_userID", comments.get(commentPos).getU_id());
@@ -873,59 +906,7 @@ public class SingleRequireDetailsActivity extends Activity implements
 		}
 	}
 
-	private class ParticipantsAsyncTast extends
-			AsyncTask<Void, Void, ProtocalResponse> {
-
-		@Override
-		protected ProtocalResponse doInBackground(Void... params) {
-			try {
-				LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-				map.put(ConstantValues.REQUESTPARAM,
-						ConstantValues.GET_PARTICIPANTS + "");
-				map.put("infoID", info.getId());
-				HttpGet get = new HttpGet(NetUtil.getUrlString(map));
-				HttpClient client = new DefaultHttpClient();
-				HttpResponse response = client.execute(get);
-				if (response.getStatusLine().getStatusCode() == 200) {
-					String json = StreamUtil.getString(response.getEntity()
-							.getContent());
-					return new Gson().fromJson(json, ProtocalResponse.class);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(ProtocalResponse result) {
-			if (result == null) {
-				ToastUtil.showToast("网络错误", SingleRequireDetailsActivity.this);
-			} else {
-				Intent service = new Intent(SingleRequireDetailsActivity.this,
-						CountingService.class);
-				ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-				List<RunningServiceInfo> runningServices = am
-						.getRunningServices(100);
-				boolean isServiceRunning = false;
-				for (RunningServiceInfo runningServiceInfo : runningServices) {
-					if (runningServiceInfo.service.getClassName().equals(
-							"com.yueme.CountingService"))
-						isServiceRunning = true;
-				}
-				if (!isServiceRunning)
-					startService(service);
-				conn = new CountServiceConnection();
-				bindService(service, conn, BIND_AUTO_CREATE);
-				String json = result.getResponse();
-				users = new Gson().fromJson(json, new TypeToken<List<User>>() {
-				}.getType());
-				for (final User user : users) {
-					onSendTxtMsg(user.getId(), user.getNickname());
-				}
-			}
-		}
-	}
+	
 
 	private class CountServiceConnection implements ServiceConnection {
 

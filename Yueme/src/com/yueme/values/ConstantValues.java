@@ -93,11 +93,7 @@ public class ConstantValues {
 	 */
 	public static final String IS_LOGINED="IS_LOGINED";
 	
-	/*
-	 * 判断消息是否为通知的常量
-	 */
 	
-	public static final String MSG_NOTIFICATION = "_NOTIFICATION_";
 	
 	/**
 	 * 消息类型
@@ -108,9 +104,10 @@ public class ConstantValues {
 	 */
 	public static final int NOTIFICATION = 0;
 	
-	/**
-	 * 消息类型
-	 */
+	
+	
+	public static final int JOINT_GROUP = 1;
+	public static final int EXIT_GROUP = 2;
 	
 	public static final int MSG = 1;
 	/**
@@ -132,5 +129,6 @@ public class ConstantValues {
 	public static final int TEXT_MSG = 1;
 	public static final int LOCATION_MSG = 2;
 	public static final int IMAGE_MSG = 3;
+	
 	
 }
